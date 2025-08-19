@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\WordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,12 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::delete('folders/{folder}', [FolderController::class, 'destroy']);
 
 
+        // ----------------------- Words ----------------------------------------------
+        Route::get('words', [WordController::class, 'index']);
+        Route::post('words', [WordController::class, 'store']);
+        Route::get('words/{word}', [WordController::class, 'show']);
+        Route::put('words/{word}', [WordController::class, 'update']);
+        Route::delete('words/{word}', [WordController::class, 'destroy']);
 
     });
 });
