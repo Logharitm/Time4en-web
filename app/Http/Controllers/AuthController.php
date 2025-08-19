@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Exceptions\CustomAuthenticationException;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -102,4 +108,98 @@ class AuthController extends Controller
         ]);
 
     }
+
+    /**
+     * Update authenticated user profile
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateProfile(UpdateProfileRequest  $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $user->update($request->validated());
+
+        return $this->successResponse('Profile updated successfully.', [
+            'user' => new UserResource($user)
+        ],200);
+    }
+
+    /**
+     * Change authenticated user's password
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!\Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Current password does not match.'],
+            ]);
+        }
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return $this->successResponse('Password updated successfully.');
+    }
+
+    /**
+     * Send password reset link
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status !== Password::RESET_LINK_SENT) {
+            throw ValidationException::withMessages([
+                'email' => ['Unable to send password reset link.'],
+            ]);
+        }
+
+        return $this->successResponse('Password reset link sent to your email.');
+    }
+
+
+
+    /**
+     * Reset password
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->password = bcrypt($request->password);
+                $user->setRememberToken(Str::random(60));
+                $user->save();
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return $this->successResponse('Password has been reset successfully.');
+        }
+
+        // استخدام ValidationException لربط الخطأ بحقل email
+        throw ValidationException::withMessages([
+            'email' => ['Invalid token or email.'],
+        ]);
+    }
+
+
 }

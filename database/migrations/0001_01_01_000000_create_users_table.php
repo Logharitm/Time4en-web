@@ -13,10 +13,25 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name'); // اسم المستخدم
+            $table->string('email')->unique(); // البريد الإلكتروني
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // تمييز بين المستخدم العادي والمدير
+            $table->enum('role', ['user', 'admin'])->default('user');
+
+            // إعدادات إضافية
+            $table->string('language', 10)->default('en'); // اللغة المفضلة
+
+            // إحصائيات
+            $table->unsignedInteger('folders_count')->default(0);
+            $table->unsignedInteger('words_count')->default(0);
+
+            // الاشتراكات
+            $table->string('subscription_plan', 50)->default('free');
+            $table->date('subscription_expires_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,8 +57,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
