@@ -26,4 +26,5 @@ class UserResource extends JsonResource
             'subscription_expires_at' => $this->subscription_expires_at,
         ];
     }
+
 }
