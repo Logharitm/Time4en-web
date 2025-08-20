@@ -30,8 +30,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::get('words', [WordController::class, 'index']);
         Route::post('words', [WordController::class, 'store']);
         Route::get('words/{word}', [WordController::class, 'show']);
-        Route::put('words/{word}', [WordController::class, 'update']);
-        Route::delete('words/{word}', [WordController::class, 'destroy']);
+        Route::put('words/{word}/update', [WordController::class, 'update']);
+        Route::delete('words/{word}/delete', [WordController::class, 'destroy']);
 
     });
 });
