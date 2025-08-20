@@ -24,9 +24,10 @@ class IndexWordRequest extends FormRequest
             if ($folder && $folder->user_id === $user->id) {
                 return true;
             }
+            return false;
         }
 
-        return false;
+        return auth()->check();
     }
 
     protected function failedAuthorization()
