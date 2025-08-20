@@ -3,14 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Word;
-use Illuminate\Auth\Access\AuthorizationException;
 
-class ShowWordRequest extends FormRequest
+class UpdateWordRequest extends FormRequest
 {
     public function authorize(): bool
     {
-//        $user = $this->user();
+        return auth()->check();
+    }
+
+    //        $user = $this->user();
 //        $word = $this->route('word');
 //
 //        if ($user->role !== 'admin') {
@@ -19,13 +20,14 @@ class ShowWordRequest extends FormRequest
 //            }
 //        }
 
-        return auth()->check();
-    }
-
     public function rules(): array
     {
         return [
+            'word' => 'sometimes|string|max:255',
+            'translation' => 'sometimes|required|string|max:255',
             'example_sentence' => 'nullable|string',
+            'audio_file' => 'nullable|file|mimes:mp3,wav|max:20480',
         ];
     }
 }
+
