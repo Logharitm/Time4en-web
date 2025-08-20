@@ -84,7 +84,7 @@ class WordController extends Controller
     /**
      * Show a word
      */
-    public function show(ShowWordRequest $request, Word $word): JsonResponse
+    public function show(Word $word): JsonResponse
     {
         dd(1);
         return $this->successResponse(
