@@ -34,7 +34,7 @@ class AuthController extends Controller
     public function register(RegisterUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
-
+dd(1);
 
         $user = User::create([
             'name' => $validated['name'],
