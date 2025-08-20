@@ -89,7 +89,7 @@ class WordController extends Controller
         $user = $request->user();
 
         if ($word->folder->user_id !== $user->id) {
-            return 1;
+            throw new AuthorizationException('Unauthorized to view this word.');
         }
 
         return $this->successResponse(
