@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ShowWordRequest;
 use App\Models\Word;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -83,10 +84,14 @@ class WordController extends Controller
     /**
      * Show a word
      */
-    public function show(Word $word): JsonResponse
+    public function show(ShowWordRequest $request, Word $word): JsonResponse
     {
-        return $this->successResponse('Word retrieved successfully.', new WordResource($word));
+        return $this->successResponse(
+            'Word retrieved successfully.',
+            new WordResource($word)
+        );
     }
+
 
     /**
      * Update word
