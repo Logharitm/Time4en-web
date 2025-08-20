@@ -13,13 +13,12 @@ class ShowWordRequest extends FormRequest
         $user = $this->user();
         $word = $this->route('word');
 
-        if ($user->role === 'admin') {
-            return true;
+        if ($user->role !== 'admin') {
+            if ($word->folder->user_id !== $user->id) {
+                throw new AuthorizationException('Unauthorized to view this word.');
+            }
         }
 
-        if ($word->folder->user_id !== $user->id) {
-            return true;
-        }
         return true;
     }
 
