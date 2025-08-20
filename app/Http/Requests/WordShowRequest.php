@@ -11,10 +11,13 @@ class WordShowRequest extends FormRequest
         return auth()->check();
     }
 
-
     public function rules(): array
     {
-        return [];
+        return [
+            'word' => 'sometimes|required|string|max:255',
+            'translation' => 'sometimes|required|string|max:255',
+            'example_sentence' => 'nullable|string',
+            'audio_file' => 'nullable|file|mimes:mp3,wav|max:20480',
+        ];
     }
 }
-
