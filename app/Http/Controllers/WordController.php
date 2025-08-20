@@ -31,7 +31,15 @@ class WordController extends Controller
         }
 
         if ($request->has('folder_id') && !empty($request->folder_id)) {
-            $query->where('folder_id', $request->folder_id);
+            $folderId = $request->folder_id;
+            if ($user->role === 'admin') {
+                $query->where('folder_id', $folderId);
+            } else {
+                $query->where('folder_id', $folderId)
+                    ->whereHas('folder', function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
+            }
         }
 
         if ($request->has('search') && !empty($request->search)) {
