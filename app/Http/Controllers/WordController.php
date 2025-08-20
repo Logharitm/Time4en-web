@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ShowWordRequest;
+use App\Http\Requests\IndexWordRequest;
 use App\Http\Requests\WordShowRequest;
 use App\Models\Word;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -21,42 +21,31 @@ class WordController extends Controller
     /**
      * List all words in a folder with search and filter
      */
-    public function index(Request $request): JsonResponse
+    public function index(IndexWordRequest $request): JsonResponse
     {
         $user = $request->user();
 
-        if ($user->role === 'admin') {
-            $query = Word::query();
-        } else {
-            $query = Word::whereHas('folder', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
+        $query = $user->role === 'admin'
+            ? Word::query()
+            : Word::whereHas('folder', fn($q) => $q->where('user_id', $user->id));
+
+        if ($request->filled('folder_id')) {
+            $query->where('folder_id', $request->folder_id);
         }
 
-        if ($request->has('folder_id') && !empty($request->folder_id)) {
-            $folderId = $request->folder_id;
-            if ($user->role === 'admin') {
-                $query->where('folder_id', $folderId);
-            } else {
-                $query->where('folder_id', $folderId)
-                    ->whereHas('folder', function ($q) use ($user) {
-                        $q->where('user_id', $user->id);
-                    });
-            }
-        }
-
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('word', 'like', "%{$search}%")
-                    ->orWhere('translation', 'like', "%{$search}%")
-                    ->orWhere('example_sentence', 'like', "%{$search}%");
-            });
+            $query->where(fn($q) => $q
+                ->where('word', 'like', "%{$search}%")
+                ->orWhere('translation', 'like', "%{$search}%")
+                ->orWhere('example_sentence', 'like', "%{$search}%")
+            );
         }
 
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
+        $query->orderBy(
+            $request->get('sort_by', 'created_at'),
+            $request->get('sort_order', 'desc')
+        );
 
         $words = $query->paginate($request->get('per_page', 20));
 
@@ -65,6 +54,7 @@ class WordController extends Controller
             WordResource::collection($words)
         );
     }
+
 
 
     /**
