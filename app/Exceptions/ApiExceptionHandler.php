@@ -58,20 +58,20 @@ class ApiExceptionHandler
      * Handle authorization exceptions
      */
     public function handleAuthorizationException(
-        AuthorizationException $e,
+        \Throwable $e,
         Request $request
     ): JsonResponse {
-        $this->logException($e, 'Authorization failed');
+        if ($e instanceof AuthorizationException || $e instanceof AccessDeniedHttpException) {
+            $this->logException($e, 'Authorization failed');
 
-        $code = 403;
-        $message = 'You do not have permission to perform this action.';
-        $errors = [];
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You do not have permission to perform this action.',
+                'errors' => []
+            ], 403);
+        }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => $message,
-            'errors' => $errors
-        ], $code);
+        throw $e;
     }
 
     /**
