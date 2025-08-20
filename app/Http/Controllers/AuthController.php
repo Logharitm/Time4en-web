@@ -171,8 +171,6 @@ class AuthController extends Controller
         return $this->successResponse('Password reset link sent to your email.');
     }
 
-
-
     /**
      * Reset password
      *
