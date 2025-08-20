@@ -15,8 +15,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::group(['middleware' => 'auth:sanctum'], function() {
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
-        Route::put('update-profile', [AuthController::class, 'updateProfile']);
-        Route::put('change-password', [AuthController::class, 'changePassword']);
+        Route::post('update-profile', [AuthController::class, 'updateProfile']);
+        Route::post('change-password', [AuthController::class, 'changePassword']);
 
         // ----------------------- Folders --------------------------------------------
         Route::get('folders', [FolderController::class, 'index']);
