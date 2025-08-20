@@ -23,7 +23,7 @@ class ApiExceptionHandler
      */
     public static array $handlers = [
         AuthenticationException::class => 'handleAuthenticationException',
-        AccessDeniedHttpException::class => 'handleAuthenticationException',
+        AccessDeniedHttpException::class => 'handleAuthorizationException',
         AuthorizationException::class => 'handleAuthorizationException',
         ValidationException::class => 'handleValidationException',
         ModelNotFoundException::class => 'handleNotFoundException',
