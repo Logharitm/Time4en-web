@@ -18,9 +18,8 @@ class ShowWordRequest extends FormRequest
         }
 
         if ($word->folder->user_id !== $user->id) {
-            throw new AuthorizationException('You are not allowed to view this word.');
+            return true;
         }
-
         return true;
     }
 
