@@ -41,7 +41,7 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
-        dd(1);
+
         // Create token
         $tokenResult = $user->createToken('Personal Access Token');
 
