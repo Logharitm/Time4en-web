@@ -84,9 +84,14 @@ class WordController extends Controller
     /**
      * Show a word
      */
-    public function show(Word $word): JsonResponse
+    public function show(Request $request, Word $word): JsonResponse
     {
-        dd(1);
+        $user = $request->user();
+
+        if ($word->folder->user_id !== $user->id) {
+            return 1;
+        }
+
         return $this->successResponse(
             'Word retrieved successfully.',
             new WordResource($word),
