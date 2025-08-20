@@ -18,14 +18,6 @@ class UpdateWordRequest extends FormRequest
         return auth()->check();
     }
 
-    //
-//
-//
-//        if ($user->role !== 'admin') {
-//            if ($word->folder->user_id !== $user->id) {
-//                throw new AuthorizationException('Unauthorized to view this word.');
-//            }
-//        }
 
     public function rules(): array
     {
