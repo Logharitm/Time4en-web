@@ -115,7 +115,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function updateProfile(UpdateProfileRequest  $request): JsonResponse
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
         $user = $request->user();
 dd($request->validated());
