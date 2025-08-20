@@ -85,15 +85,8 @@ class WordController extends Controller
     /**
      * Show a word
      */
-    public function show(Request $request, Word $word): JsonResponse
+    public function show(ShowWordRequest $request, Word $word): JsonResponse
     {
-        $user = $request->user();
-
-        if ($user->role !== 'admin') {
-            if ($word->folder->user_id !== $user->id) {
-                throw new AuthorizationException('Unauthorized to view this word.');
-            }
-        }
 
         return $this->successResponse(
             'Word retrieved successfully.',
@@ -108,6 +101,14 @@ class WordController extends Controller
      */
     public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
+        $user = $request->user();
+
+        if ($user->role !== 'admin') {
+            if ($word->folder->user_id !== $user->id) {
+                throw new AuthorizationException('Unauthorized to view this word.');
+            }
+        }
+
         $data = $request->validated();
 
         if ($request->hasFile('audio_file')) {
@@ -126,8 +127,16 @@ class WordController extends Controller
     /**
      * Delete word
      */
-    public function destroy(Word $word): JsonResponse
+    public function destroy(Request $request,Word $word): JsonResponse
     {
+        $user = $request->user();
+
+        if ($user->role !== 'admin') {
+            if ($word->folder->user_id !== $user->id) {
+                throw new AuthorizationException('Unauthorized to view this word.');
+            }
+        }
+
         if ($word->audio_url) {
             $oldPath = str_replace(asset('storage/'), '', $word->audio_url);
             Storage::disk('public')->delete($oldPath);
