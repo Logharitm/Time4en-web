@@ -10,6 +10,11 @@ class UpdateWordRequest extends FormRequest
     {
         $user = $this->user();
         $word = $this->route('word');
+        if ($user->role !== 'admin') {
+            if ($word->folder->user_id !== $user->id) {
+                throw new AuthorizationException('Unauthorized to view this word.');
+            }
+        }
         return auth()->check();
     }
 
