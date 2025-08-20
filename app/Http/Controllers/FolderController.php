@@ -20,7 +20,7 @@ class FolderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = $request->user()->folders()->query();
+        $query = $request->user()->folders();
 
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
@@ -30,7 +30,6 @@ class FolderController extends Controller
             });
         }
 
-        // فلترة حسب تاريخ الإنشاء
         if ($request->has('created_from')) {
             $query->whereDate('created_at', '>=', $request->created_from);
         }
@@ -39,15 +38,18 @@ class FolderController extends Controller
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
-        // ترتيب
-        $sortBy = $request->get('sort_by', 'created_at'); // default created_at
-        $sortOrder = $request->get('sort_order', 'desc'); // default desc
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
 
         $folders = $query->paginate($request->get('per_page', 20));
 
-        return $this->successResponse('Folders retrieved successfully.', FolderResource::collection($folders));
+        return $this->successResponse(
+            'Folders retrieved successfully.',
+            FolderResource::collection($folders)
+        );
     }
+
 
     /**
      * Create new folder
