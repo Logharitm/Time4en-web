@@ -8,11 +8,13 @@ class UpdateWordRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        $user = $this->user();
+        $word = $this->route('word');
         return auth()->check();
     }
 
-    //        $user = $this->user();
-//        $word = $this->route('word');
+    //
+//
 //
 //        if ($user->role !== 'admin') {
 //            if ($word->folder->user_id !== $user->id) {
@@ -22,12 +24,7 @@ class UpdateWordRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'word' => 'sometimes|string|max:255',
-            'translation' => 'sometimes|required|string|max:255',
-            'example_sentence' => 'nullable|string',
-            'audio_file' => 'nullable|file|mimes:mp3,wav|max:20480',
-        ];
+        return [];
     }
 }
 
