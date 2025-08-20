@@ -88,7 +88,8 @@ class WordController extends Controller
     {
         return $this->successResponse(
             'Word retrieved successfully.',
-            new WordResource($word)
+            new WordResource($word),
+            200
         );
     }
 
