@@ -20,9 +20,10 @@ class WordController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Word::where('folder_id', $request->folder_id);
-
-        // بحث بالكلمة أو الترجمة
+        $query = Word::query();
+        if ($request->has('folder_id') && !empty($request->folder_id)) {
+            $query->where('folder_id', $request->folder_id);
+        }
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
