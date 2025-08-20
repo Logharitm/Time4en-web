@@ -22,7 +22,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             set -e  # وقف لو فيه أي Error
-            cd /home/u508368169/public_html/001-Other/Time4en/ &&
+            cd ${{ secrets.DEPLOY_PATH }} &&
             
             echo '>>> Pulling latest code...'
             git pull origin main &&
