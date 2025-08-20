@@ -85,7 +85,7 @@ class WordController extends Controller
     /**
      * Show a word
      */
-    public function show(Request $request, Word $word)
+    public function show(UpdateWordRequest $request, Word $word)
     {
         $user = $request->user();
         return $this->successResponse(
