@@ -22,8 +22,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::get('folders', [FolderController::class, 'index']);
         Route::post('folders', [FolderController::class, 'store']);
         Route::get('folders/{folder}', [FolderController::class, 'show']);
-        Route::put('folders/{folder}', [FolderController::class, 'update']);
-        Route::delete('folders/{folder}', [FolderController::class, 'destroy']);
+        Route::post('folders/{folder}/update', [FolderController::class, 'update']);
+        Route::post('folders/{folder}/delete', [FolderController::class, 'destroy']);
 
 
         // ----------------------- Words ----------------------------------------------
