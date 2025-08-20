@@ -111,15 +111,8 @@ class WordController extends Controller
     /**
      * Delete word
      */
-    public function destroy(Request $request,Word $word): JsonResponse
+    public function destroy(WordShowRequest $request,Word $word): JsonResponse
     {
-        $user = $request->user();
-
-        if ($user->role !== 'admin') {
-            if ($word->folder->user_id !== $user->id) {
-                throw new AuthorizationException('Unauthorized to view this word.');
-            }
-        }
 
         if ($word->audio_url) {
             $oldPath = str_replace(asset('storage/'), '', $word->audio_url);
