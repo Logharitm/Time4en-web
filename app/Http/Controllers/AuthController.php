@@ -34,14 +34,14 @@ class AuthController extends Controller
     public function register(RegisterUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
-dd(1);
+
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
-
+        dd(1);
         // Create token
         $tokenResult = $user->createToken('Personal Access Token');
 
