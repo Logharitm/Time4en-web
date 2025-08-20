@@ -20,10 +20,20 @@ class WordController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Word::query();
+        $user = $request->user();
+
+        if ($user->role === 'admin') {
+            $query = Word::query();
+        } else {
+            $query = Word::whereHas('folder', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
         if ($request->has('folder_id') && !empty($request->folder_id)) {
             $query->where('folder_id', $request->folder_id);
         }
+
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -39,8 +49,12 @@ class WordController extends Controller
 
         $words = $query->paginate($request->get('per_page', 20));
 
-        return $this->successResponse('Words retrieved successfully.', WordResource::collection($words));
+        return $this->successResponse(
+            'Words retrieved successfully.',
+            WordResource::collection($words)
+        );
     }
+
 
     /**
      * Store new word
