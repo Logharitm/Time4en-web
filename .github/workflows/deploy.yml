@@ -3,7 +3,7 @@ name: Deploy to Bluehost
 on:
   push:
     branches:
-      - main   # أو الفرع اللي عايز تعمل منه نشر
+      - main   # الفرع اللي يتم منه النشر
 
 jobs:
   deploy:
@@ -21,10 +21,26 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            set -e  # وقف لو فيه أي Error
             cd /home/u508368169/public_html/001-Other/Time4en/ &&
+            
+            echo '>>> Pulling latest code...'
             git pull origin main &&
+            
+            echo '>>> Installing dependencies (Composer v2)...'
+            php composer.phar self-update --2 &&
             php composer.phar install --no-interaction --prefer-dist --optimize-autoloader &&
+            
+            echo '>>> Running migrations...'
             php artisan migrate --force &&
+            
+            echo '>>> Clearing & caching config/routes/views...'
+            php artisan config:clear &&
+            php artisan cache:clear &&
+            php artisan route:clear &&
+            php artisan view:clear &&
+            php artisan optimize &&
             php artisan config:cache &&
-            php artisan route:cache
+            php artisan route:cache &&
+            php artisan view:cache
           "
