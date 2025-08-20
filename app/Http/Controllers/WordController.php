@@ -92,14 +92,6 @@ class WordController extends Controller
      */
     public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
-        $user = $request->user();
-
-        if ($user->role !== 'admin') {
-            if ($word->folder->user_id !== $user->id) {
-                throw new AuthorizationException('Unauthorized to view this word.');
-            }
-        }
-
         $data = $request->validated();
 
         if ($request->hasFile('audio_file')) {
@@ -107,6 +99,7 @@ class WordController extends Controller
                 $oldPath = str_replace(asset('storage/'), '', $word->audio_url);
                 Storage::disk('public')->delete($oldPath);
             }
+
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
         }
 
