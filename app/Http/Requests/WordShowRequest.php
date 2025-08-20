@@ -19,11 +19,13 @@ class ShowWordRequest extends FormRequest
 //            }
 //        }
 
-        return true;
+        return auth()->check();
     }
 
     public function rules(): array
     {
-        return [];
+        return [
+            'example_sentence' => 'nullable|string',
+        ];
     }
 }

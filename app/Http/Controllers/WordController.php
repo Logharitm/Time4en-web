@@ -87,11 +87,12 @@ class WordController extends Controller
      */
     public function show(ShowWordRequest $request, Word $word): JsonResponse
     {
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Word retrieved successfully.',
-            'data' => $word
-        ], 200);
+        $user = $request->user();
+        return $this->successResponse(
+            'Word retrieved successfully.',
+            new WordResource($word),
+            200
+        );
     }
 
 
