@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Word;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class ShowWordRequest extends FormRequest
 {
@@ -16,7 +17,11 @@ class ShowWordRequest extends FormRequest
             return true;
         }
 
-        return $word->folder->user_id === $user->id;
+        if ($word->folder->user_id !== $user->id) {
+            throw new AuthorizationException('You are not allowed to view this word.');
+        }
+
+        return true;
     }
 
     public function rules(): array
