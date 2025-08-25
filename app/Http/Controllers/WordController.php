@@ -12,6 +12,7 @@ use App\Http\Requests\StoreWordRequest;
 use App\Http\Requests\UpdateWordRequest;
 use App\Http\Resources\WordResource;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class WordController extends Controller
@@ -62,6 +63,7 @@ class WordController extends Controller
      */
     public function store(StoreWordRequest $request): JsonResponse
     {
+        dd($this->generate($request->word));
         $data = $request->validated();
 
         if ($request->hasFile('audio_file')) {
@@ -122,5 +124,35 @@ class WordController extends Controller
         $word->delete();
 
         return $this->successResponse('Word deleted successfully.');
+    }
+
+    public function generate($word): mixed
+    {
+        $word = trim($word);
+
+        // رسالة الطلب (prompt) لتوليد جملة قصيرة
+        $prompt = "Write a short meaningful sentence using the word: {$word}.";
+
+        // استدعاء API
+        $response = Http::withToken('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')
+            ->timeout(60)
+            ->post('https://api-inference.huggingface.co/models/gpt2', [
+                'inputs' => $prompt,
+                'parameters' => [
+                    'max_new_tokens' => 20,   // عدد الكلمات الجديدة
+                    'temperature' => 0.7,     // عشوائية (0 = ثابت, 1 = عشوائي)
+                ]
+            ]);
+
+        if ($response->successful()) {
+            $result = $response->json();
+
+            // Hugging Face بيرجع Array
+            $sentence = $result[0]['generated_text'] ?? "Here is a sentence with {$word}.";
+        } else {
+            $sentence = "Here is a sentence with {$word}.";
+        }
+
+        return $sentence;
     }
 }
