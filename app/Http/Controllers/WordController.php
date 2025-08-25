@@ -145,7 +145,6 @@ class WordController extends Controller
                 ]
             ]);
 
-
         if ($response->successful()) {
             $result = $response->json();
 
