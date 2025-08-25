@@ -64,6 +64,7 @@ class WordController extends Controller
     public function store(StoreWordRequest $request): JsonResponse
     {
         dd($this->generate($request->word));
+
         $data = $request->validated();
 
         if ($request->hasFile('audio_file')) {
