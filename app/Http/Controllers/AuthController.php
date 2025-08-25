@@ -50,7 +50,7 @@ class AuthController extends Controller
             'accessToken' => $tokenResult->plainTextToken,
             'token_type' => 'Bearer',
             'user' => new UserResource($user),
-        ], 201);
+        ], 200);
 
     }
 

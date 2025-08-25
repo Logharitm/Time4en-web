@@ -57,7 +57,7 @@ class FolderController extends Controller
     public function store(StoreFolderRequest $request): JsonResponse
     {
         $folder = $request->user()->folders()->create($request->validated());
-        return $this->successResponse('Folder created successfully.', new FolderResource($folder), 201);
+        return $this->successResponse('Folder created successfully.', new FolderResource($folder), 200);
     }
 
     /**

@@ -70,7 +70,7 @@ class WordController extends Controller
 
         $word = Word::create($data);
 
-        return $this->successResponse('Word created successfully.', new WordResource($word), 201);
+        return $this->successResponse('Word created successfully.', new WordResource($word), 200);
     }
 
     /**
