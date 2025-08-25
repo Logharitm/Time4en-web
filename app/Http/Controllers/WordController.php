@@ -145,6 +145,7 @@ class WordController extends Controller
                     'temperature' => 0.7,     // عشوائية (0 = ثابت, 1 = عشوائي)
                 ]
             ]);
+
         dd($response);
         if ($response->successful()) {
             $result = $response->json();
