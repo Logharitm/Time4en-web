@@ -63,8 +63,6 @@ class WordController extends Controller
      */
     public function store(StoreWordRequest $request): JsonResponse
     {
-        dd($this->generate($request->word));
-
         $data = $request->validated();
 
         if ($request->hasFile('audio_file')) {
@@ -145,8 +143,6 @@ class WordController extends Controller
                     'temperature' => 0.7,     // عشوائية (0 = ثابت, 1 = عشوائي)
                 ]
             ]);
-
-        dd($response);
         if ($response->successful()) {
             $result = $response->json();
 
