@@ -111,6 +111,7 @@ class WordController extends Controller
         return $this->successResponse('Word updated successfully.', new WordResource($word));
     }
 
+
     /**
      * Delete word
      */
