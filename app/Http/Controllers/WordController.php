@@ -145,9 +145,10 @@ class WordController extends Controller
                     'temperature' => 0.7,     // عشوائية (0 = ثابت, 1 = عشوائي)
                 ]
             ]);
+        dd($response);
         if ($response->successful()) {
             $result = $response->json();
-dd($result);
+
             // Hugging Face بيرجع Array
             $sentence = $result[0]['generated_text'] ?? "Here is a sentence with {$word}.";
         } else {
