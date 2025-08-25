@@ -6,7 +6,7 @@ use App\Models\Folder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateFolderRequest extends FormRequest
+class ShowFolderRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -26,9 +26,6 @@ class UpdateFolderRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-        ];
+        return [];
     }
 }

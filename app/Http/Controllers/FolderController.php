@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ShowFolderRequest;
 use App\Models\Folder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,11 @@ class FolderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = $request->user()->folders();
+        $user = $request->user();
+
+        $query = $user->role === 'admin'
+            ? Folder::query()
+            : $user->folders();
 
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
@@ -63,12 +68,8 @@ class FolderController extends Controller
     /**
      * Show specific folder
      */
-    public function show(Folder $folder, Request $request): JsonResponse
+    public function show(Folder $folder, ShowFolderRequest $request): JsonResponse
     {
-        if ($folder->user_id !== $request->user()->id) {
-            throw new AuthorizationException('Unauthorized.');
-        }
-
         return $this->successResponse('Folder retrieved successfully.', new FolderResource($folder));
     }
 
@@ -77,10 +78,6 @@ class FolderController extends Controller
      */
     public function update(UpdateFolderRequest $request, Folder $folder): JsonResponse
     {
-        if ($folder->user_id !== $request->user()->id) {
-            throw new AuthorizationException('Unauthorized.');
-        }
-
         $folder->update($request->validated());
 
         return $this->successResponse('Folder updated successfully.', new FolderResource($folder));
@@ -89,12 +86,8 @@ class FolderController extends Controller
     /**
      * Delete folder
      */
-    public function destroy(Folder $folder, Request $request): JsonResponse
+    public function destroy(Folder $folder, ShowFolderRequest $request): JsonResponse
     {
-        if ($folder->user_id !== $request->user()->id) {
-            throw new AuthorizationException('Unauthorized.');
-        }
-
         $folder->delete();
         return $this->successResponse('Folder deleted successfully.');
     }
