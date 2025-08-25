@@ -147,7 +147,7 @@ class WordController extends Controller
             ]);
         if ($response->successful()) {
             $result = $response->json();
-
+dd($result);
             // Hugging Face بيرجع Array
             $sentence = $result[0]['generated_text'] ?? "Here is a sentence with {$word}.";
         } else {
