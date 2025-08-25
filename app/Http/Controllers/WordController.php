@@ -135,7 +135,7 @@ class WordController extends Controller
         $prompt = "Write a short meaningful sentence using the word: {$word}.";
 
         // استدعاء API
-        $response = Http::withToken('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')
+        $response = Http::withToken(env('HUGGINGFACE_API_KEY'))
             ->timeout(60)
             ->post('https://api-inference.huggingface.co/models/gpt2', [
                 'inputs' => $prompt,
