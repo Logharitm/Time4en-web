@@ -78,7 +78,6 @@ class PracticeController extends Controller
             PracticeAnswer::create([
                 'practice_id' => $practice->id,
                 'word_id' => $word->id,
-                'correct_answer' => $word->translation,
             ]);
 
         }

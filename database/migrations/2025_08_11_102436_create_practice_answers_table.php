@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('practice_id')->constrained('practices')->onDelete('cascade');
             $table->foreignId('word_id')->constrained('words')->onDelete('cascade');
-            $table->string('correct_answer')->nullable();
+            $table->boolean('is_correct')->nullable();
             $table->string('selected_option')->nullable();
             $table->timestamps();
         });
