@@ -48,12 +48,12 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         // ----------------------- FAQs -----------------------------------------------
         Route::post('/faqs', [FaqController::class, 'store']);
         Route::post('/faqs/{faq}', [FaqController::class, 'update']);
-        Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']);
+        Route::post('/faqs/{faq}/delete', [FaqController::class, 'destroy']);
 
         // ----------------------- Messages -------------------------------------------
         Route::post('/messages', [MessagesController::class, 'store']);
         Route::get('/messages', [MessagesController::class, 'index']);
-        Route::delete('/messages/{message}', [MessagesController::class, 'destroy']);
+        Route::post('/messages/{message}/delete', [MessagesController::class, 'destroy']);
 
         // ----------------------- Contact Info ----------------------------------------
         Route::get('/contact-info', [ContactInfoController::class, 'show']);
