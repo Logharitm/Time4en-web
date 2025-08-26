@@ -69,8 +69,13 @@ class WordController extends Controller
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
         }
 
+        $sentence = $this->generate($data['word']);
+
+        $data['example_sentence'] = $sentence;
+
         $word = Word::create($data);
 
+        // Return the success response with the newly created Word
         return $this->successResponse('Word created successfully.', new WordResource($word), 200);
     }
 
@@ -128,28 +133,32 @@ class WordController extends Controller
 
     public function generate($word): mixed
     {
+        // Trim the input word to remove any leading/trailing whitespace
         $word = trim($word);
 
-        // رسالة الطلب (prompt) لتوليد جملة قصيرة
-        $prompt = "Write a short meaningful sentence using the word: {$word}.";
+        // The base URL for the new API
+        $apiUrl = "https://api.dictionaryapi.dev/api/v2/entries/en/{$word}";
 
-        // استدعاء API
-        $response = Http::withToken('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')
-            ->timeout(60)
-            ->post('https://api-inference.huggingface.co/models/gpt2', [
-                'inputs' => $prompt,
-                'parameters' => [
-                    'max_new_tokens' => 20,   // عدد الكلمات الجديدة
-                    'temperature' => 0.7,     // عشوائية (0 = ثابت, 1 = عشوائي)
-                ]
-            ]);
+        // Make a GET request to the new API
+        $response = Http::timeout(60)->get($apiUrl);
+
+        $sentence = "Here is a sentence with {$word}."; // Default sentence in case of failure
+
         if ($response->successful()) {
-            $result = $response->json();
+            $data = $response->json();
 
-            // Hugging Face بيرجع Array
-            $sentence = $result[0]['generated_text'] ?? "Here is a sentence with {$word}.";
-        } else {
-            $sentence = "Here is a sentence with {$word}.";
+            // The API returns an array of objects. We'll take the first one.
+            if (!empty($data) && isset($data[0]['meanings'])) {
+                foreach ($data[0]['meanings'] as $meaning) {
+                    // Look for a definition that contains an example sentence
+                    foreach ($meaning['definitions'] as $definition) {
+                        if (isset($definition['example'])) {
+                            $sentence = $definition['example'];
+                            return $sentence; // Found an example, so return it immediately
+                        }
+                    }
+                }
+            }
         }
 
         return $sentence;
