@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateQuizRequest;
 use App\Http\Resources\PracticeReportResource;
-use App\Models\Folder;
 use App\Models\Practice;
 use App\Models\PracticeAnswer;
 use App\Models\Word;
+use App\Traits\ApiResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PracticeController extends Controller
 {
+    use ApiResponse;
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
     {
         $folderId = $request->input('folder_id');
@@ -74,11 +74,10 @@ class PracticeController extends Controller
             ];
         }
 
-        return response()->json([
-            'message' => 'تم إنشاء الاختبار بنجاح.',
-            'practice_id' => $practice->id,
-            'questions' => $questions,
-        ]);
+        return $this->successResponse(
+            'تم إنشاء الاختبار بنجاح.',
+            ['practice_id' => $practice->id, 'questions' => $questions]
+        );
     }
 
     /**
