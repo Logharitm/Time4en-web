@@ -61,7 +61,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/contact-info', [ContactInfoController::class, 'update']);
 
         // --------------------------------- Policies ---------------------------------
-        Route::put('/policies/{type}', [PolicyController::class, 'update']);
+        Route::post('/policies/{type}', [PolicyController::class, 'update']);
 
 
     });
