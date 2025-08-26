@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Word::class, Folder::class);
     }
+
+    public function practices(): HasMany
+    {
+        return $this->hasMany(Practice::class);
+    }
 }

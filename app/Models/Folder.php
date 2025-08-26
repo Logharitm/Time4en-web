@@ -28,4 +28,9 @@ class Folder extends Model
     {
         return $this->hasMany(Word::class);
     }
+
+    public function practices(): HasMany
+    {
+        return $this->hasMany(Practice::class);
+    }
 }

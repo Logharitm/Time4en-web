@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,12 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::get('words/{word}', [WordController::class, 'show']);
         Route::post('words/{word}/update', [WordController::class, 'update']);
         Route::post('words/{word}/delete', [WordController::class, 'destroy']);
+
+
+        // ----------------------- Practice -------------------------------------------
+        Route::post('/practice/start', [PracticeController::class, 'createQuiz']);
+        Route::post('/practice/submit-answer', [PracticeController::class, 'submitAnswer']);
+        Route::get('/practice/report/{practice}', [PracticeController::class, 'showReport']);
 
     });
 });

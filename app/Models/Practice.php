@@ -7,32 +7,36 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Word extends Model
+class Practice extends Model
 {
     use HasFactory;
 
+    /**
+     * @var array
+     */
+
     protected $fillable = [
+        'user_id',
         'folder_id',
-        'word',
-        'translation',
-        'example_sentence',
-        'audio_url',
+        'total_words',
+        'correct_answers',
+        'wrong_answers',
     ];
+
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
     public function folder(): BelongsTo
     {
         return $this->belongsTo(Folder::class);
     }
 
-    public function getAudioUrlAttribute($value): ?string
-    {
-        if ($value) {
-            return asset('storage/' . $value);
-        }
-        return null;
-    }
 
-    public function practiceAnswers(): HasMany
+    public function answers(): HasMany
     {
         return $this->hasMany(PracticeAnswer::class);
     }
