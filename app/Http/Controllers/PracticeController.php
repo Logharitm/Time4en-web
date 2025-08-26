@@ -103,7 +103,6 @@ class PracticeController extends Controller
         PracticeAnswer::query()
             ->where('practice_id', $practiceId)
             ->where('word_id', $wordId)
-            ->whereNull('is_correct')
             ->update([
                 'is_correct' => $isCorrect,
                 'selected_option' => $selectedOption,
