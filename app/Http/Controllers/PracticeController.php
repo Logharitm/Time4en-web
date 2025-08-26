@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateQuizRequest;
+use App\Http\Requests\SubmitAnswerRequest;
 use App\Http\Resources\PracticeReportResource;
 use App\Models\Practice;
 use App\Models\PracticeAnswer;
@@ -89,40 +90,29 @@ class PracticeController extends Controller
     }
 
 
-    public function submitAnswer(Request $request): JsonResponse
+    public function submitAnswer(SubmitAnswerRequest $request): JsonResponse
     {
-        // التحقق من صحة المدخلات
-        $request->validate([
-            'practice_id' => 'required|exists:practices,id',
-            'word_id' => 'required|exists:words,id',
-            'selected_option' => 'required|string',
-        ]);
+        $practiceId = $request->validated()['practice_id'];
+        $wordId = $request->validated()['word_id'];
+        $selectedOption = $request->validated()['selected_option'];
 
-        $practiceId = $request->input('practice_id');
-        $wordId = $request->input('word_id');
-        $selectedOption = $request->input('selected_option');
+        $word = Word::findOrFail($wordId);
 
-        // جلب الكلمة الصحيحة للتحقق من الإجابة
-        $word = Word::find($wordId);
-        if (!$word) {
-            return response()->json(['message' => 'الكلمة غير موجودة.'], 404);
-        }
-
-        // التحقق مما إذا كانت الإجابة صحيحة
         $isCorrect = $word->translation === $selectedOption;
 
-        // حفظ الإجابة في قاعدة البيانات
-        PracticeAnswer::create([
-            'practice_id' => $practiceId,
-            'word_id' => $wordId,
-            'is_correct' => $isCorrect,
-            'selected_option' => $selectedOption,
-        ]);
+        PracticeAnswer::query()
+            ->where('practice_id', $practiceId)
+            ->where('word_id', $wordId)
+            ->whereNull('is_correct')
+            ->update([
+                'is_correct' => $isCorrect,
+                'selected_option' => $selectedOption,
+            ]);
 
-        return response()->json([
-            'message' => 'تم تسجيل الإجابة بنجاح.',
-            'is_correct' => $isCorrect,
-        ]);
+        return $this->successResponse(
+            'تم تسجيل الإجابة بنجاح.',
+            $isCorrect,
+        );
     }
 
     /**
