@@ -8,7 +8,7 @@ use App\Models\Folder;
 use App\Models\Practice;
 use App\Models\PracticeAnswer;
 use App\Models\Word;
-use HttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
