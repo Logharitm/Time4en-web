@@ -51,8 +51,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/faqs/{faq}/delete', [FaqController::class, 'destroy']);
 
         // ----------------------- Messages -------------------------------------------
-        Route::post('/messages', [MessagesController::class, 'store']);
         Route::get('/messages', [MessagesController::class, 'index']);
+        Route::post('/messages', [MessagesController::class, 'store']);
         Route::post('/messages/{message}/delete', [MessagesController::class, 'destroy']);
 
         // ----------------------- Contact Info ----------------------------------------

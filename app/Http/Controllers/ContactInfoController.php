@@ -16,7 +16,7 @@ class ContactInfoController extends Controller
      */
     public function show(): JsonResponse
     {
-        $info = ContactInfo::first();
+        $info = ContactInfo::query()->first();
         return $this->successResponse('تم جلب بيانات الاتصال بنجاح', $info);
     }
 
@@ -25,7 +25,7 @@ class ContactInfoController extends Controller
      */
     public function update(UpdateContactInfoRequest $request): JsonResponse
     {
-        $info = ContactInfo::first(); // عندنا سجل واحد فقط
+        $info = ContactInfo::query()->first();
         $info->update($request->validated());
 
         return $this->successResponse('تم تحديث بيانات الاتصال بنجاح', $info);
