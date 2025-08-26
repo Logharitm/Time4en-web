@@ -43,11 +43,12 @@ class PracticeController extends Controller
 
         $questionsWords = $allWords->shuffle()->take($totalWords);
 
-dd(1);
         $practice = Practice::create([
             'user_id' => $userId,
             'folder_id' => $folderId,
             'total_words' => $totalWords,
+            'correct_answers' => 0,
+            'wrong_answers' => 0,
         ]);
 
         $questions = [];
