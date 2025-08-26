@@ -16,7 +16,7 @@ class PracticeAnswer extends Model
     protected $fillable = [
         'practice_id',
         'word_id',
-        'is_correct',
+        'correct_answer',
         'selected_option',
     ];
 

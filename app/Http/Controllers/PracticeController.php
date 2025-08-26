@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 class PracticeController extends Controller
 {
     use ApiResponse;
+
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
     {
         $folderId = $request->input('folder_id');
@@ -72,17 +73,23 @@ class PracticeController extends Controller
                 'correct_answer' => $word->translation,
                 'options' => $options,
             ];
+
+
+            PracticeAnswer::create([
+                'practice_id' => $practice->id,
+                'word_id' => $word->id,
+                'correct_answer' => $word->translation,
+            ]);
+
         }
 
         return $this->successResponse(
-            'تم إنشاء الاختبار بنجاح.',
+            'تم إنشاء الاختبار بنجاح',
             ['practice_id' => $practice->id, 'questions' => $questions]
         );
     }
 
-    /**
-     * حفظ إجابة المستخدم على سؤال معين.
-     */
+
     public function submitAnswer(Request $request): JsonResponse
     {
         // التحقق من صحة المدخلات
