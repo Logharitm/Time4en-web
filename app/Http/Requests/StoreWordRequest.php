@@ -25,7 +25,8 @@ class StoreWordRequest extends FormRequest
             ],
             'word' => 'required|string|max:255',
             'translation' => 'required|string|max:255',
-            'audio_file' => 'nullable|file|mimes:mp3,wav,aac|max:20480',
+            'audio_file' => 'nullable|file',
+            //'audio_file' => 'nullable|file|mimes:mp3,wav,aac|max:20480',
         ];
     }
 }
