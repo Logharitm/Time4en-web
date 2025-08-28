@@ -23,7 +23,7 @@ class UpdateFolderRequest extends FormRequest
 
         // If a folder ID is found, check if the user owns it
         if ($folderId) {
-            return Folder::where('id', $folderId)->where('user_id', $user->id)->exists();
+            return Folder::where('id', $folderId)->exists();
         }
 
         // Fallback: If no folder is provided in the route, just check if the user is authenticated.
