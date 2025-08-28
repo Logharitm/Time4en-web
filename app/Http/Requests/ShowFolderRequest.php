@@ -15,10 +15,10 @@ class ShowFolderRequest extends FormRequest
             return true;
         }
 
-        $folderId = $this->input('folder_id') ?? $this->route('folder');
+        $folder = $this->route('folder');
 
-        if ($folderId) {
-            return Folder::where('id', $folderId)->where('user_id', $user->id)->exists();
+        if ($folder) {
+            return $folder->user_id === $user->id;
         }
 
         return auth()->check();

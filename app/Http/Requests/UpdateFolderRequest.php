@@ -15,11 +15,10 @@ class UpdateFolderRequest extends FormRequest
             return true;
         }
 
-        $folderId = $this->route('folder');
-        dd($folderId);
-        if ($folderId) {
-            return true;
-            //return Folder::where('id', $folderId)->where('user_id', $user->id)->exists();
+        $folder = $this->route('folder');
+
+        if ($folder) {
+            return $folder->user_id === $user->id;
         }
 
         return auth()->check();
