@@ -41,12 +41,7 @@ class SubscriptionController extends Controller
 
     public function store(StoreSubscriptionRequest $request): JsonResponse
     {
-        try {
-            $subscription = Subscription::create($request->validated());
-        }catch (\Exception $e) {
-           dd('Failed to create subscription: ' . $e->getMessage(), 500);
-        }
-
+        $subscription = Subscription::create($request->validated());
         return $this->successResponse('Subscription created successfully.', new SubscriptionResource($subscription));
     }
 

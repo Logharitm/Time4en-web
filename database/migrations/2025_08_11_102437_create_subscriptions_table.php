@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('plan_id')->constrained('plans')->onDelete('restrict');
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('amount_paid')->nullable();
             $table->enum('status', ['active', 'expired', 'canceled'])->default('active');
             $table->timestamps();
         });
