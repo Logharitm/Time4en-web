@@ -24,6 +24,8 @@ class UpdateFaqRequest extends FormRequest
         return [
             'question' => 'sometimes|required|string|max:255',
             'answer'   => 'sometimes|required|string',
+            'question_en' => 'sometimes|required|string|max:255',
+            'answer_en'   => 'sometimes|required|string',
         ];
     }
 }

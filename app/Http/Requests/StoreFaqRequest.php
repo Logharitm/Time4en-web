@@ -24,6 +24,9 @@ class StoreFaqRequest extends FormRequest
         return [
             'question' => 'required|string|max:255',
             'answer'   => 'required|string',
+            'question_en' => 'required|string|max:255',
+            'answer_en'   => 'required|string',
+
         ];
     }
 }
