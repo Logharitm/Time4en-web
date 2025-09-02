@@ -10,6 +10,7 @@ class ContactInfo extends Model
 
     protected $fillable = [
         'address',
+        'address_en',
         'phone',
         'email',
         'facebook',

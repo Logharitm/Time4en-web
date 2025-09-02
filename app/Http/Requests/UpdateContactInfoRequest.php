@@ -23,6 +23,7 @@ class UpdateContactInfoRequest extends FormRequest
     {
         return [
             'address'   => 'nullable|string|max:255',
+            'address_en'   => 'nullable|string|max:255',
             'phone'     => 'nullable|string|max:20',
             'email'     => 'nullable|email|max:255',
             'facebook'  => 'nullable|url',

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('contact_info', function (Blueprint $table) {
             $table->id();
             $table->string('address')->nullable();
+            $table->string('address_en')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('facebook')->nullable();
@@ -26,6 +27,7 @@ return new class extends Migration
 
         \DB::table('contact_info')->insert([
             'address' => null,
+            'address_en' => null,
             'phone' => null,
             'email' => null,
             'facebook' => null,
