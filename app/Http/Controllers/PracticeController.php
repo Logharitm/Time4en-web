@@ -70,6 +70,7 @@ class PracticeController extends Controller
             $questions[] = [
                 'word_id' => $word->id,
                 'word' => $word->word,
+                'file' => $word->audio_file,
                 'question' => "ما هي ترجمة كلمة '{$word->word}'؟",
                 'correct_answer' => $word->translation,
                 'options' => $options,
