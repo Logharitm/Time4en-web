@@ -21,7 +21,7 @@ class PolicyController extends Controller
     public function update(UpdatePolicyRequest $request, string $type): JsonResponse
     {
         $policy = Policy::query()->where('type', $type)->firstOrFail();
-        $policy->update(['content' => $request->input('content')]);
+        $policy->update(['content' => $request->input('content') , 'content_en' => $request->input('content_en')]);
 
         return $this->successResponse("تم تحديث البيانات بنجاح", $policy);
     }
