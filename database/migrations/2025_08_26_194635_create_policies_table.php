@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('type')->unique(); // privacy | terms
             $table->longText('content')->nullable();
+            $table->longText('content_en')->nullable();
             $table->timestamps();
         });
 
@@ -20,12 +21,14 @@ return new class extends Migration
             [
                 'type' => 'privacy',
                 'content' => null,
+                'content_en' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'type' => 'terms',
                 'content' => null,
+                'content_en' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

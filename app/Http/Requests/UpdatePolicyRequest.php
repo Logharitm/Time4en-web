@@ -23,6 +23,7 @@ class UpdatePolicyRequest extends FormRequest
     {
         return [
             'content' => 'required|string',
+            'content_en' => 'required|string',
         ];
     }
 }

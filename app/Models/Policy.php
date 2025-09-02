@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Policy extends Model
 {
-    protected $fillable = ['type', 'content'];
+    protected $fillable = ['type', 'content', 'content_en'];
 }
