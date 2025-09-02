@@ -52,7 +52,7 @@ class PlanController extends Controller
         if ($plan->subscriptions()->exists()) {
             return $this->errorResponse('This plan has active subscriptions and cannot be updated.', 403);
         }
-
+dd($plan);
         $plan->update($request->validated());
         return $this->successResponse('Plan updated successfully.', new PlanResource($plan));
     }
