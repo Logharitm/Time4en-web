@@ -44,7 +44,7 @@ class SubscriptionController extends Controller
         try {
             $subscription = Subscription::create($request->validated());
         }catch (\Exception $e) {
-            return $this->errorResponse('Failed to create subscription: ' . $e->getMessage(), 500);
+           dd('Failed to create subscription: ' . $e->getMessage(), 500);
         }
 
         return $this->successResponse('Subscription created successfully.', new SubscriptionResource($subscription));
