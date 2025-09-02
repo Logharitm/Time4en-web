@@ -6,6 +6,7 @@ use App\Http\Requests\StorePlanRequest;
 use App\Http\Requests\UpdatePlanRequest;
 use App\Http\Resources\PlanResource;
 use App\Models\Plan;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
@@ -52,7 +53,7 @@ class PlanController extends Controller
         $plan = Plan::findOrFail($planId);
 
         if ($plan->subscriptions()->exists()) {
-            return $this->errorResponse('This plan has active subscriptions and cannot be updated.', 403);
+            throw new AuthorizationException('This plan has active subscriptions and cannot be updated.');
         }
 
         $plan->update($request->validated());
@@ -62,7 +63,7 @@ class PlanController extends Controller
     public function destroy(Plan $plan): JsonResponse
     {
         if ($plan->subscriptions()->exists()) {
-            return $this->errorResponse('This plan has subscriptions and cannot be deleted.', 403);
+            throw new AuthorizationException('This plan has subscriptions and cannot be deleted.', 403);
         }
 
         $plan->delete();
