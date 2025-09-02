@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('plan_id')->constrained('plans')->onDelete('cascade');
+            $table->foreignId('plan_id')->constrained('plans')->onDelete('restrict');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['active', 'expired', 'canceled']);
+            $table->enum('status', ['active', 'expired', 'canceled'])->default('active');
             $table->timestamps();
         });
     }
