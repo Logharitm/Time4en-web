@@ -50,11 +50,11 @@ class PlanController extends Controller
     public function update(UpdatePlanRequest $request, $planId): JsonResponse
     {
         $plan = Plan::findOrFail($planId);
-        dd($request->all(), $request->validated());
+
         if ($plan->subscriptions()->exists()) {
             return $this->errorResponse('This plan has active subscriptions and cannot be updated.', 403);
         }
-dd($request->validated());
+
         $plan->update($request->validated());
         return $this->successResponse('Plan updated successfully.', new PlanResource($plan));
     }
