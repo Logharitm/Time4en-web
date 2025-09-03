@@ -199,7 +199,7 @@ onMounted(() => {
               </VBtn>
             </div>
             <p class="text-body-1 mb-0">
-              Allowed JPG, GIF or PNG. Max size of 800K
+              Allowed JPG, GIF or PNG. Max size of 2MB
             </p>
           </form>
         </VCardText>
