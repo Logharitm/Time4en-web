@@ -11,7 +11,9 @@ use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WordController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -24,6 +26,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
 
     Route::group(['middleware' => 'auth:sanctum'], function() {
 
+        Route::get('/statistics', [StatisticsController::class, 'index']);
         // --------------------------------- Auth ---------------------------------
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);

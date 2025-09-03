@@ -15,3 +15,4 @@ registerPlugins(app)
 
 // Mount vue app
 app.mount('#app')
+

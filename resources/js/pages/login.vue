@@ -35,30 +35,54 @@ const errors = ref({
 const refVForm = ref()
 
 const credentials = ref({
-  email: 'admin@demo.com',
-  password: 'admin',
+  email: '',
+  password: '',
 })
+
 
 const rememberMe = ref(false)
 
 const login = async () => {
   try {
-    const res = await $api('/api/auth/login', {
+    const res = await $api('/login', {
       method: 'POST',
       body: {
         email: credentials.value.email,
         password: credentials.value.password,
       },
       onResponseError({ response }) {
-        errors.value = response._data.errors
+        // لو الـ API بيرجع errors زي { errors: { email: ["Invalid email or password"] } }
+        if (response._data?.errors) {
+          errors.value = response._data.errors
+        } else if (response._data?.message) {
+          // لو بيرجع رسالة عامة
+          errors.value = {
+            email: [response._data.message],
+          }
+        }
       },
     })
 
-    console.log('response >>>', res)
-  } catch (error) {
-    console.error(err)
+    // ✅ في حالة النجاح
+    const accessToken = res.data.accessToken
+
+    useCookie('accessToken').value = accessToken
+    useCookie('userData').value = { email: credentials.value.email }
+    useCookie('userAbilityRules').value = [{ action: 'manage', subject: 'all' }]
+    ability.update([{ action: 'manage', subject: 'all' }])
+
+
+    await nextTick(() => {
+      router.replace(route.query.to ? String(route.query.to) : 'home/dashboard')
+    })
+  } catch (err) {
+    console.error('Login error:', err)
+    errors.value = {
+      email: ['Something went wrong, please try again.'],
+    }
   }
 }
+
 
 const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
@@ -120,25 +144,10 @@ const onSubmit = () => {
       >
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Welcome to <span class="text-capitalize"> {{ themeConfig.app.title }} </span>! 👋🏻
+            Welcome to <span class="text-capitalize"> {{ themeConfig.app.title }} </span>
           </h4>
-          <p class="mb-0">
-            Please sign-in to your account and start the adventure
-          </p>
         </VCardText>
-        <VCardText>
-          <VAlert
-            color="primary"
-            variant="tonal"
-          >
-            <p class="text-sm mb-2">
-              Admin Email: <strong>admin@demo.com</strong> / Pass: <strong>admin</strong>
-            </p>
-            <p class="text-sm mb-0">
-              Client Email: <strong>client@demo.com</strong> / Pass: <strong>client</strong>
-            </p>
-          </VAlert>
-        </VCardText>
+
         <VCardText>
           <VForm
             ref="refVForm"

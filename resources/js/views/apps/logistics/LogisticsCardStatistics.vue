@@ -1,39 +1,23 @@
 <script setup>
-const logisticData = ref([
-  {
-    icon: 'tabler-truck',
-    color: 'primary',
-    title: 'On route vehicles',
-    value: 42,
-    change: 18.2,
-    isHover: false,
-  },
-  {
-    icon: 'tabler-alert-triangle',
-    color: 'warning',
-    title: 'Vehicles with errors',
-    value: 8,
-    change: -8.7,
-    isHover: false,
-  },
-  {
-    icon: 'tabler-git-fork',
-    color: 'error',
-    title: 'Deviated from route',
-    value: 27,
-    change: 4.3,
-    isHover: false,
-  },
-  {
-    icon: 'tabler-clock',
-    color: 'info',
-    title: 'Late vehicles',
-    value: 13,
-    change: -2.5,
-    isHover: false,
-  },
-])
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const logisticData = ref([])
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('/statistics')
+
+    logisticData.value = res.data.map(item => ({
+      ...item,
+      isHover: false, 
+    }))
+  } catch (error) {
+    console.error('Error fetching statistics:', error)
+  }
+})
 </script>
+
 
 <template>
   <VRow>
@@ -69,14 +53,6 @@ const logisticData = ref([
             </div>
             <div class="text-body-1 mb-1">
               {{ data.title }}
-            </div>
-            <div class="d-flex gap-x-2 align-center">
-              <h6 class="text-h6">
-                {{ (data.change > 0) ? '+' : '' }} {{ data.change }}%
-              </h6>
-              <div class="text-sm text-disabled">
-                than last week
-              </div>
             </div>
           </VCardText>
         </VCard>

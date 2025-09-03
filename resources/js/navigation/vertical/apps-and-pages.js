@@ -5,10 +5,6 @@ export default [
     icon: { icon: 'tabler-shopping-cart' },
     children: [
       {
-        title: 'Dashboard',
-        to: 'apps-ecommerce-dashboard',
-      },
-      {
         title: 'Product',
         children: [
           { title: 'List', to: 'apps-ecommerce-product-list' },

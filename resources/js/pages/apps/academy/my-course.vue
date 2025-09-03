@@ -1,5 +1,5 @@
 <script setup>
-import { VideoPlayer } from '@videojs-player/vue'
+
 import AcademyMyCourses from '@/views/apps/academy/AcademyMyCourses.vue'
 import boyAppAcademy from '@images/illustrations/boy-app-academy.png'
 import girlAppAcademy from '@images/illustrations/girl-app-academy.png'
@@ -163,14 +163,6 @@ const searchQuery = ref('')
               border
             >
               <div class="px-2 pt-2">
-                <VideoPlayer
-                  src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
-                  :poster="guitarCoursePoster"
-                  controls
-                  plays-inline
-                  :height="$vuetify.display.mdAndUp ? 200 : 150"
-                  class="w-100 rounded"
-                />
               </div>
               <VCardText>
                 <h5 class="text-h5 mb-2">
@@ -192,14 +184,6 @@ const searchQuery = ref('')
               border
             >
               <div class="px-2 pt-2">
-                <VideoPlayer
-                  src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
-                  :poster="singingCoursePoster"
-                  controls
-                  plays-inline
-                  :height="$vuetify.display.mdAndUp ? 200 : 150"
-                  class="w-100 rounded"
-                />
               </div>
               <VCardText>
                 <h5 class="text-h5 mb-2">
@@ -218,7 +202,6 @@ const searchQuery = ref('')
 </template>
 
 <style lang="scss">
-@import "video.js/dist/video-js.css";
 
 .illustration1 {
   position: absolute;
