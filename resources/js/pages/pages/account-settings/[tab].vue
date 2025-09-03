@@ -24,21 +24,6 @@ const tabs = [
     icon: 'tabler-lock',
     tab: 'security',
   },
-  {
-    title: 'Billing & Plans',
-    icon: 'tabler-file-text',
-    tab: 'billing-plans',
-  },
-  {
-    title: 'Notifications',
-    icon: 'tabler-bell',
-    tab: 'notification',
-  },
-  {
-    title: 'Connections',
-    icon: 'tabler-link',
-    tab: 'connection',
-  },
 ]
 
 definePage({ meta: { navActiveLink: 'pages-account-settings-tab' } })
@@ -80,20 +65,6 @@ definePage({ meta: { navActiveLink: 'pages-account-settings-tab' } })
         <AccountSettingsSecurity />
       </VWindowItem>
 
-      <!-- Billing -->
-      <VWindowItem value="billing-plans">
-        <AccountSettingsBillingAndPlans />
-      </VWindowItem>
-
-      <!-- Notification -->
-      <VWindowItem value="notification">
-        <AccountSettingsNotification />
-      </VWindowItem>
-
-      <!-- Connections -->
-      <VWindowItem value="connection">
-        <AccountSettingsConnections />
-      </VWindowItem>
     </VWindow>
   </div>
 </template>

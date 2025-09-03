@@ -27,26 +27,6 @@ import LogisticsVehicleOverview from '@/views/apps/logistics/LogisticsVehicleOve
       <LogisticsShipmentStatistics />
     </VCol>
 
-    <VCol
-      cols="12"
-      md="4"
-    >
-      <LogisticsDeliveryPerformance />
-    </VCol>
-
-    <VCol
-      cols="12"
-      md="4"
-    >
-      <LogisticsDeliveryExpectations />
-    </VCol>
-
-    <VCol
-      cols="12"
-      md="4"
-    >
-      <LogisticsOrderByCountries />
-    </VCol>
 
   </VRow>
 </template>
