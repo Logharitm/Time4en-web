@@ -67,4 +67,30 @@ class StatisticsController extends Controller
             ],
         ]);
     }
+
+    public function plans()
+    {
+        $totalSubscriptions = Subscription::where('status', 'active')->count();
+
+        if ($totalSubscriptions === 0) {
+            return response()->json([]);
+        }
+
+        $plans = Plan::withCount(['subscriptions' => function ($query) {
+            $query->where('status', 'active');
+        }])->get();
+
+        $data = $plans->map(function ($plan) use ($totalSubscriptions) {
+            $count = $plan->subscriptions_count;
+
+            return [
+                'icon' => 'tabler-currency-dollar', // أو تغيرها حسب نوع الخطة
+                'title' => $plan->name,
+                'subscribers' => $count,
+                'percentage' => round(($count / $totalSubscriptions) * 100, 1),
+            ];
+        });
+
+        return response()->json($data);
+    }
 }

@@ -27,6 +27,8 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::group(['middleware' => 'auth:sanctum'], function() {
 
         Route::get('/statistics', [StatisticsController::class, 'index']);
+        Route::get('/plans/statistics', [StatisticsController::class, 'plans']);
+
         // --------------------------------- Auth ---------------------------------
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);

@@ -1,20 +1,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 
 const logisticData = ref([])
 
-onMounted(async () => {
+const fetchStatistics = async () => {
   try {
-    const res = await axios.get('/statistics')
+    const res = await $api('/statistics', {
+      method: 'GET',
+      onResponseError({ response }) {
+        console.error('API Error:', response._data)
+      },
+    })
 
-    logisticData.value = res.data.map(item => ({
+    logisticData.value = res.map(item => ({
       ...item,
-      isHover: false, 
+      isHover: false,
     }))
   } catch (error) {
-    console.error('Error fetching statistics:', error)
+    console.error('Unexpected error:', error)
   }
+}
+
+onMounted(() => {
+  fetchStatistics()
 })
 </script>
 
