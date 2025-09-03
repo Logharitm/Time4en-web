@@ -33,6 +33,7 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($userId)
             ],
             'language' => 'sometimes|string|max:10',
+            'avatar' => 'nullable|file',
         ];
     }
 }

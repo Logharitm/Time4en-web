@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique(); // البريد الإلكتروني
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
+            $table->string('avatar')->nullable();
             // تمييز بين المستخدم العادي والمدير
             $table->enum('role', ['user', 'admin'])->default('user');
 
@@ -31,6 +31,8 @@ return new class extends Migration
             // الاشتراكات
             $table->string('subscription_plan', 50)->default('free');
             $table->date('subscription_expires_at')->nullable();
+
+
 
             $table->rememberToken();
             $table->timestamps();

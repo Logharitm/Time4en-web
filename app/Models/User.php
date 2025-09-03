@@ -50,6 +50,14 @@ class User extends Authenticatable
         ];
     }
 
+    public function getAvatarAttribute($value): ?string
+    {
+        if ($value) {
+            return asset('storage/' . $value);
+        }
+        return null;
+    }
+
     public function folders(): HasMany
     {
         return $this->hasMany(Folder::class);

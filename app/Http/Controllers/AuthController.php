@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -120,6 +121,18 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $user->update($request->validated());
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                $oldPath = str_replace(asset('storage/'), '', $user->avatar);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $avatar = $request->file('avatar')->store('avatar', 'public');
+        }
+
+        $user->avatar = $avatar;
+        $user->update();
 
         return $this->successResponse('Profile updated successfully.', [
             'user' => new UserResource($user)
