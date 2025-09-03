@@ -130,9 +130,11 @@ class AuthController extends Controller
             }
 
             $avatar = $request->file('avatar')->store('avatar', 'public');
+
+            $user->avatar = $avatar;
         }
 
-        $user->avatar = $avatar;
+
         $user->update();
 
         return $this->successResponse('Profile updated successfully.', [
