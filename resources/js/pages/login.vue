@@ -67,7 +67,7 @@ const login = async () => {
     const accessToken = res.data.accessToken
 
     useCookie('accessToken').value = accessToken
-    useCookie('userData').value = { name: res.data.name, role: 'Admin', email: credentials.value.email }
+    useCookie('userData').value = { name: res.data.name, role: 'Admin', email: credentials.value.email, avatar: res.data.avatar || null }
     useCookie('userAbilityRules').value = [{ action: 'manage', subject: 'all' }]
     ability.update([{ action: 'manage', subject: 'all' }])
 

@@ -28,6 +28,7 @@ const fetchUser = async () => {
       accountDataLocal.value.email = user.email
       accountDataLocal.value.language = user.language || 'en'
       accountDataLocal.value.role = user.role
+      accountDataLocal.value.avatar = user.avatar
     }
   } catch (err) {
     console.error('Error fetching user:', err)
@@ -104,7 +105,7 @@ onMounted(() => {
             rounded
             size="100"
             class="me-6"
-            :image="accountDataLocal.avatarPreview || '/default-avatar.png'"
+            :image="accountDataLocal.avatarPreview || accountDataLocal.avatar || '/default-avatar.png'"
           />
 
           <!-- 👉 Upload Photo -->

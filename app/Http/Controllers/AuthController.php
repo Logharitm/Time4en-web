@@ -80,6 +80,7 @@ class AuthController extends Controller
             'accessToken' => $tokenResult->plainTextToken,
             'token_type' => 'Bearer',
             'name' => $user->name,
+            'avatar' => $user->avatar,
         ], 200);
 
     }
