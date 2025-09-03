@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const vehicleData = ref([])
+const plansData = ref([])
 
 const fetchPlans = async () => {
   try {
@@ -12,8 +12,7 @@ const fetchPlans = async () => {
       },
     })
 
-    // لو الريسبونس بيرجع مصفوفة مباشرة
-    vehicleData.value = res?._data ?? res
+    plansData.value = res?._data ?? res
   } catch (err) {
     console.error('Unexpected error:', err)
   }
@@ -32,19 +31,46 @@ onMounted(() => {
       </template>
     </VCardItem>
     <VCardText>
+      <!-- Progress Bars Overview -->
+      <div class="d-flex mb-6">
+        <div
+          v-for="(plan, index) in plansData"
+          :key="index"
+          :style="`inline-size: ${plan.percentage}%;`"
+        >
+          <div class="vehicle-progress-label position-relative mb-6 text-body-1 d-none d-sm-block">
+            {{ plan.title }}
+          </div>
+          <VProgressLinear
+            :color="index === 0 ? 'rgb(var(--v-theme-primary))'
+                    : index === 1 ? 'rgb(var(--v-theme-info))'
+                    : index === 2 ? 'rgb(var(--v-theme-success))'
+                    : 'rgba(var(--v-theme-on-surface), var(--v-hover-opacity))'"
+            model-value="100"
+            height="46"
+            class="rounded-0"
+          >
+            <div
+              class="text-sm font-weight-medium text-start"
+              :class="index <= 2 ? 'text-white' : 'text-surface'"
+            >
+              {{ plan.percentage }}%
+            </div>
+          </VProgressLinear>
+        </div>
+      </div>
+
+      <!-- Detailed Table -->
       <VTable class="text-no-wrap">
         <tbody>
         <tr
-          v-for="(plan, index) in vehicleData"
+          v-for="(plan, index) in plansData"
           :key="index"
         >
-          <td
-            width="70%"
-            style="padding-inline-start: 0 !important;"
-          >
+          <td width="70%" style="padding-inline-start: 0 !important;">
             <div class="d-flex align-center gap-x-2">
               <VIcon
-                :icon="plan.icon"
+                icon="tabler-plant-2"
                 size="24"
                 class="text-high-emphasis"
               />
@@ -55,7 +81,12 @@ onMounted(() => {
           </td>
           <td>
             <h6 class="text-h6">
-              {{ plan.subscribers }} مشترك
+              {{ plan.subscribers }}
+              <VIcon
+              icon="tabler-user-hexagon"
+              size="24"
+              class="text-high-emphasis"
+            />
             </h6>
           </td>
           <td>

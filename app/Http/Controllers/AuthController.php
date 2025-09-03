@@ -78,6 +78,7 @@ class AuthController extends Controller
         return $this->successResponse('User successfully login.', [
             'accessToken' => $tokenResult->plainTextToken,
             'token_type' => 'Bearer',
+            'name' => $user->name,
         ], 200);
 
     }
