@@ -123,7 +123,7 @@ class AuthController extends Controller
         $user = $request->user();
         $user->update($request->validated());
 
-        if ($request->hasFile('avatar')) {
+        if ($request->hasFile('avatar') && $request->file('avatar') != null) {
             if ($user->avatar) {
                 $oldPath = str_replace(asset('storage/'), '', $user->avatar);
                 Storage::disk('public')->delete($oldPath);

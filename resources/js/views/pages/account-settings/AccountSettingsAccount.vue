@@ -5,6 +5,11 @@ const refInputEl = ref()
 const isLoading = ref(false)
 const isSaving = ref(false)
 
+// 👉 Toast state
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
+
 const accountDataLocal = ref({
   name: '',
   email: '',
@@ -37,6 +42,13 @@ const fetchUser = async () => {
   }
 }
 
+// 👉 Toast trigger
+const triggerToast = (msg, type = 'success') => {
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
+
 // 👉 Save changes
 const saveProfile = async () => {
   isSaving.value = true
@@ -47,18 +59,33 @@ const saveProfile = async () => {
     formData.append('email', accountDataLocal.value.email)
     formData.append('language', accountDataLocal.value.language)
 
-    if (accountDataLocal.value.avatar) {
+    // ✅ فقط لو المستخدم اختار صورة جديدة
+    if (accountDataLocal.value.avatar instanceof File) {
       formData.append('avatar', accountDataLocal.value.avatar)
+    } else {
+      // لو ما اختارش صورة جديدة، ابعتها null
+      formData.append('avatar', '')
     }
 
-    await $api('/update-profile', {
+    const res = await $api('/update-profile', {
       method: 'POST',
       body: formData,
     })
 
-    // ممكن تعمل Toast هنا انه اتعدل بنجاح
+    triggerToast('Profile updated successfully!', 'success')
+
+    if (res?.data?.user) {
+      useCookie('userData').value = {
+        name: res.data.user.name,
+        role: res.data.user.role,
+        email: res.data.user.email,
+        avatar: res.data.user.avatar || null,
+      }
+    }
+
   } catch (err) {
     console.error('Error updating profile:', err)
+    triggerToast('Failed to update profile!', 'error')
   } finally {
     isSaving.value = false
   }
@@ -85,7 +112,33 @@ onMounted(() => {
 })
 </script>
 
+
 <template>
+  <VSnackbar
+    v-model="showToast"
+    :color="color"
+    location="top end"
+    timeout="5000"
+  >
+    <template #prepend>
+      <VIcon v-if="color === 'success'" icon="tabler-check" />
+      <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
+      <VIcon v-else icon="tabler-info-circle" />
+    </template>
+
+    {{ message }}
+
+    <template #actions>
+      <VBtn
+        icon
+        variant="text"
+        color="white"
+        @click="showToast = false"
+      >
+        <VIcon icon="tabler-x" />
+      </VBtn>
+    </template>
+  </VSnackbar>
   <VRow>
     <VCol cols="12">
       <VCard>
