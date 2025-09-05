@@ -5,7 +5,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 trait ApiResponse
 {
-    protected function successResponse(string $message, $data = [], int $code = 200): JsonResponse
+    protected function successResponse(string $message, $data = [], int $code = 200)
     {
         if ($data instanceof AnonymousResourceCollection) {
             $payload = $data->response()->getData(true);
