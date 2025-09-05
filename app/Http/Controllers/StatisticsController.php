@@ -82,7 +82,6 @@ class StatisticsController extends Controller
 
         $data = $plans->map(function ($plan) use ($totalSubscriptions) {
             $count = $plan->subscriptions_count;
-
             return [
                 'icon' => 'tabler-currency-dollar', // أو تغيرها حسب نوع الخطة
                 'title' => $plan->name,
