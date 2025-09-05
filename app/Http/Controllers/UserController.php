@@ -23,7 +23,6 @@ class UserController extends Controller
         if ($request->has('role') && in_array($request->role, ['admin', 'user'])) {
             $query->where('role', $request->role);
         }
-
         // search by name or email
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
