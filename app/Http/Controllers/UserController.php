@@ -38,11 +38,10 @@ class UserController extends Controller
 
         $users = $query->paginate($request->get('per_page', 20));
 
-        return UserResource::collection($users)
-            ->additional([
-                'status' => 'success',
-                'message' => 'Users retrieved successfully.',
-            ]);
+        return $this->successResponse(
+            'Users retrieved successfully.',
+            UserResource::collection($users)
+        );
 
     }
 
