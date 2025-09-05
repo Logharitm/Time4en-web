@@ -25,6 +25,7 @@ class UserResource extends JsonResource
             'words_count' => $this->words_count,
             'subscription_plan' => $this->subscription_plan,
             'subscription_expires_at' => $this->subscription_expires_at,
+            'subscription' => $this->subscription,
         ];
     }
 }

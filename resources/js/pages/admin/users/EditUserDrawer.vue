@@ -28,26 +28,12 @@ const password = ref('')
 const role = ref('')
 const language = ref('')
 const avatar = ref(null)
-const subscriptionPlan = ref('')
 
-// plans list from API
-const plans = ref([])
 
-const fetchPlans = async () => {
-  try {
-    const response = await $api('/plans', { method: 'GET' })
-    if (response.status === 'success') {
-      plans.value = response.data
-    }
-  } catch (e) {
-    console.error('Error fetching plans', e)
-  }
-}
 
-onMounted(fetchPlans)
 
 // 👈 مراقبة تغييرات المستخدم وتعبئة الحقول
-watch(() => props.userData, (newVal) => {
+watch(() => props.userData, newVal => {
   if (newVal) {
     userId.value = newVal.id
     name.value = newVal.name
@@ -55,7 +41,6 @@ watch(() => props.userData, (newVal) => {
     password.value = '' // لا تعرض كلمة المرور
     role.value = newVal.role
     language.value = newVal.language
-    subscriptionPlan.value = newVal.subscription_plan
     avatar.value = null
   }
 })
@@ -74,6 +59,7 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
+
       formData.append('_method', 'POST') // 👈 لبعض الـ APIs، قد تحتاج هذه الطريقة لتمرير POST
       formData.append('name', name.value)
       formData.append('email', email.value)
@@ -88,10 +74,6 @@ const onSubmit = () => {
       } else {
         // إذا لم يتم اختيار صورة جديدة، أرسل قيمة فارغة أو لا ترسلها
         // formData.append('avatar', '');
-      }
-
-      if (subscriptionPlan.value) {
-        formData.append('subscription_plan', subscriptionPlan.value)
       }
 
       // إرسال الـ formData مع الـ userId
@@ -191,18 +173,9 @@ const handleDrawerModelValueUpdate = val => {
                 <input
                   type="file"
                   accept="image/*"
-                  @change="e => avatar = e.target.files[0]"
                   class="border rounded p-2 w-full"
-                />
-              </VCol>
-
-              <VCol cols="12">
-                <AppSelect
-                  v-model="subscriptionPlan"
-                  label="الباقة"
-                  placeholder="اختر الباقة"
-                  :items="plans.map(p => ({ title: p.name, value: p.id }))"
-                />
+                  @change="e => avatar = e.target.files[0]"
+                >
               </VCol>
 
               <VCol cols="12">

@@ -1,6 +1,6 @@
 <script setup>
 import AddNewUserDrawer from './AddNewUserDrawer.vue'
-import EditUserDrawer from './EditUserDrawer.vue' // 👈 إضافة مكوّن التعديل
+import EditUserDrawer from './EditUserDrawer.vue'
 
 // filters
 const searchQuery = ref('')
@@ -17,13 +17,24 @@ const updateOptions = options => {
   orderBy.value = options.sortBy[0]?.order
 }
 
+// 👉 Toast state
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
+
+const triggerToast = (msg, type = 'success') => {
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
+
 // Headers
 const headers = [
-  {title: 'المستخدم', key: 'user'},
-  {title: 'النوع', key: 'role'},
-  {title: 'باقة الاشتراك', key: 'plan'},
-  {title: 'الانتهاء في', key: 'expires_at'},
-  {title: 'العمليات', key: 'actions', sortable: false},
+  { title: 'المستخدم', key: 'user' },
+  { title: 'النوع', key: 'role' },
+  { title: 'باقة الاشتراك', key: 'plan' },
+  { title: 'الانتهاء في', key: 'expires_at' },
+  { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -66,12 +77,13 @@ const users = computed(() => usersData.value)
 // helpers
 const resolveUserRoleVariant = role => {
   const roleLowerCase = role?.toLowerCase()
-  if (roleLowerCase === 'subscriber') return {color: 'success', icon: 'tabler-user'}
-  if (roleLowerCase === 'author') return {color: 'error', icon: 'tabler-device-desktop'}
-  if (roleLowerCase === 'maintainer') return {color: 'info', icon: 'tabler-chart-pie'}
-  if (roleLowerCase === 'editor') return {color: 'warning', icon: 'tabler-edit'}
-  if (roleLowerCase === 'admin') return {color: 'primary', icon: 'tabler-crown'}
-  return {color: 'primary', icon: 'tabler-user'}
+  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' }
+  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' }
+  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
+  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
+  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
+
+  return { color: 'primary', icon: 'tabler-user' }
 }
 
 const prefixWithPlus = value => (value > 0 ? `+${value}` : value)
@@ -84,9 +96,10 @@ const addNewUser = async userData => {
       method: 'POST',
       body: userData,
     })
+    triggerToast('تم اضافة البيانات بنجاح', 'success')
     fetchUsers()
   } catch (err) {
-    console.error('Error adding user:', err)
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
   }
 }
 
@@ -105,7 +118,7 @@ const deleteUser = async id => {
 const isEditUserDrawerVisible = ref(false)
 const userToEdit = ref(null)
 
-const openEditDrawer = (user) => {
+const openEditDrawer = user => {
   userToEdit.value = user
   isEditUserDrawerVisible.value = true
 }
@@ -117,12 +130,12 @@ const updateUser = async (id, userData) => {
       method: 'POST',
       body: userData,
     })
+    triggerToast('تم تعديل البيانات بنجاح', 'success')
     fetchUsers()
   } catch (err) {
-    console.error('Error updating user:', err)
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
   }
 }
-
 </script>
 
 <template>
@@ -147,17 +160,25 @@ const updateUser = async (id, userData) => {
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
-        <VSpacer/>
+        <VSpacer />
         <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
           <div style="inline-size: 15.625rem;">
-            <AppTextField v-model="searchQuery" placeholder="بحث"/>
+            <AppTextField
+              v-model="searchQuery"
+              placeholder="بحث"
+            />
           </div>
 
-          <VBtn prepend-icon="tabler-plus" @click="isAddNewUserDrawerVisible = true">اضافة مستخدم جديد</VBtn>
+          <VBtn
+            prepend-icon="tabler-plus"
+            @click="isAddNewUserDrawerVisible = true"
+          >
+            اضافة مستخدم جديد
+          </VBtn>
         </div>
       </VCardText>
 
-      <VDivider/>
+      <VDivider />
 
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
@@ -178,7 +199,10 @@ const updateUser = async (id, userData) => {
               :variant="!item.avatar ? 'tonal' : undefined"
               :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
             >
-              <VImg v-if="item.avatar" :src="item.avatar"/>
+              <VImg
+                v-if="item.avatar"
+                :src="item.avatar"
+              />
               <span v-else>{{ item.name?.charAt(0).toUpperCase() }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
@@ -190,7 +214,9 @@ const updateUser = async (id, userData) => {
                   {{ item.name }}
                 </RouterLink>
               </h6>
-              <div class="text-sm">{{ item.email }}</div>
+              <div class="text-sm">
+                {{ item.email }}
+              </div>
             </div>
           </div>
         </template>
@@ -202,7 +228,8 @@ const updateUser = async (id, userData) => {
               :icon="resolveUserRoleVariant(item.role).icon"
               :color="resolveUserRoleVariant(item.role).color"
             />
-            <div class="text-capitalize text-high-emphasis text-body-1">{{
+            <div class="text-capitalize text-high-emphasis text-body-1">
+              {{
                 item.role == 'user' ? 'عميل' : 'ادمن'
               }}
             </div>
@@ -210,37 +237,74 @@ const updateUser = async (id, userData) => {
         </template>
 
         <template #item.plan="{ item }">
-          <div class="text-body-1 text-high-emphasis text-capitalize">{{ item.subscription_plan || 'غير مشترك' }}</div>
+          <div class="text-body-1 text-high-emphasis text-capitalize">
+            {{ item.subscription_plan || 'غير مشترك' }}
+          </div>
         </template>
 
         <template #item.expires_at="{ item }">
-          <div class="text-body-1 text-high-emphasis">{{ item.subscription_expires_at ?? 'غير محدد' }}</div>
+          <div class="text-body-1 text-high-emphasis">
+            {{ item.subscription_expires_at ?? 'غير محدد' }}
+          </div>
         </template>
 
         <template #item.actions="{ item }">
           <IconBtn @click="openEditDrawer(item)">
-            <VIcon icon="tabler-pencil"/>
+            <VIcon icon="tabler-pencil" />
           </IconBtn>
           <IconBtn @click="deleteUser(item.id)">
-            <VIcon icon="tabler-trash"/>
+            <VIcon icon="tabler-trash" />
           </IconBtn>
           <IconBtn>
-            <VIcon icon="tabler-eye"/>
+            <VIcon icon="tabler-eye" />
           </IconBtn>
         </template>
 
         <template #bottom>
-          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="totalUsers"/>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalUsers"
+          />
         </template>
       </VDataTableServer>
     </VCard>
 
-    <AddNewUserDrawer v-model:is-drawer-open="isAddNewUserDrawerVisible" @user-data="addNewUser"/>
+    <AddNewUserDrawer
+      v-model:is-drawer-open="isAddNewUserDrawerVisible"
+      @user-data="addNewUser"
+    />
 
     <EditUserDrawer
       v-model:is-drawer-open="isEditUserDrawerVisible"
       :user-data="userToEdit"
       @user-data="updateUser"
     />
+
+    <VSnackbar
+      v-model="showToast"
+      :color="color"
+      location="top end"
+      timeout="5000"
+    >
+      <template #prepend>
+        <VIcon v-if="color === 'success'" icon="tabler-check" />
+        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
+        <VIcon v-else icon="tabler-info-circle" />
+      </template>
+
+      {{ message }}
+
+      <template #actions>
+        <VBtn
+          icon
+          variant="text"
+          color="white"
+          @click="showToast = false"
+        >
+          <VIcon icon="tabler-x" />
+        </VBtn>
+      </template>
+    </VSnackbar>
   </section>
 </template>

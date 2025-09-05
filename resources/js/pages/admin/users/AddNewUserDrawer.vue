@@ -23,23 +23,6 @@ const password = ref('')
 const role = ref('')
 const language = ref('')
 const avatar = ref(null)
-const subscriptionPlan = ref('')
-
-// plans list from API
-const plans = ref([])
-
-const fetchPlans = async () => {
-  try {
-    const response = await $api('/plans', { method: 'GET' })
-    if (response.status === 'success') {
-      plans.value = response.data
-    }
-  } catch (e) {
-    console.error('Error fetching plans', e)
-  }
-}
-
-onMounted(fetchPlans)
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -67,9 +50,6 @@ const onSubmit = () => {
         formData.append('avatar', '')
       }
 
-      if (subscriptionPlan.value) {
-        formData.append('subscription_plan', subscriptionPlan.value)
-      }
 
       emit('userData', formData)
 
@@ -173,14 +153,6 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
-              <VCol cols="12">
-                <AppSelect
-                  v-model="subscriptionPlan"
-                  label="الباقة"
-                  placeholder="اختر الباقة"
-                  :items="plans.map(p => ({ title: p.name, value: p.id }))"
-                />
-              </VCol>
 
               <VCol cols="12">
                 <VBtn
