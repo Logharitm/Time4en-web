@@ -209,5 +209,10 @@
         "item": "item"
       }
     }
+  },
+  "themes": {
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System"
   }
 }

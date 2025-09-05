@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <VCard>
-    <VCardItem title="Plans Overview">
+    <VCardItem title="باقات الاشتراك">
       <template #append>
         <MoreBtn />
       </template>

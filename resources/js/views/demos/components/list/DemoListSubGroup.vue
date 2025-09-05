@@ -32,7 +32,7 @@ const cruds = [
     'Delete',
     'tabler-trash',
   ],
-]
+  Words
 </script>
 
 <template>

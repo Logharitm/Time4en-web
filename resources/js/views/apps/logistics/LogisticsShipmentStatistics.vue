@@ -192,20 +192,7 @@ const shipmentConfig = {
 
 <template>
   <VCard>
-    <VCardItem
-      title="Shipment statistics"
-      subtitle="Total number of deliveries 23.8k"
-    >
-      <template #append>
-        <VBtn
-          variant="tonal"
-          append-icon="tabler-chevron-down"
-        >
-          January
-        </VBtn>
-      </template>
-    </VCardItem>
-
+    <VCardItem title="الاشتراكات" />
     <VCardText>
       <VueApexCharts
         id="shipment-statistics"
