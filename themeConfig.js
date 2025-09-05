@@ -9,20 +9,15 @@ import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layo
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
-    title: 'Time4En',
+    title: 'Time4en',
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1, // 1 for matching with vuetify breakpoint. Docs: https://next.vuetifyjs.com/en/features/display-and-platform/
     i18n: {
       enable: true,
-      defaultLocale: 'en',
+      defaultLocale: 'ar',
       langConfig: [
-        {
-          label: 'English',
-          i18nLang: 'en',
-          isRTL: false,
-        },
         {
           label: 'Arabic',
           i18nLang: 'ar',
@@ -50,10 +45,6 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     popoverOffset: 6,
   },
 
-  /*
-    // ℹ️  In below Icons section, you can specify icon for each component. Also you can use other props of v-icon component like `color` and `size` for each icon.
-    // Such as: chevronDown: { icon: 'tabler-chevron-down', color:'primary', size: '24' },
-    */
   icons: {
     chevronDown: { icon: 'tabler-chevron-down' },
     chevronRight: { icon: 'tabler-chevron-right', size: 20 },

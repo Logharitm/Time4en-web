@@ -20,49 +20,49 @@ class StatisticsController extends Controller
             [
                 'icon' => 'tabler-folder',
                 'color' => 'primary',
-                'title' => 'Folders',
+                'title' => 'المجلدات',
                 'value' => Folder::count(),
             ],
             [
                 'icon' => 'tabler-file-word',
                 'color' => 'success',
-                'title' => 'Words',
+                'title' => 'الكلمات',
                 'value' => Word::count(),
             ],
             [
                 'icon' => 'tabler-users',
                 'color' => 'secondary',
-                'title' => 'Users',
+                'title' => 'المستخدمين',
                 'value' => User::count()
             ],
             [
                 'icon' => 'tabler-shield-question',
                 'color' => 'info',
-                'title' => 'Practice',
+                'title' => 'الاختبارات',
                 'value' => Practice::count()
             ],
             [
                 'icon' => 'tabler-brand-messenger',
                 'color' => 'warning',
-                'title' => 'Messages',
+                'title' => 'الرسائل الواردة',
                 'value' => Contact::count()
             ],
             [
                 'icon' => 'tabler-plant-2',
                 'color' => 'error',
-                'title' => 'Plans',
+                'title' => 'باقات الاشتراك',
                 'value' => Plan::count()
             ],
             [
                 'icon' => 'tabler-paywall',
                 'color' => 'info',
-                'title' => 'Subscriptions',
+                'title' => 'الاشتراكات',
                 'value' => Subscription::count()
             ],
             [
                 'icon' => 'tabler-brand-cashapp',
                 'color' => 'success',
-                'title' => 'Payments',
+                'title' => 'المدفوعات',
                 'value' => Payment::count()
             ],
         ]);
