@@ -6,17 +6,22 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  userData: { // 👈 يستقبل بيانات المستخدم
+    type: Object,
+    default: null,
+  },
 })
 
 const emit = defineEmits([
   'update:isDrawerOpen',
-  'userData',
+  'userData', // هذا الـ emit سيُستخدم لتحديث المستخدم
 ])
 
 const isFormValid = ref(false)
 const refForm = ref()
 
 // form fields
+const userId = ref(null)
 const name = ref('')
 const email = ref('')
 const password = ref('')
@@ -41,6 +46,20 @@ const fetchPlans = async () => {
 
 onMounted(fetchPlans)
 
+// 👈 مراقبة تغييرات المستخدم وتعبئة الحقول
+watch(() => props.userData, (newVal) => {
+  if (newVal) {
+    userId.value = newVal.id
+    name.value = newVal.name
+    email.value = newVal.email
+    password.value = '' // لا تعرض كلمة المرور
+    role.value = newVal.role
+    language.value = newVal.language
+    subscriptionPlan.value = newVal.subscription_plan
+    avatar.value = null
+  }
+})
+
 // 👉 drawer close
 const closeNavigationDrawer = () => {
   emit('update:isDrawerOpen', false)
@@ -55,23 +74,28 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
+      formData.append('_method', 'POST') // 👈 لبعض الـ APIs، قد تحتاج هذه الطريقة لتمرير POST
       formData.append('name', name.value)
       formData.append('email', email.value)
-      formData.append('password', password.value)
+      if (password.value) {
+        formData.append('password', password.value)
+      }
       formData.append('role', role.value)
       formData.append('language', language.value)
 
       if (avatar.value instanceof File) {
         formData.append('avatar', avatar.value)
       } else {
-        formData.append('avatar', '')
+        // إذا لم يتم اختيار صورة جديدة، أرسل قيمة فارغة أو لا ترسلها
+        // formData.append('avatar', '');
       }
 
       if (subscriptionPlan.value) {
         formData.append('subscription_plan', subscriptionPlan.value)
       }
 
-      emit('userData', formData)
+      // إرسال الـ formData مع الـ userId
+      emit('userData', userId.value, formData)
 
       emit('update:isDrawerOpen', false)
       nextTick(() => {
@@ -98,7 +122,7 @@ const handleDrawerModelValueUpdate = val => {
     @update:model-value="handleDrawerModelValueUpdate"
   >
     <AppDrawerHeaderSection
-      title="إضافة مستخدم جديد"
+      title="تعديل مستخدم"
       @cancel="closeNavigationDrawer"
     />
 
@@ -135,8 +159,7 @@ const handleDrawerModelValueUpdate = val => {
                 <AppTextField
                   v-model="password"
                   type="password"
-                  :rules="[requiredValidator]"
-                  label="كلمة المرور"
+                  label="كلمة المرور (اتركه فارغاً للتجاهل)"
                   placeholder="********"
                 />
               </VCol>
@@ -187,7 +210,7 @@ const handleDrawerModelValueUpdate = val => {
                   type="submit"
                   class="me-3"
                 >
-                  حفظ
+                  تحديث
                 </VBtn>
                 <VBtn
                   type="reset"

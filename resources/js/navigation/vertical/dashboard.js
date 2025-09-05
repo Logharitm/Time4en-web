@@ -9,7 +9,6 @@ export default [
     icon: { icon: 'tabler-user' },
     children: [
       { title: 'List', to: { name: 'admin-users' } },
-      { title: 'Add', to: { name: 'admin-users-add' } },
     ],
   },
   {

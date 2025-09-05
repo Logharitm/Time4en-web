@@ -1,5 +1,6 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import AddNewUserDrawer from './AddNewUserDrawer.vue'
+import EditUserDrawer from './EditUserDrawer.vue' // 👈 إضافة مكوّن التعديل
 
 // filters
 const searchQuery = ref('')
@@ -18,11 +19,11 @@ const updateOptions = options => {
 
 // Headers
 const headers = [
-  { title: 'المستخدم', key: 'user' },
-  { title: 'النوع', key: 'role' },
-  { title: 'باقة الاشتراك', key: 'plan' },
-  { title: 'الانتهاء في', key: 'expires_at' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  {title: 'المستخدم', key: 'user'},
+  {title: 'النوع', key: 'role'},
+  {title: 'باقة الاشتراك', key: 'plan'},
+  {title: 'الانتهاء في', key: 'expires_at'},
+  {title: 'العمليات', key: 'actions', sortable: false},
 ]
 
 // API
@@ -36,17 +37,18 @@ const fetchUsers = async () => {
     const response = await $api('/users', {
       method: 'GET',
       params: {
-        q: searchQuery.value,
-        itemsPerPage: itemsPerPage.value,
+        role: 'user',
+        search: searchQuery.value,
+        per_page: itemsPerPage.value,
         page: page.value,
-        sortBy: sortBy.value,
-        orderBy: orderBy.value,
+        sort_by: sortBy.value,
+        sort_order: orderBy.value,
       },
     })
 
     if (response.status === 'success') {
       usersData.value = response.data
-      totalUsers.value = response.meta?.total || response.data.length
+      totalUsers.value = response.meta?.total || 0
     }
   } catch (err) {
     console.error('Error fetching users', err)
@@ -57,17 +59,19 @@ const fetchUsers = async () => {
 
 onMounted(fetchUsers)
 
+watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchUsers)
+
 const users = computed(() => usersData.value)
 
 // helpers
 const resolveUserRoleVariant = role => {
   const roleLowerCase = role?.toLowerCase()
-  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' }
-  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' }
-  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
-  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
-  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
-  return { color: 'primary', icon: 'tabler-user' }
+  if (roleLowerCase === 'subscriber') return {color: 'success', icon: 'tabler-user'}
+  if (roleLowerCase === 'author') return {color: 'error', icon: 'tabler-device-desktop'}
+  if (roleLowerCase === 'maintainer') return {color: 'info', icon: 'tabler-chart-pie'}
+  if (roleLowerCase === 'editor') return {color: 'warning', icon: 'tabler-edit'}
+  if (roleLowerCase === 'admin') return {color: 'primary', icon: 'tabler-crown'}
+  return {color: 'primary', icon: 'tabler-user'}
 }
 
 const prefixWithPlus = value => (value > 0 ? `+${value}` : value)
@@ -75,11 +79,15 @@ const prefixWithPlus = value => (value > 0 ? `+${value}` : value)
 const isAddNewUserDrawerVisible = ref(false)
 
 const addNewUser = async userData => {
-  await $api('/users/store', {
-    method: 'POST',
-    body: userData,
-  })
-  fetchUsers()
+  try {
+    await $api('/users/store', {
+      method: 'POST',
+      body: userData,
+    })
+    fetchUsers()
+  } catch (err) {
+    console.error('Error adding user:', err)
+  }
 }
 
 const deleteUser = async id => {
@@ -93,12 +101,32 @@ const deleteUser = async id => {
   fetchUsers()
 }
 
+// 👈 إضافة متغيرات ودوال التعديل
+const isEditUserDrawerVisible = ref(false)
+const userToEdit = ref(null)
+
+const openEditDrawer = (user) => {
+  userToEdit.value = user
+  isEditUserDrawerVisible.value = true
+}
+
+const updateUser = async (id, userData) => {
+  try {
+    // يمكنك تعديل مسار الـ API حسب المسار الصحيح في الباك إند
+    await $api(`/users/update/${id}`, {
+      method: 'POST',
+      body: userData,
+    })
+    fetchUsers()
+  } catch (err) {
+    console.error('Error updating user:', err)
+  }
+}
+
 </script>
 
 <template>
   <section>
-
-    <!-- 👉 Filters -->
     <VCard class="mb-6">
       <VCardItem class="pb-4">
         <VCardTitle>المستخدمين</VCardTitle>
@@ -131,7 +159,6 @@ const deleteUser = async id => {
 
       <VDivider/>
 
-      <!-- 👉 Data Table -->
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
@@ -141,7 +168,6 @@ const deleteUser = async id => {
         :items-length="totalUsers"
         :headers="headers"
         class="text-no-wrap"
-        show-select
         :loading="loading"
         @update:options="updateOptions"
       >
@@ -176,7 +202,10 @@ const deleteUser = async id => {
               :icon="resolveUserRoleVariant(item.role).icon"
               :color="resolveUserRoleVariant(item.role).color"
             />
-            <div class="text-capitalize text-high-emphasis text-body-1">{{ item.role == 'user' ? 'عميل': 'ادمن' }}</div>
+            <div class="text-capitalize text-high-emphasis text-body-1">{{
+                item.role == 'user' ? 'عميل' : 'ادمن'
+              }}
+            </div>
           </div>
         </template>
 
@@ -189,6 +218,9 @@ const deleteUser = async id => {
         </template>
 
         <template #item.actions="{ item }">
+          <IconBtn @click="openEditDrawer(item)">
+            <VIcon icon="tabler-pencil"/>
+          </IconBtn>
           <IconBtn @click="deleteUser(item.id)">
             <VIcon icon="tabler-trash"/>
           </IconBtn>
@@ -203,7 +235,12 @@ const deleteUser = async id => {
       </VDataTableServer>
     </VCard>
 
-    <!-- 👉 Add New User Drawer -->
     <AddNewUserDrawer v-model:is-drawer-open="isAddNewUserDrawerVisible" @user-data="addNewUser"/>
+
+    <EditUserDrawer
+      v-model:is-drawer-open="isEditUserDrawerVisible"
+      :user-data="userToEdit"
+      @user-data="updateUser"
+    />
   </section>
 </template>
