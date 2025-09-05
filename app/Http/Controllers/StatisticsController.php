@@ -18,7 +18,7 @@ class StatisticsController extends Controller
     {
         return response()->json([
             [
-                'icon' => 'tabler-folder',
+                'icon' => 'tabler-folders',
                 'color' => 'primary',
                 'title' => 'المجلدات',
                 'value' => Folder::count(),

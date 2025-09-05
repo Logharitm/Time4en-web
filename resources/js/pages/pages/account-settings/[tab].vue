@@ -15,12 +15,12 @@ const activeTab = computed({
 // tabs
 const tabs = [
   {
-    title: 'Account',
+    title: 'البيانات العامة',
     icon: 'tabler-users',
     tab: 'account',
   },
   {
-    title: 'Security',
+    title: 'اعدادات الامان',
     icon: 'tabler-lock',
     tab: 'security',
   },

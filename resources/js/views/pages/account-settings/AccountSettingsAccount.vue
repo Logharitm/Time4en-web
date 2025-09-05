@@ -72,7 +72,7 @@ const saveProfile = async () => {
       body: formData,
     })
 
-    triggerToast('Profile updated successfully!', 'success')
+    triggerToast('تم تعديل البيانات بنجاح', 'success')
 
     if (res?.data?.user) {
       useCookie('userData').value = {
@@ -85,7 +85,7 @@ const saveProfile = async () => {
 
   } catch (err) {
     console.error('Error updating profile:', err)
-    triggerToast('Failed to update profile!', 'error')
+    triggerToast('حدث خطأ من فضلك حاو في وقت اخر', 'error')
   } finally {
     isSaving.value = false
   }
@@ -173,7 +173,7 @@ onMounted(() => {
                   icon="tabler-cloud-upload"
                   class="d-sm-none"
                 />
-                <span class="d-none d-sm-block">Upload new photo</span>
+                <span class="d-none d-sm-block">تحميل صورة الحساب</span>
               </VBtn>
 
               <input
@@ -191,7 +191,7 @@ onMounted(() => {
                 variant="tonal"
                 @click="resetAvatar"
               >
-                <span class="d-none d-sm-block">Reset</span>
+                <span class="d-none d-sm-block">الغاء</span>
                 <VIcon
                   icon="tabler-refresh"
                   class="d-sm-none"
@@ -199,7 +199,7 @@ onMounted(() => {
               </VBtn>
             </div>
             <p class="text-body-1 mb-0">
-              Allowed JPG, GIF or PNG. Max size of 2MB
+              مسموح بالامتدادات JPG, GIF , PNG  بمساحة 2 ميجا كحد اقصي
             </p>
           </form>
         </VCardText>
@@ -218,8 +218,8 @@ onMounted(() => {
               >
                 <AppTextField
                   v-model="accountDataLocal.name"
-                  label="Name"
-                  placeholder="Enter your name"
+                  label="الاسم"
+                  placeholder="ادخل اسمك"
                 />
               </VCol>
 
@@ -230,8 +230,8 @@ onMounted(() => {
               >
                 <AppTextField
                   v-model="accountDataLocal.email"
-                  label="Email"
-                  placeholder="Enter your email"
+                  label="البريد الالكتروني"
+                  placeholder="ادخل بريدك الالكتروني"
                   type="email"
                 />
               </VCol>
@@ -243,7 +243,7 @@ onMounted(() => {
               >
                 <AppSelect
                   v-model="accountDataLocal.language"
-                  label="Language"
+                  label="اللغة"
                   placeholder="Select Language"
                   :items="languages"
                 />
@@ -256,7 +256,7 @@ onMounted(() => {
               >
                 <AppTextField
                   v-model="accountDataLocal.role"
-                  label="Role"
+                  label="الوظيفة"
                   readonly
                   variant="plain"
                 />
@@ -271,7 +271,7 @@ onMounted(() => {
                   type="submit"
                   :loading="isSaving"
                 >
-                  Save changes
+                  حفظ التعديلات
                 </VBtn>
                 <VBtn
                   color="secondary"
@@ -279,7 +279,7 @@ onMounted(() => {
                   :disabled="isSaving"
                   @click.prevent="fetchUser"
                 >
-                  Cancel
+                  الغاء
                 </VBtn>
               </VCol>
             </VRow>

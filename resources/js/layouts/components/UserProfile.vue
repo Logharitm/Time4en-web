@@ -32,7 +32,7 @@ const userProfileList = [
   {
     type: 'navItem',
     icon: 'tabler-user',
-    title: 'Profile',
+    title: 'تعديل الملف الشخصي',
     to: {
       name: 'pages-account-settings-tab',
       params: { tab: 'account' },
@@ -156,7 +156,7 @@ const userProfileList = [
                 append-icon="tabler-logout"
                 @click="logout"
               >
-                Logout
+                تسجيل الخروج
               </VBtn>
             </div>
           </PerfectScrollbar>

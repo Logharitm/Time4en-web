@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    use ApiResponse;
+
+    public function index(Request $request): JsonResponse
+    {
+        $query = User::query();
+
+        // filter by role (admin or user)
+        if ($request->has('role') && in_array($request->role, ['admin', 'user'])) {
+            $query->where('role', $request->role);
+        }
+
+        // search by name or email
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $users = $query->paginate($request->get('per_page', 20));
+
+        return $this->successResponse(
+            'Users retrieved successfully.',
+            UserResource::collection($users)
+        );
+    }
+
+    public function store(StoreUserRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $data['password'] = bcrypt($data['password']);
+
+        $user = User::create($data);
+
+        return $this->successResponse('User created successfully.', new UserResource($user), 200);
+    }
+
+    public function show(User $user): JsonResponse
+    {
+        return $this->successResponse('User retrieved successfully.', new UserResource($user));
+    }
+
+    public function update(UpdateUserRequest $request, $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+
+        $data = $request->validated();
+        if (isset($data['password']) && $data['password']) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return $this->successResponse('User updated successfully.', new UserResource($user));
+    }
+
+    public function destroy(User $user): JsonResponse
+    {
+        $user->delete();
+        return $this->successResponse('User deleted successfully.');
+    }
+}

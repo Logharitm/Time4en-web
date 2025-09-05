@@ -3,9 +3,9 @@ import { ref } from 'vue'
 
 // 👉 Password fields state
 const passwordFields = ref([
-  { key: 'current_password', label: 'Current Password', value: '', visible: false },
-  { key: 'new_password', label: 'New Password', value: '', visible: false },
-  { key: 'new_password_confirmation', label: 'Confirm New Password', value: '', visible: false },
+  { key: 'current_password', label: 'كلمة المرور الحالية', value: '', visible: false },
+  { key: 'new_password', label: 'كلمة المرور الجديدة', value: '', visible: false },
+  { key: 'new_password_confirmation', label: 'تأكيد كلمة المرور الجديدة', value: '', visible: false },
 ])
 
 // 👉 Toast state
@@ -35,13 +35,13 @@ const changePassword = async () => {
       body: payload,
     })
 
-    triggerToast(res.data.message || 'Password updated successfully!', 'success')
+    triggerToast(res.data.message || 'تم تعديل كلمة المرور بنجاح', 'success')
 
     // Reset fields after success
     passwordFields.value.forEach(f => f.value = '')
   } catch (err) {
     console.error('Error updating password:', err)
-    triggerToast(err?.response?._data?.message || 'Failed to update password!', 'error')
+    triggerToast(err?.response?._data?.message || 'حدث خطأ اثناء التعديل برجاء المحاولة في وقت لاحق', 'error')
   }
 }
 </script>
@@ -83,7 +83,7 @@ const changePassword = async () => {
   </VSnackbar>
   <VRow>
     <VCol cols="12">
-      <VCard title="Change Password">
+      <VCard title="تعديل كلمة المرور">
         <VForm @submit.prevent="changePassword">
           <VCardText class="pt-0">
             <VRow>
@@ -108,14 +108,14 @@ const changePassword = async () => {
 
           <VCardText class="d-flex flex-wrap gap-4">
             <VBtn type="submit">
-              Save changes
+              حفظ التعديلات
             </VBtn>
             <VBtn
               type="reset"
               color="secondary"
               variant="tonal"
             >
-              Reset
+              الغاء
             </VBtn>
           </VCardText>
         </VForm>
