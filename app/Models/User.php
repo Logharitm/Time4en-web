@@ -75,7 +75,7 @@ class User extends Authenticatable
         return $this->hasMany(Practice::class);
     }
 
-    public function subscriptions(): HasOne
+    public function subscription(): HasOne
     {
         return $this->hasOne(Subscription::class);
     }
