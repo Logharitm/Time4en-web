@@ -33,7 +33,9 @@ const headers = [
   { title: 'المستخدم', key: 'user' },
   { title: 'النوع', key: 'role' },
   { title: 'باقة الاشتراك', key: 'plan' },
-  { title: 'الانتهاء في', key: 'expires_at' },
+  { title: 'بداية الاشتراك', key: 'start_at' },
+  { title: 'نهاية الاشتراك', key: 'expires_at' },
+  { title: ' الوقت المتبقي', key: 'remain' },
   { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
@@ -242,7 +244,19 @@ const updateUser = async (id, userData) => {
           </div>
         </template>
 
+        <template #item.start_at="{ item }">
+          <div class="text-body-1 text-high-emphasis">
+            {{ item.subscription.start_date ?? 'غير محدد' }}
+          </div>
+        </template>
+
         <template #item.expires_at="{ item }">
+          <div class="text-body-1 text-high-emphasis">
+            {{ item.subscription.end_date ?? 'غير محدد' }}
+          </div>
+        </template>
+
+        <template #item.remain="{ item }">
           <div class="text-body-1 text-high-emphasis">
             {{ item.subscription_expires_at ?? 'غير محدد' }}
           </div>
