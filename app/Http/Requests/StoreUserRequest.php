@@ -19,7 +19,7 @@ class StoreUserRequest extends FormRequest
             'password'              => 'required|string|min:8',
             'role'                  => 'required|in:admin,user',
             'language'              => 'nullable|string|max:10',
-            'avatar'                => 'nullable|string',
+            'avatar'                => 'nullable|file',
             'subscription_plan'     => 'nullable|string|max:255',
             'subscription_expires_at' => 'nullable|date',
         ];

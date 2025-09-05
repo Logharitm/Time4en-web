@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -51,6 +52,12 @@ class UserController extends Controller
 
         $user = User::create($data);
 
+        if ($request->hasFile('avatar') && $request->file('avatar') != null) {
+            $avatar = $request->file('avatar')->store('avatar', 'public');
+            $user->avatar = $avatar;
+            $user->update();
+        }
+
         return $this->successResponse('User created successfully.', new UserResource($user), 200);
     }
 
@@ -68,6 +75,17 @@ class UserController extends Controller
             $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
+        }
+
+        if ($request->hasFile('avatar') && $request->file('avatar') != null) {
+            if ($user->avatar) {
+                $oldPath = str_replace(asset('storage/'), '', $user->avatar);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $avatar = $request->file('avatar')->store('avatar', 'public');
+
+            $user->avatar = $avatar;
         }
 
         $user->update($data);
