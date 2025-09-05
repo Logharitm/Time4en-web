@@ -7,17 +7,12 @@ export default [
   {
     title: 'المستخدمين',
     icon: { icon: 'tabler-user' },
-    children: [
-      { title: 'List', to: { name: 'admin-users' } },
-    ],
+    to: { name: 'admin-users' },
   },
   {
     title: 'الادمن',
     icon: { icon: 'tabler-user-star' },
-    children: [
-      { title: 'List', to: { name: 'admin-admins' } },
-      { title: 'Add', to: { name: 'admin-admins-add' } },
-    ],
+    to: { name: 'admin-admins' },
   },
   {
     title: 'المجلدات',
@@ -96,10 +91,7 @@ export default [
   {
     title: 'اسألة واجوبة',
     icon: { icon: 'tabler-help-hexagon' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-faqs' },
   },
 
 

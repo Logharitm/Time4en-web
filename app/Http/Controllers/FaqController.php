@@ -15,7 +15,20 @@ class FaqController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $faqs = Faq::query()->paginate($request->get('per_page', 20));
+        $query = Faq::query();
+
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('question', 'like', "%{$search}%")
+                    ->orWhere('answer', 'like', "%{$search}%")
+                    ->orWhere('question_en', 'like', "%{$search}%")
+                    ->orWhere('answer_en', 'like', "%{$search}%");
+            });
+        }
+
+        $faqs = $query->paginate($request->get('per_page', 20));
         return $this->successResponse("تم جلب الأسئلة", $faqs);
     }
 

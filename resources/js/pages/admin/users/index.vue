@@ -1,32 +1,83 @@
 <script setup>
-import AddNewUserDrawer from './AddNewUserDrawer.vue'
-import EditUserDrawer from './EditUserDrawer.vue'
+import {
+  ref,
+  computed,
+  watch,
+  onMounted
+} from 'vue';
+import {
+  useRouter
+} from 'vue-router'; // ✅ استيراد useRouter
+import AddNewUserDrawer from './AddNewUserDrawer.vue';
+import EditUserDrawer from './EditUserDrawer.vue';
+
+// Router instance
+const router = useRouter(); // ✅ الحصول على كائن router
 
 // filters
-const searchQuery = ref('')
+const searchQuery = ref('');
 
 // Data table options
-const itemsPerPage = ref(10)
-const page = ref(1)
-const sortBy = ref()
-const orderBy = ref()
-const selectedRows = ref([])
+const itemsPerPage = ref(10);
+const page = ref(1);
+const sortBy = ref();
+const orderBy = ref();
+const selectedRows = ref([]);
 
 const updateOptions = options => {
-  sortBy.value = options.sortBy[0]?.key
-  orderBy.value = options.sortBy[0]?.order
-}
+  sortBy.value = options.sortBy[0]?.key;
+  orderBy.value = options.sortBy[0]?.order;
+};
 
 // 👉 Toast state
-const showToast = ref(false)
-const message = ref('')
-const color = ref('success')
+const showToast = ref(false);
+const message = ref('');
+const color = ref('success');
 
 const triggerToast = (msg, type = 'success') => {
-  message.value = msg
-  color.value = type
-  showToast.value = true
-}
+  message.value = msg;
+  color.value = type;
+  showToast.value = true;
+};
+
+// 👈 إضافة متغيرات ودوال نافذة التأكيد
+const isDeleteConfirmDialogVisible = ref(false);
+const userToDeleteId = ref(null);
+
+const confirmDelete = (userId) => {
+  userToDeleteId.value = userId;
+  isDeleteConfirmDialogVisible.value = true;
+};
+
+const executeDelete = async () => {
+  if (userToDeleteId.value) {
+    await deleteUser(userToDeleteId.value);
+    isDeleteConfirmDialogVisible.value = false;
+    userToDeleteId.value = null;
+  }
+};
+
+const calculateRemainingDays = (endDateString) => {
+  if (!endDateString) return 'غير محدد';
+
+  const today = new Date();
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  const endDate = new Date(endDateString);
+  const endDateMidnight = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+  const differenceInTime = endDateMidnight.getTime() - todayMidnight.getTime();
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
+
+  if (differenceInDays > 0) {
+    return `متبقي ${differenceInDays} يوم`;
+  } else if (differenceInDays === 0) {
+    return 'ينتهي اليوم';
+  } else {
+    return 'منتهية';
+  }
+};
+
 
 // Headers
 const headers = [
@@ -37,15 +88,15 @@ const headers = [
   { title: 'نهاية الاشتراك', key: 'expires_at' },
   { title: ' الوقت المتبقي', key: 'remain' },
   { title: 'العمليات', key: 'actions', sortable: false },
-]
+];
 
 // API
-const usersData = ref([])
-const totalUsers = ref(0)
-const loading = ref(true)
+const usersData = ref([]);
+const totalUsers = ref(0);
+const loading = ref(true);
 
 const fetchUsers = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const response = await $api('/users', {
       method: 'GET',
@@ -57,87 +108,96 @@ const fetchUsers = async () => {
         sort_by: sortBy.value,
         sort_order: orderBy.value,
       },
-    })
+    });
 
     if (response.status === 'success') {
-      usersData.value = response.data
-      totalUsers.value = response.meta?.total || 0
+      usersData.value = response.data;
+      totalUsers.value = response.meta?.total || 0;
     }
   } catch (err) {
-    console.error('Error fetching users', err)
+    console.error('Error fetching users', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
-onMounted(fetchUsers)
+onMounted(fetchUsers);
 
-watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchUsers)
+watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchUsers);
 
-const users = computed(() => usersData.value)
+const users = computed(() => usersData.value);
 
 // helpers
 const resolveUserRoleVariant = role => {
-  const roleLowerCase = role?.toLowerCase()
-  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' }
-  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' }
-  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
-  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
-  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
+  const roleLowerCase = role?.toLowerCase();
+  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' };
+  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' };
+  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' };
+  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' };
+  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' };
 
-  return { color: 'primary', icon: 'tabler-user' }
-}
+  return { color: 'primary', icon: 'tabler-user' };
+};
 
-const prefixWithPlus = value => (value > 0 ? `+${value}` : value)
+const prefixWithPlus = value => (value > 0 ? `+${value}` : value);
 
-const isAddNewUserDrawerVisible = ref(false)
+const isAddNewUserDrawerVisible = ref(false);
 
 const addNewUser = async userData => {
   try {
     await $api('/users/store', {
       method: 'POST',
       body: userData,
-    })
-    triggerToast('تم اضافة البيانات بنجاح', 'success')
-    fetchUsers()
+    });
+    triggerToast('تم اضافة البيانات بنجاح', 'success');
+    fetchUsers();
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error');
   }
-}
+};
 
 const deleteUser = async id => {
-  await $api(`/users/delete/${id}`, {
-    method: 'DELETE',
-  })
+  try {
+    await $api(`/users/delete/${id}`, {
+      method: 'POST',
+    });
+    const index = selectedRows.value.findIndex(row => row === id);
+    if (index !== -1) selectedRows.value.splice(index, 1);
 
-  const index = selectedRows.value.findIndex(row => row === id)
-  if (index !== -1) selectedRows.value.splice(index, 1)
-
-  fetchUsers()
-}
+    triggerToast('تم الحذف بنجاح', 'success');
+    fetchUsers();
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    triggerToast('حدث خطأ أثناء الحذف', 'error');
+  }
+};
 
 // 👈 إضافة متغيرات ودوال التعديل
-const isEditUserDrawerVisible = ref(false)
-const userToEdit = ref(null)
+const isEditUserDrawerVisible = ref(false);
+const userToEdit = ref(null);
 
 const openEditDrawer = user => {
-  userToEdit.value = user
-  isEditUserDrawerVisible.value = true
-}
+  userToEdit.value = user;
+  isEditUserDrawerVisible.value = true;
+};
 
 const updateUser = async (id, userData) => {
   try {
-    // يمكنك تعديل مسار الـ API حسب المسار الصحيح في الباك إند
     await $api(`/users/update/${id}`, {
       method: 'POST',
       body: userData,
-    })
-    triggerToast('تم تعديل البيانات بنجاح', 'success')
-    fetchUsers()
+    });
+    triggerToast('تم تعديل البيانات بنجاح', 'success');
+    fetchUsers();
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error');
   }
-}
+};
+
+// ✅ الدالة الجديدة للتوجيه إلى صفحة المستخدم
+const viewUser = (userId) => {
+  router.push({name: 'admin-users-id', params: {id: userId}});
+};
 </script>
 
 <template>
@@ -162,7 +222,7 @@ const updateUser = async (id, userData) => {
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
-        <VSpacer />
+        <VSpacer/>
         <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
           <div style="inline-size: 15.625rem;">
             <AppTextField
@@ -180,7 +240,7 @@ const updateUser = async (id, userData) => {
         </div>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
@@ -240,37 +300,37 @@ const updateUser = async (id, userData) => {
 
         <template #item.plan="{ item }">
           <div class="text-body-1 text-high-emphasis text-capitalize">
-            {{ item.subscription_plan || 'غير مشترك' }}
+            {{ item.subscription?.plan?.name || 'غير مشترك' }}
           </div>
         </template>
 
         <template #item.start_at="{ item }">
           <div class="text-body-1 text-high-emphasis">
-            {{ item.subscription.start_date ?? 'غير محدد' }}
+            {{ item.subscription?.start_date ?? 'غير محدد' }}
           </div>
         </template>
 
         <template #item.expires_at="{ item }">
           <div class="text-body-1 text-high-emphasis">
-            {{ item.subscription.end_date ?? 'غير محدد' }}
+            {{ item.subscription?.end_date ?? 'غير محدد' }}
           </div>
         </template>
 
         <template #item.remain="{ item }">
           <div class="text-body-1 text-high-emphasis">
-            {{ item.subscription_expires_at ?? 'غير محدد' }}
+            {{ calculateRemainingDays(item.subscription?.end_date) }}
           </div>
         </template>
 
         <template #item.actions="{ item }">
           <IconBtn @click="openEditDrawer(item)">
-            <VIcon icon="tabler-pencil" />
+            <VIcon icon="tabler-pencil"/>
           </IconBtn>
-          <IconBtn @click="deleteUser(item.id)">
-            <VIcon icon="tabler-trash" />
+          <IconBtn @click="confirmDelete(item.id)">
+            <VIcon icon="tabler-trash"/>
           </IconBtn>
-          <IconBtn>
-            <VIcon icon="tabler-eye" />
+          <IconBtn @click="viewUser(item.id)">
+            <VIcon icon="tabler-eye"/>
           </IconBtn>
         </template>
 
@@ -302,9 +362,9 @@ const updateUser = async (id, userData) => {
       timeout="5000"
     >
       <template #prepend>
-        <VIcon v-if="color === 'success'" icon="tabler-check" />
-        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
-        <VIcon v-else icon="tabler-info-circle" />
+        <VIcon v-if="color === 'success'" icon="tabler-check"/>
+        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle"/>
+        <VIcon v-else icon="tabler-info-circle"/>
       </template>
 
       {{ message }}
@@ -316,9 +376,40 @@ const updateUser = async (id, userData) => {
           color="white"
           @click="showToast = false"
         >
-          <VIcon icon="tabler-x" />
+          <VIcon icon="tabler-x"/>
         </VBtn>
       </template>
     </VSnackbar>
+
+    <VDialog
+      v-model="isDeleteConfirmDialogVisible"
+      max-width="500px"
+    >
+      <VCard>
+        <VCardTitle class="text-h6">
+          تأكيد الحذف
+        </VCardTitle>
+        <VCardText>
+          هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.
+        </VCardText>
+        <VCardActions class="px-6 pb-4">
+          <VSpacer/>
+          <VBtn
+            color="error"
+            variant="flat"
+            @click="isDeleteConfirmDialogVisible = false"
+          >
+            إلغاء
+          </VBtn>
+          <VBtn
+            color="success"
+            variant="flat"
+            @click="executeDelete"
+          >
+            موافق
+          </VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </section>
 </template>
