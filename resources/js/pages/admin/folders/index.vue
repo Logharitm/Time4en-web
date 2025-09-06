@@ -1,6 +1,6 @@
 <script setup>
-import {ref, computed, watch, onMounted} from 'vue'
-import {useRouter} from 'vue-router'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import AddFolderDrawer from './AddFolderDrawer.vue'
 import EditFolderDrawer from './EditFolderDrawer.vue'
 
@@ -9,6 +9,9 @@ const router = useRouter()
 
 // Filters
 const searchQuery = ref('')
+const filterUserName = ref('')
+const filterCreatedFrom = ref('')
+const filterCreatedTo = ref('')
 
 // Data table
 const itemsPerPage = ref(10)
@@ -48,12 +51,12 @@ const executeDelete = async () => {
 
 // Headers
 const headers = [
-  {title: 'اسم الفولدر', key: 'name'},
-  {title: 'الوصف', key: 'description'},
-  {title: 'المستخدم', key: 'user_name'},
-  {title: 'عدد الكلمات', key: 'words_count'},
-  {title: 'تاريخ الإنشاء', key: 'created_at'},
-  {title: 'العمليات', key: 'actions', sortable: false},
+  { title: 'اسم المجلد', key: 'name' },
+  { title: 'الوصف', key: 'description' },
+  { title: 'المستخدم', key: 'user_name' },
+  { title: 'عدد الكلمات', key: 'words_count' },
+  { title: 'تاريخ الإنشاء', key: 'created_at' },
+  { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -61,19 +64,37 @@ const foldersData = ref([])
 const totalFolders = ref(0)
 const loading = ref(true)
 
+// Format date to AM/PM
+const formatDateTime = dateStr => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true, // ✅ AM/PM
+  })
+}
+
 // Fetch data with backend filtering
 const fetchFolders = async () => {
   loading.value = true
   try {
     const params = {
       search: searchQuery.value || undefined,
+      user_name: filterUserName.value || undefined,
+      created_from: filterCreatedFrom.value || undefined,
+      created_to: filterCreatedTo.value || undefined,
       per_page: itemsPerPage.value,
       page: page.value,
       sort_by: sortBy.value,
       sort_order: orderBy.value,
     }
 
-    const response = await $api('/folders', {method: 'GET', params})
+    const response = await $api('/folders', { method: 'GET', params })
     if (response.status === 'success') {
       foldersData.value = response.data
       totalFolders.value = response.meta?.total || 0
@@ -88,6 +109,9 @@ const fetchFolders = async () => {
 // Reset filters function
 const resetFilters = () => {
   searchQuery.value = ''
+  filterUserName.value = ''
+  filterCreatedFrom.value = ''
+  filterCreatedTo.value = ''
 }
 
 onMounted(() => {
@@ -95,7 +119,7 @@ onMounted(() => {
 })
 
 watch(
-  [searchQuery, itemsPerPage, page, sortBy, orderBy],
+  [searchQuery, filterUserName, filterCreatedFrom, filterCreatedTo, itemsPerPage, page, sortBy, orderBy],
   fetchFolders
 )
 
@@ -110,12 +134,12 @@ const openEditDrawer = folder => {
   folderToEdit.value = folder
   isEditFolderDrawerVisible.value = true
 }
-const openView = (id) => router.push(`/admin/folders/${id}`)
+const openView = id => router.push(`/admin/folders/${id}`)
 
 const addNewFolder = async formData => {
   try {
-    await $api('/folders/store', {method: 'POST', body: formData})
-    triggerToast('تم إضافة الفولدر بنجاح', 'success')
+    await $api('/folders', { method: 'POST', body: formData })
+    triggerToast('تم إضافة المجلد بنجاح', 'success')
     fetchFolders()
   } catch (err) {
     triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
@@ -125,7 +149,7 @@ const addNewFolder = async formData => {
 const updateFolder = async (id, formData) => {
   try {
     await $api(`/folders/${id}/update`, {method: 'POST', body: formData})
-    triggerToast('تم تعديل الفولدر بنجاح', 'success')
+    triggerToast('تم تعديل المجلد بنجاح', 'success')
     fetchFolders()
   } catch (err) {
     triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
@@ -135,7 +159,7 @@ const updateFolder = async (id, formData) => {
 const deleteFolder = async id => {
   try {
     await $api(`/folders/${id}/delete`, {method: 'POST'})
-    triggerToast('تم حذف الفولدر بنجاح', 'success')
+    triggerToast('تم حذف المجلد بنجاح', 'success')
     fetchFolders()
   } catch (err) {
     triggerToast('حدث خطأ أثناء الحذف', 'error')
@@ -147,11 +171,12 @@ const deleteFolder = async id => {
   <section>
     <VCard class="mb-6">
       <VCardItem class="pb-4">
-        <VCardTitle>الفولدرات</VCardTitle>
+        <VCardTitle>المجلدات</VCardTitle>
       </VCardItem>
 
       <VCardText class="d-flex flex-wrap gap-4 align-center">
 
+        <!-- Filters -->
         <div class="me-3 d-flex gap-3">
           <AppSelect
             label="عرض"
@@ -165,8 +190,31 @@ const deleteFolder = async id => {
         <div style="min-width: 200px;">
           <AppTextField
             v-model="searchQuery"
-            placeholder="بحث باسم الفولدر"
-            label="اسم الفولدر"
+            placeholder="بحث باسم المجلد او الوصف"
+            label="اسم المجلد او الوصف"
+          />
+        </div>
+
+        <div style="min-width: 200px;">
+          <AppTextField
+            v-model="filterUserName"
+            placeholder="بحث باسم المستخدم"
+            label="اسم المستخدم"
+          />
+        </div>
+
+        <div style="min-width: 160px;">
+          <AppDateTimePicker
+            v-model="filterCreatedFrom"
+            label="تاريخ الإنشاء من"
+            :config="{ enableTime: false, dateFormat: 'Y-m-d' }"
+          />
+        </div>
+        <div style="min-width: 160px;">
+          <AppDateTimePicker
+            v-model="filterCreatedTo"
+            label="تاريخ الإنشاء إلى"
+            :config="{ enableTime: false, dateFormat: 'Y-m-d' }"
           />
         </div>
 
@@ -181,12 +229,13 @@ const deleteFolder = async id => {
         </VBtn>
 
         <VBtn prepend-icon="tabler-plus" @click="isAddFolderDrawerVisible = true">
-          إضافة فولدر جديد
+          إضافة مجلد جديد
         </VBtn>
       </VCardText>
 
       <VDivider/>
 
+      <!-- DataTable -->
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
@@ -204,10 +253,16 @@ const deleteFolder = async id => {
             {{ item.user_name }}
           </a>
         </template>
+        <template #item.created_at="{ item }">
+          {{ formatDateTime(item.created_at) }}
+        </template>
+        <!-- ✅ Format date -->
+        <template #item.words_count="{ item }">
+          {{ item.words_count }}
+          <IconBtn @click="openView(item.id)" title="عرض الكلمات"><VIcon icon="tabler-eye"/></IconBtn>
+        </template>
+
         <template #item.actions="{ item }">
-          <IconBtn @click="openView(item.id)">
-            <VIcon icon="tabler-eye"/>
-          </IconBtn>
           <IconBtn @click="openEditDrawer(item)">
             <VIcon icon="tabler-pencil"/>
           </IconBtn>
@@ -215,6 +270,7 @@ const deleteFolder = async id => {
             <VIcon icon="tabler-trash"/>
           </IconBtn>
         </template>
+
         <template #bottom>
           <TablePagination
             v-model:page="page"
@@ -252,7 +308,7 @@ const deleteFolder = async id => {
     <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
       <VCard>
         <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
-        <VCardText>هل أنت متأكد أنك تريد حذف هذا الفولدر؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
+        <VCardText>هل أنت متأكد أنك تريد حذف هذا المجلد؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer/>
           <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>

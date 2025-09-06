@@ -5,11 +5,11 @@ import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 const props = defineProps({
   isDrawerOpen: {
     type: Boolean,
-    required: true
-  }
+    required: true,
+  },
 })
 
-const emit = defineEmits(['update:isDrawerOpen', 'plan-data'])
+const emit = defineEmits(['update:isDrawerOpen', 'folder-data'])
 
 // Form
 const isFormValid = ref(false)
@@ -17,31 +17,19 @@ const refForm = ref()
 
 // Fields
 const userId = ref(null)
-const planId = ref(null)
-const startDate = ref('')
-const endDate = ref('')
-const status = ref('active')
-const amountPaid = ref('')
+const name = ref('')
+const description = ref('')
 
 // Options
 const users = ref([])
-const plans = ref([])
-const statuses = ref([
-  { value: 'active', title: 'Active' },
-  { value: 'expired', title: 'Expired' },
-  { value: 'canceled', title: 'Canceled' }
-])
 
-// Fetch users & plans
+// Fetch users with role=user
 onMounted(async () => {
   try {
-    const usersResp = await $api('/users', { method: 'GET' })
-    users.value = usersResp.data || []
-
-    const plansResp = await $api('/plans', { method: 'GET' })
-    plans.value = plansResp.data || []
+    const resp = await $api('/users?role=user', { method: 'GET' })
+    users.value = resp.data || []
   } catch (err) {
-    console.error('Error fetching users/plans', err)
+    console.error('Error fetching users', err)
   }
 })
 
@@ -51,6 +39,9 @@ const closeDrawer = () => {
   nextTick(() => {
     refForm.value?.reset()
     refForm.value?.resetValidation()
+    userId.value = null
+    name.value = ''
+    description.value = ''
   })
 }
 
@@ -60,18 +51,14 @@ const onSubmit = () => {
     if (valid) {
       const formData = new FormData()
       formData.append('user_id', userId.value)
-      formData.append('plan_id', planId.value)
-      formData.append('start_date', startDate.value)
-      formData.append('end_date', endDate.value)
-      formData.append('status', status.value)
-      formData.append('amount_paid', amountPaid.value)
+      formData.append('name', name.value)
+      formData.append('description', description.value || '')
 
-      emit('plan-data', formData)
+      emit('folder-data', formData)
       closeDrawer()
     }
   })
 }
-
 </script>
 
 <template>
@@ -83,7 +70,7 @@ const onSubmit = () => {
     :model-value="props.isDrawerOpen"
     @update:model-value="val => emit('update:isDrawerOpen', val)"
   >
-    <AppDrawerHeaderSection title="إضافة اشتراك جديد" @cancel="closeDrawer" />
+    <AppDrawerHeaderSection title="إضافة مجلد جديد" @cancel="closeDrawer" />
     <VDivider />
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
@@ -91,32 +78,35 @@ const onSubmit = () => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <VCol cols="12">
-                <AppSelect v-model="userId" :items="users.map(u => ({ value: u.id, title: u.name }))" label="المستخدم" :rules="[requiredValidator]" />
+                <AppSelect
+                  v-model="userId"
+                  :items="users.map(u => ({ value: u.id, title: u.name }))"
+                  label="العميل"
+                  :rules="[requiredValidator]"
+                />
               </VCol>
 
               <VCol cols="12">
-                <AppSelect v-model="planId" :items="plans.map(p => ({ value: p.id, title: p.name }))" label="الباقة" :rules="[requiredValidator]" />
+                <AppTextField
+                  v-model="name"
+                  label="اسم المجلد"
+                  :rules="[requiredValidator]"
+                />
               </VCol>
 
               <VCol cols="12">
-                <AppTextField v-model="startDate" label="تاريخ البداية" type="date" :rules="[requiredValidator]" />
-              </VCol>
-
-              <VCol cols="12">
-                <AppTextField v-model="endDate" label="تاريخ النهاية" type="date" :rules="[requiredValidator]" />
-              </VCol>
-
-              <VCol cols="12">
-                <AppSelect v-model="status" :items="statuses" label="الحالة" :rules="[requiredValidator]" />
-              </VCol>
-
-              <VCol cols="12">
-                <AppTextField v-model="amountPaid" label="المبلغ المدفوع" type="number" />
+                <AppTextField
+                  v-model="description"
+                  label="الوصف"
+                  type="text"
+                />
               </VCol>
 
               <VCol cols="12">
                 <VBtn type="submit" class="me-3">حفظ</VBtn>
-                <VBtn type="reset" variant="tonal" color="error" @click="closeDrawer">إلغاء</VBtn>
+                <VBtn type="reset" variant="tonal" color="error" @click="closeDrawer">
+                  إلغاء
+                </VBtn>
               </VCol>
             </VRow>
           </VForm>

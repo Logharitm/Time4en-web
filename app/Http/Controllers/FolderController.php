@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ShowFolderRequest;
 use App\Models\Folder;
+use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,7 +75,13 @@ class FolderController extends Controller
      */
     public function store(StoreFolderRequest $request): JsonResponse
     {
-        $folder = $request->user()->folders()->create($request->validated());
+        if ($request->has('user_id')){
+            $user = User::find($request->user_id);
+            $folder = $user->folders()->create($request->validated());
+        }else{
+            $folder = $request->user()->folders()->create($request->validated());
+        }
+
         return $this->successResponse('Folder created successfully.', new FolderResource($folder), 200);
     }
 
