@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
@@ -17,11 +17,13 @@ const refForm = ref()
 
 // Fields
 const userId = ref(null)
+const folderId = ref(null)   // ✅ الفولدر المختار
 const name = ref('')
 const description = ref('')
 
 // Options
 const users = ref([])
+const folders = ref([])
 
 // Fetch users with role=user
 onMounted(async () => {
@@ -33,6 +35,21 @@ onMounted(async () => {
   }
 })
 
+// Watch userId => fetch folders
+watch(userId, async (val) => {
+  if (val) {
+    try {
+      const resp = await $api(`/folders?user_id=${val}`, { method: 'GET' })
+      folders.value = resp.data || []
+    } catch (err) {
+      console.error('Error fetching folders', err)
+    }
+  } else {
+    folders.value = []
+    folderId.value = null
+  }
+})
+
 // Close drawer
 const closeDrawer = () => {
   emit('update:isDrawerOpen', false)
@@ -40,8 +57,10 @@ const closeDrawer = () => {
     refForm.value?.reset()
     refForm.value?.resetValidation()
     userId.value = null
+    folderId.value = null
     name.value = ''
     description.value = ''
+    folders.value = []
   })
 }
 
@@ -51,6 +70,7 @@ const onSubmit = () => {
     if (valid) {
       const formData = new FormData()
       formData.append('user_id', userId.value)
+      formData.append('folder_id', folderId.value) // ✅ الفولدر المختار
       formData.append('name', name.value)
       formData.append('description', description.value || '')
 
@@ -77,11 +97,22 @@ const onSubmit = () => {
         <VCardText>
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
+              <!-- اختيار العميل -->
               <VCol cols="12">
                 <AppSelect
                   v-model="userId"
                   :items="users.map(u => ({ value: u.id, title: u.name }))"
                   label="العميل"
+                  :rules="[requiredValidator]"
+                />
+              </VCol>
+
+              <!-- اختيار الفولدر حسب العميل -->
+              <VCol cols="12" v-if="folders.length">
+                <AppSelect
+                  v-model="folderId"
+                  :items="folders.map(f => ({ value: f.id, title: f.name }))"
+                  label="المجلد"
                   :rules="[requiredValidator]"
                 />
               </VCol>

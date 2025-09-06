@@ -22,19 +22,43 @@ const audioFile = ref(null)
 const users = ref([])
 const folders = ref([])
 
+// جلب اليوزرز أول ما يفتح
 onMounted(async () => {
   try {
     const usersResp = await $api('/users?role=user', { method: 'GET' })
     users.value = usersResp.data || []
 
-    const foldersResp = await $api('/folders', { method: 'GET' })
-    folders.value = foldersResp.data || []
+    // لو الكلمة فيها يوزر متخزن مسبقًا
+    if (props.wordData?.user_id) {
+      userId.value = props.wordData.user_id
+      await fetchFolders(userId.value)
+    }
   } catch (err) {
-    console.error('Error fetching users/folders', err)
+    console.error('Error fetching users', err)
   }
 })
 
-// Fill data when editing
+// دالة تجيب فولدرات حسب اليوزر
+const fetchFolders = async (uid) => {
+  if (!uid) {
+    folders.value = []
+    return
+  }
+  try {
+    const foldersResp = await $api(`/folders?user_id=${uid}`, { method: 'GET' })
+    folders.value = foldersResp.data || []
+  } catch (err) {
+    console.error('Error fetching folders', err)
+  }
+}
+
+// مراقبة اختيار اليوزر
+watch(userId, (newVal) => {
+  folderId.value = null // تصفير الفولدر عند تغيير اليوزر
+  fetchFolders(newVal)
+})
+
+// ملئ البيانات وقت التعديل
 watch(() => props.wordData, val => {
   if (val && Object.keys(val).length > 0) {
     userId.value = val.user_id || null
@@ -43,7 +67,7 @@ watch(() => props.wordData, val => {
     translation.value = val.translation || ''
     exampleSentence.value = val.example_sentence || ''
   }
-}, { immediate: true })
+}, {immediate: true})
 
 const closeDrawer = () => {
   emit('update:isDrawerOpen', false)
@@ -70,52 +94,3 @@ const onSubmit = () => {
   })
 }
 </script>
-
-<template>
-  <VNavigationDrawer temporary :width="400" location="end" class="scrollable-content"
-                     :model-value="props.isDrawerOpen"
-                     @update:model-value="val => emit('update:isDrawerOpen', val)">
-    <AppDrawerHeaderSection title="تعديل الكلمة" @cancel="closeDrawer"/>
-    <VDivider/>
-    <PerfectScrollbar>
-      <VCard flat>
-        <VCardText>
-          <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
-            <VRow>
-              <VCol cols="12">
-                <AppSelect v-model="userId" :items="users.map(u => ({ value: u.id, title: u.name }))" label="العميل"
-                           :rules="[requiredValidator]"/>
-              </VCol>
-
-              <VCol cols="12">
-                <AppSelect v-model="folderId" :items="folders.map(f => ({ value: f.id, title: f.name }))" label="المجلد"
-                           :rules="[requiredValidator]"/>
-              </VCol>
-
-              <VCol cols="12">
-                <AppTextField v-model="word" label="الكلمة" :rules="[requiredValidator]"/>
-              </VCol>
-
-              <VCol cols="12">
-                <AppTextField v-model="translation" label="الترجمة" :rules="[requiredValidator]"/>
-              </VCol>
-
-              <VCol cols="12">
-                <AppTextarea v-model="exampleSentence" label="جملة توضيحية"/>
-              </VCol>
-
-              <VCol cols="12">
-                <input type="file" @change="e => audioFile.value = e.target.files[0]" accept="audio/*"/>
-              </VCol>
-
-              <VCol cols="12">
-                <VBtn type="submit" class="me-3">تحديث</VBtn>
-                <VBtn type="reset" variant="tonal" color="error" @click="closeDrawer">إلغاء</VBtn>
-              </VCol>
-            </VRow>
-          </VForm>
-        </VCardText>
-      </VCard>
-    </PerfectScrollbar>
-  </VNavigationDrawer>
-</template>

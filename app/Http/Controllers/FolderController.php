@@ -42,6 +42,12 @@ class FolderController extends Controller
             });
         }
 
+        if ($request->filled('user_id')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('id', '=', "{$request->user_id}");
+            });
+        }
+
         if ($request->filled('min_words')) {
             $query->where('words_count', '>=', (int) $request->min_words);
         }

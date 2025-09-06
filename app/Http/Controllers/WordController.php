@@ -31,12 +31,10 @@ class WordController extends Controller
             : Word::whereHas('folder', fn($q) => $q->where('user_id', $user->id))
                 ->with(['folder.user']);
 
-        // فلترة بالفولدر
         if ($request->filled('folder_id')) {
             $query->where('folder_id', $request->folder_id);
         }
 
-        // بحث بالكلمة أو الترجمة أو الجملة
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -46,21 +44,18 @@ class WordController extends Controller
             });
         }
 
-        // فلترة باسم المستخدم (من خلال folder.user)
         if ($request->filled('user_name')) {
             $query->whereHas('folder.user', function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->user_name}%");
             });
         }
 
-        // فلترة باسم الفولدر
         if ($request->filled('folder_name')) {
             $query->whereHas('folder', function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->folder_name}%");
             });
         }
 
-        // فلترة بالتاريخ
         if ($request->filled('created_from')) {
             $query->whereDate('created_at', '>=', $request->created_from);
         }
@@ -69,13 +64,11 @@ class WordController extends Controller
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
-        // ترتيب
         $query->orderBy(
             $request->get('sort_by', 'created_at'),
             $request->get('sort_order', 'desc')
         );
 
-        // Pagination
         $words = $query->paginate($request->get('per_page', 20));
 
         return $this->successResponse(
