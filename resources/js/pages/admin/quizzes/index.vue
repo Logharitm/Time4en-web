@@ -211,46 +211,41 @@ const toggleAudio = (item) => {
       </VCardItem>
 
       <VCardText class="d-flex flex-wrap gap-4 align-center">
-        <!-- الفلاتر -->
-        <div class="d-flex flex-wrap gap-4">
-          <div class="me-3 d-flex gap-3">
-            <AppSelect
-              label="عرض"
-              :model-value="itemsPerPage"
-              :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
-              style="inline-size: 6.25rem;"
-              @update:model-value="itemsPerPage = parseInt($event, 10)"
-            />
-          </div>
-
-          <div style="min-width: 220px;">
-            <AppTextField v-model="searchQuery" placeholder="بحث بالكلمة أو الترجمة" label="بحث بالكلمة أو الترجمة" />
-          </div>
-
-          <div style="min-width: 200px;">
-            <AppTextField v-model="filterUserName" placeholder="بحث باسم المستخدم" label="اسم المستخدم" />
-          </div>
-
-          <div style="min-width: 200px;">
-            <AppTextField v-model="filterFolderName" placeholder="بحث باسم المجلد" label="اسم المجلد" />
-          </div>
-
-          <div style="min-width: 160px;">
-            <AppDateTimePicker v-model="filterCreatedFrom" label="تاريخ الإنشاء من" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
-          </div>
-
-          <div style="min-width: 160px;">
-            <AppDateTimePicker v-model="filterCreatedTo" label="تاريخ الإنشاء إلى" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
-          </div>
+        <div class="me-3 d-flex gap-3">
+          <AppSelect
+            label="عرض"
+            :model-value="itemsPerPage"
+            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
+            style="inline-size: 6.25rem;"
+            @update:model-value="itemsPerPage = parseInt($event, 10)"
+          />
         </div>
 
-        <!-- أزرار إعادة التعيين والإضافة في سطر جديد -->
-        <div class="d-flex gap-3 mt-4">
-          <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">إعادة تعيين</VBtn>
-          <VBtn prepend-icon="tabler-plus" @click="isAddWordDrawerVisible = true">إضافة كلمة جديدة</VBtn>
+        <div style="min-width: 220px;">
+          <AppTextField v-model="searchQuery" placeholder="بحث بالكلمة أو الترجمة" label="بحث بالكلمة أو الترجمة" />
         </div>
+
+        <div style="min-width: 200px;">
+          <AppTextField v-model="filterUserName" placeholder="بحث باسم المستخدم" label="اسم المستخدم" />
+        </div>
+
+        <div style="min-width: 200px;">
+          <AppTextField v-model="filterFolderName" placeholder="بحث باسم المجلد" label="اسم المجلد" />
+        </div>
+
+        <div style="min-width: 160px;">
+          <AppDateTimePicker v-model="filterCreatedFrom" label="تاريخ الإنشاء من" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
+        </div>
+        <div style="min-width: 160px;">
+          <AppDateTimePicker v-model="filterCreatedTo" label="تاريخ الإنشاء إلى" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
+        </div>
+
+        <VSpacer />
+
+        <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">إعادة تعيين</VBtn>
+
+        <VBtn prepend-icon="tabler-plus" @click="isAddWordDrawerVisible = true">إضافة كلمة جديدة</VBtn>
       </VCardText>
-
 
       <VDivider />
 
@@ -306,18 +301,8 @@ const toggleAudio = (item) => {
     </VCard>
 
     <AddWordDrawer v-model:is-drawer-open="isAddWordDrawerVisible" @word-data="addNewWord" />
-    <EditWordDrawer
-      v-model:is-drawer-open="isEditWordDrawerVisible"
-      :word-data="wordToEdit"
-      @submit-word="async (id, formData) => {
-    try {
-      await updateWord(id, formData)
-      isEditWordDrawerVisible = false
-    } catch (err) {
-      // فورم مفتوح تلقائياً إذا حصل خطأ
-    }
-  }"
-    />
+    <EditWordDrawer v-model:is-drawer-open="isEditWordDrawerVisible" :word-data="wordToEdit" @word-data="updateWord" />
+
     <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
       <template #prepend>
         <VIcon v-if="color==='success'" icon="tabler-check"/>

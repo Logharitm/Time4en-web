@@ -27,7 +27,7 @@ export default [
   {
     title: 'الاختبارات',
     icon: { icon: 'tabler-shield-question' },
-    to: { name: 'admin-words' },
+    to: { name: 'admin-quizzes' },
   },
   {
     title: 'باقات الاشتراك',

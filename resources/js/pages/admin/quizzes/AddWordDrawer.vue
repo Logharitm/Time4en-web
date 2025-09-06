@@ -9,7 +9,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:isDrawerOpen', 'word-data'])
+const emit = defineEmits(['update:isDrawerOpen', 'folder-data'])
 
 // Form
 const isFormValid = ref(false)
@@ -17,23 +17,18 @@ const refForm = ref()
 
 // Fields
 const userId = ref(null)
-const folderId = ref(null)
-const word = ref('')
-const translation = ref('')
-const audioFile = ref(null)
-const audioError = ref(null)
+const folderId = ref(null)   // ✅ الفولدر المختار
+const description = ref('')
 
 // Options
 const users = ref([])
 const folders = ref([])
 
-// refs
-const audioInput = ref(null)
-
 // Fetch users with role=user
 onMounted(async () => {
   try {
     const resp = await $api('/users?role=user', { method: 'GET' })
+
     users.value = resp.data || []
   } catch (err) {
     console.error('Error fetching users', err)
@@ -45,8 +40,9 @@ watch(userId, async val => {
   if (val) {
     try {
       const resp = await $api(`/folders?user_id=${val}`, { method: 'GET' })
+
       folders.value = resp.data || []
-      folderId.value = null
+      folderId.value = null // ✅ reset الفولدر المختار لما يتغير اليوزر
     } catch (err) {
       console.error('Error fetching folders', err)
       folders.value = []
@@ -58,20 +54,6 @@ watch(userId, async val => {
   }
 })
 
-// handle audio file
-const onAudioChange = e => {
-  const file = e.target.files[0]
-  if (file) {
-    if (file.type.startsWith('audio/')) {
-      audioFile.value = file
-      audioError.value = null
-    } else {
-      audioError.value = 'الملف يجب أن يكون صوتياً'
-      audioFile.value = null
-      e.target.value = null
-    }
-  }
-}
 
 // Close drawer
 const closeDrawer = () => {
@@ -81,11 +63,7 @@ const closeDrawer = () => {
     refForm.value?.resetValidation()
     userId.value = null
     folderId.value = null
-    word.value = ''
-    translation.value = ''
-    audioFile.value = null
-    audioError.value = null
-    if (audioInput.value) audioInput.value.value = null
+    description.value = ''
     folders.value = []
   })
 }
@@ -95,15 +73,12 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
-      formData.append('user_id', userId.value)
-      formData.append('folder_id', folderId.value)
-      formData.append('word', word.value)
-      formData.append('translation', translation.value)
-      if (audioFile.value) {
-        formData.append('audio_file', audioFile.value)
-      }
 
-      emit('word-data', formData)
+      formData.append('user_id', userId.value)
+      formData.append('folder_id', folderId.value) // ✅ الفولدر المختار
+      formData.append('description', description.value || '')
+
+      emit('folder-data', formData)
       closeDrawer()
     }
   })
@@ -120,7 +95,7 @@ const onSubmit = () => {
     @update:model-value="val => emit('update:isDrawerOpen', val)"
   >
     <AppDrawerHeaderSection
-      title="إضافة كلمة جديدة"
+      title="إضافة مجلد جديد"
       @cancel="closeDrawer"
     />
     <VDivider />
@@ -144,7 +119,10 @@ const onSubmit = () => {
               </VCol>
 
               <!-- اختيار الفولدر حسب العميل -->
-              <VCol v-if="folders.length" cols="12">
+              <VCol
+                v-if="folders.length"
+                cols="12"
+              >
                 <AppSelect
                   v-model="folderId"
                   :items="folders.map(f => ({ value: f.id, title: f.name }))"
@@ -155,56 +133,19 @@ const onSubmit = () => {
 
               <VCol cols="12">
                 <AppTextField
-                  v-model="word"
-                  label="الكلمة"
-                  :rules="[requiredValidator]"
+                  v-model="description"
+                  label="الوصف"
+                  type="text"
                 />
               </VCol>
 
               <VCol cols="12">
-                <AppTextField
-                  v-model="translation"
-                  label="الترجمة"
-                  :rules="[requiredValidator]"
-                />
-              </VCol>
-
-              <!-- ملف الصوت -->
-              <VCol cols="12">
-                <div class="d-flex gap-2 align-center">
-                  <input
-                    ref="audioInput"
-                    type="file"
-                    accept="audio/*"
-                    @change="onAudioChange"
-                    style="display:none"
-                  />
-
-                  <VBtn variant="outlined" @click="audioInput.click()">
-                    رفع ملف صوت
-                  </VBtn>
-
-                  <div v-if="audioFile" class="d-flex gap-2 align-center">
-                    <span class="small">{{ audioFile.name }}</span>
-                    <VBtn
-                      icon
-                      variant="text"
-                      @click="() => { audioFile = null; audioInput.value.value = null }"
-                    >
-                      <VIcon icon="tabler-x" />
-                    </VBtn>
-                  </div>
-
-                  <div v-else class="text-muted small">لم يتم اختيار ملف</div>
-                </div>
-
-                <div v-if="audioError" class="text-danger small mt-1">
-                  {{ audioError }}
-                </div>
-              </VCol>
-
-              <VCol cols="12">
-                <VBtn type="submit" class="me-3">حفظ</VBtn>
+                <VBtn
+                  type="submit"
+                  class="me-3"
+                >
+                  حفظ
+                </VBtn>
                 <VBtn
                   type="reset"
                   variant="tonal"
