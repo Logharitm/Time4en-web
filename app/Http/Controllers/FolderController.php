@@ -24,22 +24,34 @@ class FolderController extends Controller
         $user = $request->user();
 
         $query = $user->role === 'admin'
-            ? Folder::query()
-            : $user->folders();
+            ? Folder::query()->with('user')
+            : $user->folders()->with('user');
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        if ($request->has('created_from')) {
-            $query->whereDate('created_at', '>=', $request->created_from);
+        if ($request->filled('user_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->user_name}%");
+            });
         }
 
-        if ($request->has('created_to')) {
+        if ($request->filled('min_words')) {
+            $query->where('words_count', '>=', (int) $request->min_words);
+        }
+        if ($request->filled('max_words')) {
+            $query->where('words_count', '<=', (int) $request->max_words);
+        }
+
+        if ($request->filled('created_from')) {
+            $query->whereDate('created_at', '>=', $request->created_from);
+        }
+        if ($request->filled('created_to')) {
             $query->whereDate('created_at', '<=', $request->created_to);
         }
 
@@ -54,6 +66,7 @@ class FolderController extends Controller
             FolderResource::collection($folders)
         );
     }
+
 
 
     /**

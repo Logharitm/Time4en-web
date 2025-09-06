@@ -1,12 +1,16 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import {ref, computed, watch, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
+import AddFolderDrawer from './AddFolderDrawer.vue'
+import EditFolderDrawer from './EditFolderDrawer.vue'
 
+// Router
+const router = useRouter()
+
+// Filters
 const searchQuery = ref('')
-const selectedRole = ref()
-const selectedPlan = ref()
-const selectedStatus = ref()
 
-// Data table options
+// Data table
 const itemsPerPage = ref(10)
 const page = ref(1)
 const sortBy = ref()
@@ -18,507 +22,243 @@ const updateOptions = options => {
   orderBy.value = options.sortBy[0]?.order
 }
 
+// Toast
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
+const triggerToast = (msg, type = 'success') => {
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
+
+// Delete
+const isDeleteConfirmDialogVisible = ref(false)
+const folderToDeleteId = ref(null)
+const confirmDelete = id => {
+  folderToDeleteId.value = id
+  isDeleteConfirmDialogVisible.value = true
+}
+const executeDelete = async () => {
+  if (!folderToDeleteId.value) return
+  await deleteFolder(folderToDeleteId.value)
+  isDeleteConfirmDialogVisible.value = false
+  folderToDeleteId.value = null
+}
+
 // Headers
 const headers = [
-  {
-    title: 'User',
-    key: 'user',
-  },
-  {
-    title: 'Role',
-    key: 'role',
-  },
-  {
-    title: 'Plan',
-    key: 'plan',
-  },
-  {
-    title: 'Billing',
-    key: 'billing',
-  },
-  {
-    title: 'Status',
-    key: 'status',
-  },
-  {
-    title: 'Actions',
-    key: 'actions',
-    sortable: false,
-  },
+  {title: 'اسم الفولدر', key: 'name'},
+  {title: 'الوصف', key: 'description'},
+  {title: 'المستخدم', key: 'user_name'},
+  {title: 'عدد الكلمات', key: 'words_count'},
+  {title: 'تاريخ الإنشاء', key: 'created_at'},
+  {title: 'العمليات', key: 'actions', sortable: false},
 ]
 
-const {
-  data: usersData,
-  execute: fetchUsers,
-} = await useApi(createUrl('/apps/users', {
-  query: {
-    q: searchQuery,
-    status: selectedStatus,
-    plan: selectedPlan,
-    role: selectedRole,
-    itemsPerPage,
-    page,
-    sortBy,
-    orderBy,
-  },
-}))
+// API
+const foldersData = ref([])
+const totalFolders = ref(0)
+const loading = ref(true)
 
-const users = computed(() => usersData.value.users)
-const totalUsers = computed(() => usersData.value.totalUsers)
+// Fetch data with backend filtering
+const fetchFolders = async () => {
+  loading.value = true
+  try {
+    const params = {
+      search: searchQuery.value || undefined,
+      per_page: itemsPerPage.value,
+      page: page.value,
+      sort_by: sortBy.value,
+      sort_order: orderBy.value,
+    }
 
-// 👉 search filters
-const roles = [
-  {
-    title: 'Admin',
-    value: 'admin',
-  },
-  {
-    title: 'Author',
-    value: 'author',
-  },
-  {
-    title: 'Editor',
-    value: 'editor',
-  },
-  {
-    title: 'Maintainer',
-    value: 'maintainer',
-  },
-  {
-    title: 'Subscriber',
-    value: 'subscriber',
-  },
-]
-
-const plans = [
-  {
-    title: 'Basic',
-    value: 'basic',
-  },
-  {
-    title: 'Company',
-    value: 'company',
-  },
-  {
-    title: 'Enterprise',
-    value: 'enterprise',
-  },
-  {
-    title: 'Team',
-    value: 'team',
-  },
-]
-
-const status = [
-  {
-    title: 'Pending',
-    value: 'pending',
-  },
-  {
-    title: 'Active',
-    value: 'active',
-  },
-  {
-    title: 'Inactive',
-    value: 'inactive',
-  },
-]
-
-const resolveUserRoleVariant = role => {
-  const roleLowerCase = role.toLowerCase()
-  if (roleLowerCase === 'subscriber')
-    return {
-      color: 'success',
-      icon: 'tabler-user',
+    const response = await $api('/folders', {method: 'GET', params})
+    if (response.status === 'success') {
+      foldersData.value = response.data
+      totalFolders.value = response.meta?.total || 0
     }
-  if (roleLowerCase === 'author')
-    return {
-      color: 'error',
-      icon: 'tabler-device-desktop',
-    }
-  if (roleLowerCase === 'maintainer')
-    return {
-      color: 'info',
-      icon: 'tabler-chart-pie',
-    }
-  if (roleLowerCase === 'editor')
-    return {
-      color: 'warning',
-      icon: 'tabler-edit',
-    }
-  if (roleLowerCase === 'admin')
-    return {
-      color: 'primary',
-      icon: 'tabler-crown',
-    }
-  
-  return {
-    color: 'primary',
-    icon: 'tabler-user',
+  } catch (err) {
+    console.error('Error fetching folders', err)
+  } finally {
+    loading.value = false
   }
 }
 
-const resolveUserStatusVariant = stat => {
-  const statLowerCase = stat.toLowerCase()
-  if (statLowerCase === 'pending')
-    return 'warning'
-  if (statLowerCase === 'active')
-    return 'success'
-  if (statLowerCase === 'inactive')
-    return 'secondary'
-  
-  return 'primary'
+// Reset filters function
+const resetFilters = () => {
+  searchQuery.value = ''
 }
 
-const isAddNewUserDrawerVisible = ref(false)
+onMounted(() => {
+  fetchFolders()
+})
 
-const addNewUser = async userData => {
-  await $api('/apps/users', {
-    method: 'POST',
-    body: userData,
-  })
+watch(
+  [searchQuery, itemsPerPage, page, sortBy, orderBy],
+  fetchFolders
+)
 
-  // Refetch User
-  fetchUsers()
+const folders = computed(() => foldersData.value)
+
+// Add / Edit
+const isAddFolderDrawerVisible = ref(false)
+const isEditFolderDrawerVisible = ref(false)
+const folderToEdit = ref(null)
+
+const openEditDrawer = folder => {
+  folderToEdit.value = folder
+  isEditFolderDrawerVisible.value = true
+}
+const openView = (id) => router.push(`/admin/folders/${id}`)
+
+const addNewFolder = async formData => {
+  try {
+    await $api('/folders/store', {method: 'POST', body: formData})
+    triggerToast('تم إضافة الفولدر بنجاح', 'success')
+    fetchFolders()
+  } catch (err) {
+    triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
+  }
 }
 
-const deleteUser = async id => {
-  await $api(`/apps/users/${ id }`, { method: 'DELETE' })
-
-  // Delete from selectedRows
-  const index = selectedRows.value.findIndex(row => row === id)
-  if (index !== -1)
-    selectedRows.value.splice(index, 1)
-
-  // Refetch User
-  fetchUsers()
+const updateFolder = async (id, formData) => {
+  try {
+    await $api(`/folders/${id}/update`, {method: 'POST', body: formData})
+    triggerToast('تم تعديل الفولدر بنجاح', 'success')
+    fetchFolders()
+  } catch (err) {
+    triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
+  }
 }
 
-const widgetData = ref([
-  {
-    title: 'Session',
-    value: '21,459',
-    change: 29,
-    desc: 'Total Users',
-    icon: 'tabler-users',
-    iconColor: 'primary',
-  },
-  {
-    title: 'Paid Users',
-    value: '4,567',
-    change: 18,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-plus',
-    iconColor: 'error',
-  },
-  {
-    title: 'Active Users',
-    value: '19,860',
-    change: -14,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-check',
-    iconColor: 'success',
-  },
-  {
-    title: 'Pending Users',
-    value: '237',
-    change: 42,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-search',
-    iconColor: 'warning',
-  },
-])
+const deleteFolder = async id => {
+  try {
+    await $api(`/folders/${id}/delete`, {method: 'POST'})
+    triggerToast('تم حذف الفولدر بنجاح', 'success')
+    fetchFolders()
+  } catch (err) {
+    triggerToast('حدث خطأ أثناء الحذف', 'error')
+  }
+}
 </script>
 
 <template>
   <section>
-    <!-- 👉 Widgets -->
-    <div class="d-flex mb-6">
-      <VRow>
-        <template
-          v-for="(data, id) in widgetData"
-          :key="id"
-        >
-          <VCol
-            cols="12"
-            md="3"
-            sm="6"
-          >
-            <VCard>
-              <VCardText>
-                <div class="d-flex justify-space-between">
-                  <div class="d-flex flex-column gap-y-1">
-                    <div class="text-body-1 text-high-emphasis">
-                      {{ data.title }}
-                    </div>
-                    <div class="d-flex gap-x-2 align-center">
-                      <h4 class="text-h4">
-                        {{ data.value }}
-                      </h4>
-                      <div
-                        class="text-base"
-                        :class="data.change > 0 ? 'text-success' : 'text-error'"
-                      >
-                        ({{ prefixWithPlus(data.change) }}%)
-                      </div>
-                    </div>
-                    <div class="text-sm">
-                      {{ data.desc }}
-                    </div>
-                  </div>
-                  <VAvatar
-                    :color="data.iconColor"
-                    variant="tonal"
-                    rounded
-                    size="42"
-                  >
-                    <VIcon
-                      :icon="data.icon"
-                      size="26"
-                    />
-                  </VAvatar>
-                </div>
-              </VCardText>
-            </VCard>
-          </VCol>
-        </template>
-      </VRow>
-    </div>
-
     <VCard class="mb-6">
       <VCardItem class="pb-4">
-        <VCardTitle>Filters</VCardTitle>
+        <VCardTitle>الفولدرات</VCardTitle>
       </VCardItem>
 
-      <VCardText>
-        <VRow>
-          <!-- 👉 Select Role -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedRole"
-              placeholder="Select Role"
-              :items="roles"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-          <!-- 👉 Select Plan -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedPlan"
-              placeholder="Select Plan"
-              :items="plans"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-          <!-- 👉 Select Status -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedStatus"
-              placeholder="Select Status"
-              :items="status"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-        </VRow>
-      </VCardText>
+      <VCardText class="d-flex flex-wrap gap-4 align-center">
 
-      <VDivider />
-
-      <VCardText class="d-flex flex-wrap gap-4">
         <div class="me-3 d-flex gap-3">
           <AppSelect
+            label="عرض"
             :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
+            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
             style="inline-size: 6.25rem;"
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
-        <VSpacer />
 
-        <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
-          <!-- 👉 Search  -->
-          <div style="inline-size: 15.625rem;">
-            <AppTextField
-              v-model="searchQuery"
-              placeholder="Search User"
-            />
-          </div>
-
-          <!-- 👉 Export button -->
-          <VBtn
-            variant="tonal"
-            color="secondary"
-            prepend-icon="tabler-upload"
-          >
-            Export
-          </VBtn>
-
-          <!-- 👉 Add user button -->
-          <VBtn
-            prepend-icon="tabler-plus"
-            @click="isAddNewUserDrawerVisible = true"
-          >
-            Add New User
-          </VBtn>
+        <div style="min-width: 200px;">
+          <AppTextField
+            v-model="searchQuery"
+            placeholder="بحث باسم الفولدر"
+            label="اسم الفولدر"
+          />
         </div>
+
+        <VSpacer/>
+
+        <VBtn
+          prepend-icon="tabler-rotate-clockwise"
+          @click="resetFilters"
+          variant="outlined"
+        >
+          إعادة تعيين
+        </VBtn>
+
+        <VBtn prepend-icon="tabler-plus" @click="isAddFolderDrawerVisible = true">
+          إضافة فولدر جديد
+        </VBtn>
       </VCardText>
 
-      <VDivider />
+      <VDivider/>
 
-      <!-- SECTION datatable -->
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
         v-model:page="page"
-        :items="users"
+        :items="folders"
         item-value="id"
-        :items-length="totalUsers"
+        :items-length="totalFolders"
         :headers="headers"
         class="text-no-wrap"
-        show-select
+        :loading="loading"
         @update:options="updateOptions"
       >
-        <!-- User -->
-        <template #item.user="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar
-              size="34"
-              :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
-            >
-              <VImg
-                v-if="item.avatar"
-                :src="item.avatar"
-              />
-              <span v-else>{{ avatarText(item.fullName) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                <RouterLink
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
-                  class="font-weight-medium text-link"
-                >
-                  {{ item.fullName }}
-                </RouterLink>
-              </h6>
-              <div class="text-sm">
-                {{ item.email }}
-              </div>
-            </div>
-          </div>
+        <template #item.user_name="{ item }">
+          <a @click.prevent="router.push(`/admin/users/${item.user.id}`)" class="text-primary cursor-pointer">
+            {{ item.user_name }}
+          </a>
         </template>
-
-        <!-- 👉 Role -->
-        <template #item.role="{ item }">
-          <div class="d-flex align-center gap-x-2">
-            <VIcon
-              :size="22"
-              :icon="resolveUserRoleVariant(item.role).icon"
-              :color="resolveUserRoleVariant(item.role).color"
-            />
-
-            <div class="text-capitalize text-high-emphasis text-body-1">
-              {{ item.role }}
-            </div>
-          </div>
-        </template>
-
-        <!-- Plan -->
-        <template #item.plan="{ item }">
-          <div class="text-body-1 text-high-emphasis text-capitalize">
-            {{ item.currentPlan }}
-          </div>
-        </template>
-
-        <!-- Status -->
-        <template #item.status="{ item }">
-          <VChip
-            :color="resolveUserStatusVariant(item.status)"
-            size="small"
-            label
-            class="text-capitalize"
-          >
-            {{ item.status }}
-          </VChip>
-        </template>
-
-        <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteUser(item.id)">
-            <VIcon icon="tabler-trash" />
+          <IconBtn @click="openView(item.id)">
+            <VIcon icon="tabler-eye"/>
           </IconBtn>
-
-          <IconBtn>
-            <VIcon icon="tabler-eye" />
+          <IconBtn @click="openEditDrawer(item)">
+            <VIcon icon="tabler-pencil"/>
           </IconBtn>
-
-          <VBtn
-            icon
-            variant="text"
-            color="medium-emphasis"
-          >
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem :to="{ name: 'apps-user-view-id', params: { id: item.id } }">
-                  <template #prepend>
-                    <VIcon icon="tabler-eye" />
-                  </template>
-
-                  <VListItemTitle>View</VListItemTitle>
-                </VListItem>
-
-                <VListItem link>
-                  <template #prepend>
-                    <VIcon icon="tabler-pencil" />
-                  </template>
-                  <VListItemTitle>Edit</VListItemTitle>
-                </VListItem>
-
-                <VListItem @click="deleteUser(item.id)">
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Delete</VListItemTitle>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </VBtn>
+          <IconBtn @click="confirmDelete(item.id)">
+            <VIcon icon="tabler-trash"/>
+          </IconBtn>
         </template>
-
-        <!-- pagination -->
         <template #bottom>
           <TablePagination
             v-model:page="page"
             :items-per-page="itemsPerPage"
-            :total-items="totalUsers"
+            :total-items="totalFolders"
           />
         </template>
       </VDataTableServer>
-      <!-- SECTION -->
     </VCard>
-    <!-- 👉 Add New User -->
-    <AddNewUserDrawer
-      v-model:is-drawer-open="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
+
+    <AddFolderDrawer
+      v-model:is-drawer-open="isAddFolderDrawerVisible"
+      @folder-data="addNewFolder"
     />
+
+    <EditFolderDrawer
+      v-model:is-drawer-open="isEditFolderDrawerVisible"
+      :folder-data="folderToEdit"
+      @folder-data="updateFolder"
+    />
+
+    <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
+      <template #prepend>
+        <VIcon v-if="color==='success'" icon="tabler-check"/>
+        <VIcon v-else-if="color==='error'" icon="tabler-alert-circle"/>
+      </template>
+      {{ message }}
+      <template #actions>
+        <VBtn icon variant="text" color="white" @click="showToast=false">
+          <VIcon icon="tabler-x"/>
+        </VBtn>
+      </template>
+    </VSnackbar>
+
+    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
+      <VCard>
+        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardText>هل أنت متأكد أنك تريد حذف هذا الفولدر؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
+        <VCardActions class="px-6 pb-4">
+          <VSpacer/>
+          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>
+          <VBtn color="success" variant="flat" @click="executeDelete">موافق</VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </section>
 </template>
