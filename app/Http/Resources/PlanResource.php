@@ -15,7 +15,7 @@ class PlanResource extends JsonResource
             'price'          => $this->price,
             'duration_months'=> $this->duration_months,
             'words_limit'    => $this->words_limit,
-            'subscriptions' => $this->subscriptions->cont(),
+            'subscriptions' => $this->subscriptions()->cont(),
             'created_at'     => $this->created_at,
             'updated_at'     => $this->updated_at,
         ];
