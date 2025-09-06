@@ -146,12 +146,17 @@ onMounted(async () => {
 
 // Watch filters and table controls -> backend fetch
 watch(
-  [searchQuery, filterRole, filterPlan, filterStartDate, filterEndDate, itemsPerPage, page, sortBy, orderBy],
+  [searchQuery, filterRole, filterPlan, filterStartDate, filterEndDate, itemsPerPage, sortBy, orderBy],
   () => {
-    page.value = 1
+    page.value = 1    // Reset فقط مع الفلاتر
     fetchUsers()
   }
 )
+
+// مراقبة تغيير الصفحة فقط
+watch(page, () => {
+  fetchUsers()
+})
 
 const users = computed(() => usersData.value)
 

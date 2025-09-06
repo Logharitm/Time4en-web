@@ -17,26 +17,17 @@ export default [
   {
     title: 'المجلدات',
     icon: { icon: 'tabler-folders' },
-    children: [
-      { title: 'List', to: { name: 'admin-folders' } },
-      { title: 'Add', to: { name: 'admin-folders-add' } },
-    ],
+    to: { name: 'admin-folders' },
   },
   {
     title: 'الكلمات',
     icon: { icon: 'tabler-file-word' },
-    children: [
-      { title: 'List', to: { name: 'admin-words' } },
-      { title: 'Add', to: { name: 'admin-words-add' } },
-    ],
+    to: { name: 'admin-words' },
   },
   {
     title: 'الاختبارات',
     icon: { icon: 'tabler-shield-question' },
-    children: [
-      { title: 'List', to: { name: 'admin-words' } },
-      { title: 'Add', to: { name: 'admin-words-add' } },
-    ],
+    to: { name: 'admin-words' },
   },
   {
     title: 'باقات الاشتراك',

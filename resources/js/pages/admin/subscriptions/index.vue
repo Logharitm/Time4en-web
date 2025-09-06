@@ -229,18 +229,21 @@ const deleteSubscription = async id => {
           />
         </div>
 
-        <AppTextField
+
+        <AppDateTimePicker
           v-model="filterStartDate"
-          type="date"
           label="تاريخ البداية"
+          placeholder="اختر التاريخ"
           style="min-width: 200px;"
+          clearable
         />
 
-        <AppTextField
+        <AppDateTimePicker
           v-model="filterEndDate"
-          type="date"
           label="تاريخ النهاية"
+          placeholder="اختر التاريخ"
           style="min-width: 200px;"
+          clearable
         />
 
         <VSpacer/>

@@ -269,11 +269,23 @@ const resetFilters = () => {
         </div>
 
         <div>
-          <AppTextField v-model="filterPaidStart" type="date" label="تاريخ الدفع من" style="min-width: 180px;" />
+          <AppDateTimePicker
+            v-model="filterPaidStart"
+            label="تاريخ الدفع من"
+            placeholder="اختر التاريخ"
+            style="min-width: 200px;"
+            clearable
+          />
         </div>
 
         <div>
-          <AppTextField v-model="filterPaidEnd" type="date" label="تاريخ الدفع إلى" style="min-width: 180px;" />
+          <AppDateTimePicker
+            v-model="filterPaidEnd"
+            label="تاريخ الدفع إلى"
+            placeholder="اختر التاريخ"
+            style="min-width: 200px;"
+            clearable
+          />
         </div>
 
         <VSpacer/>

@@ -14,6 +14,7 @@ class FolderResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'user_id' => $this->user_id,
+            'user_name' => $this->user->name,
             'words_count' => $this->when(isset($this->words_count), $this->words_count, $this->words()->count()),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
