@@ -18,21 +18,45 @@ class SubscriptionController extends Controller
     {
         $query = Subscription::with(['user','plan']);
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('user_id')) {
+        if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
         }
 
-        $subscriptions = $query->paginate($request->get('per_page', 20));
+        if ($request->filled('plan_id')) {
+            $query->where('plan_id', $request->plan_id);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('start_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('end_date', '<=', $request->end_date);
+        }
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%");
+            });
+        }
+        
+        if ($request->filled('sort_by') && $request->filled('sort_order')) {
+            $query->orderBy($request->sort_by, $request->sort_order);
+        } else {
+            $query->latest();
+        }
+
+        $subscriptions = $query->paginate($request->get('per_page', 10));
 
         return $this->successResponse(
             'Subscriptions retrieved successfully.',
             SubscriptionResource::collection($subscriptions)
         );
     }
+
 
     public function show(Subscription $subscription): JsonResponse
     {

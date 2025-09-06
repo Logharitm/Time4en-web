@@ -9,6 +9,10 @@ const router = useRouter()
 
 // Filters
 const searchQuery = ref('')
+const filterPlan = ref(null)
+const filterStatus = ref(null)
+const filterStartDate = ref(null)
+const filterEndDate = ref(null)
 
 // Data table
 const itemsPerPage = ref(10)
@@ -63,35 +67,45 @@ const subscriptionsData = ref([])
 const totalSubscriptions = ref(0)
 const loading = ref(true)
 
+// Fetch data with backend filtering
+// Vue.js code
 const fetchSubscriptions = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const response = await $api('/subscriptions', {
-      method: 'GET',
-      params: {
-        search: searchQuery.value,
-        per_page: itemsPerPage.value,
-        page: page.value,
-        sort_by: sortBy.value,
-        sort_order: orderBy.value,
-      },
-    })
+    const params = {
+      search: searchQuery.value || undefined,
+      // الحل هنا: قم بإرسال معرف الباقة مباشرة
+      plan_id: filterPlan.value || undefined,
+      status: filterStatus.value || undefined,
+      start_date: filterStartDate.value || undefined,
+      end_date: filterEndDate.value || undefined,
+      per_page: itemsPerPage.value,
+      page: page.value,
+      sort_by: sortBy.value,
+      sort_order: orderBy.value,
+    };
+
+    const response = await $api('/subscriptions', { method: 'GET', params });
     if (response.status === 'success') {
-      subscriptionsData.value = response.data
-      totalSubscriptions.value = response.meta?.total || 0
+      subscriptionsData.value = response.data;
+      totalSubscriptions.value = response.meta?.total || 0;
     }
   } catch (err) {
-    console.error('Error fetching subscriptions', err)
+    console.error('Error fetching subscriptions', err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 onMounted(fetchSubscriptions)
-watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchSubscriptions)
+watch(
+  [searchQuery, filterPlan, filterStatus, filterStartDate, filterEndDate, itemsPerPage, page, sortBy, orderBy],
+  fetchSubscriptions
+)
+
 const subscriptions = computed(() => subscriptionsData.value)
 
-// حساب الوقت المتبقي بالدقائق/أيام
+// حساب الوقت المتبقي
 const getTimeLeft = endDate => {
   const end = new Date(endDate)
   const now = new Date()
@@ -111,10 +125,7 @@ const openEditDrawer = subscription => {
   subscriptionToEdit.value = subscription
   isEditSubscriptionDrawerVisible.value = true
 }
-
-const openView = (id) => {
-  router.push(`/admin/subscriptions/${id}`)
-}
+const openView = (id) => router.push(`/admin/subscriptions/${id}`)
 
 const addNewSubscription = async formData => {
   try {
@@ -145,7 +156,6 @@ const deleteSubscription = async id => {
     triggerToast('حدث خطأ أثناء الحذف', 'error')
   }
 }
-
 </script>
 
 <template>
@@ -155,26 +165,71 @@ const deleteSubscription = async id => {
         <VCardTitle>الاشتراكات</VCardTitle>
       </VCardItem>
 
-      <VCardText class="d-flex flex-wrap gap-4">
-        <div class="me-3 d-flex gap-3">
-          <AppSelect
-            :model-value="itemsPerPage"
-            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
-            style="inline-size: 6.25rem;"
-            @update:model-value="itemsPerPage = parseInt($event, 10)"
+      <!-- Filters -->
+      <!-- Filters -->
+      <VCardText class="d-flex flex-wrap gap-4 align-center">
+
+        <!-- حقل البحث مع ليبل -->
+        <div style="min-width: 200px;">
+          <AppTextField
+            v-model="searchQuery"
+            placeholder="بحث بالاسم"
+            label="اسم المستخدم"
           />
         </div>
-        <VSpacer/>
-        <div class="app-plan-search-filter d-flex align-center flex-wrap gap-4">
-          <div style="inline-size: 15.625rem;">
-            <AppTextField v-model="searchQuery" placeholder="بحث"/>
-          </div>
 
-          <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">
-            إضافة اشتراك جديد
-          </VBtn>
+        <!-- اختيار الباقة -->
+        <AppSelect
+          v-model="filterPlan"
+          :items="subscriptionsData.map(s => ({ value: s.plan.id, title: s.plan.name }))"
+          label="الباقة"
+          item-value="value"
+          item-title="title"
+        />
+
+        <!-- اختيار الحالة -->
+        <div style="min-width: 150px;">
+          <AppSelect
+            v-model="filterStatus"
+            :items="[
+        { value: 'active', title: 'نشط' },
+        { value: 'expired', title: 'منتهي' },
+        { value: 'canceled', title: 'ملغى' }
+      ]"
+            label="الحالة"
+          />
         </div>
+
+        <!-- تاريخ البداية -->
+        <div>
+          <label for="startDate">تاريخ البداية</label>
+          <input
+            id="startDate"
+            type="date"
+            v-model="filterStartDate"
+            class="form-control"
+          />
+        </div>
+
+        <!-- تاريخ النهاية -->
+        <div>
+          <label for="endDate">تاريخ النهاية</label>
+          <input
+            id="endDate"
+            type="date"
+            v-model="filterEndDate"
+            class="form-control"
+          />
+        </div>
+
+        <VSpacer/>
+
+        <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">
+          إضافة اشتراك جديد
+        </VBtn>
+
       </VCardText>
+
 
       <VDivider/>
 
@@ -195,28 +250,12 @@ const deleteSubscription = async id => {
             {{ item.user.name }}
           </a>
         </template>
-
-        <template #item.plan_name="{ item }">
-          {{ item.plan.name }}
-        </template>
-
-        <template #item.time_left="{ item }">
-          {{ getTimeLeft(item.end_date) }}
-        </template>
-
+        <template #item.plan_name="{ item }">{{ item.plan.name }}</template>
+        <template #item.time_left="{ item }">{{ getTimeLeft(item.end_date) }}</template>
         <template #item.actions="{ item }">
-
-          <IconBtn @click="openView(item.id)">
-            <VIcon icon="tabler-eye"/>
-          </IconBtn>
-
-
-          <IconBtn @click="openEditDrawer(item)">
-            <VIcon icon="tabler-pencil"/>
-          </IconBtn>
-          <IconBtn @click="confirmDelete(item.id)">
-            <VIcon icon="tabler-trash"/>
-          </IconBtn>
+          <IconBtn @click="openView(item.id)"><VIcon icon="tabler-eye"/></IconBtn>
+          <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil"/></IconBtn>
+          <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash"/></IconBtn>
         </template>
       </VDataTableServer>
     </VCard>

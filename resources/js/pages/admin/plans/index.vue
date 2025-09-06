@@ -52,6 +52,7 @@ const headers = [
   { title: 'عدد الكلمات', key: 'words_limit' },
   { title: 'السعر', key: 'price' },
   { title: 'المدة (شهور)', key: 'duration_months' },
+  { title: 'عدد المشتركين', key: 'subscriptions' },
   { title: 'الوصف', key: 'description' },
   { title: 'العمليات', key: 'actions', sortable: false },
 ]
