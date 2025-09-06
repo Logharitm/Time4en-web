@@ -135,6 +135,11 @@ const deletePayment = async id => {
     triggerToast('حدث خطأ أثناء الحذف', 'error')
   }
 }
+
+const openView = (id) => {
+  router.push(`/admin/subscriptions/${id}`)
+}
+
 </script>
 
 <template>
@@ -184,6 +189,11 @@ const deletePayment = async id => {
         </template>
 
         <template #item.actions="{ item }">
+
+          <IconBtn @click="openView(item.subscription?.id)">
+            <VIcon icon="tabler-eye"/>
+          </IconBtn>
+
           <IconBtn @click="openEditDrawer(item)">
             <VIcon icon="tabler-pencil"/>
           </IconBtn>
