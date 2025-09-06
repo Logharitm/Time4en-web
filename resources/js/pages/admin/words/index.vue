@@ -1,12 +1,20 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import AddWordDrawer from './AddWordDrawer.vue'
+import EditWordDrawer from './EditWordDrawer.vue'
 
+// Router
+const router = useRouter()
+
+// Filters
 const searchQuery = ref('')
-const selectedRole = ref()
-const selectedPlan = ref()
-const selectedStatus = ref()
+const filterUserName = ref('')
+const filterFolderName = ref('')
+const filterCreatedFrom = ref('')
+const filterCreatedTo = ref('')
 
-// Data table options
+// Data table
 const itemsPerPage = ref(10)
 const page = ref(1)
 const sortBy = ref()
@@ -18,507 +26,304 @@ const updateOptions = options => {
   orderBy.value = options.sortBy[0]?.order
 }
 
+// Toast
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
+const triggerToast = (msg, type = 'success') => {
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
+
+// Delete
+const isDeleteConfirmDialogVisible = ref(false)
+const wordToDeleteId = ref(null)
+const confirmDelete = id => {
+  wordToDeleteId.value = id
+  isDeleteConfirmDialogVisible.value = true
+}
+const executeDelete = async () => {
+  if (!wordToDeleteId.value) return
+  await deleteWord(wordToDeleteId.value)
+  isDeleteConfirmDialogVisible.value = false
+  wordToDeleteId.value = null
+}
+
 // Headers
 const headers = [
-  {
-    title: 'User',
-    key: 'user',
-  },
-  {
-    title: 'Role',
-    key: 'role',
-  },
-  {
-    title: 'Plan',
-    key: 'plan',
-  },
-  {
-    title: 'Billing',
-    key: 'billing',
-  },
-  {
-    title: 'Status',
-    key: 'status',
-  },
-  {
-    title: 'Actions',
-    key: 'actions',
-    sortable: false,
-  },
+  { title: 'الكلمة', key: 'word' },
+  { title: 'الترجمة', key: 'translation' },
+  { title: 'الجملة', key: 'example_sentence' },
+  { title: 'الصوت', key: 'audio', sortable: false },
+  { title: 'المجلد', key: 'folder_name' },
+  { title: 'المستخدم', key: 'user_name' },
+  { title: 'تاريخ الإنشاء', key: 'created_at' },
+  { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
-const {
-  data: usersData,
-  execute: fetchUsers,
-} = await useApi(createUrl('/apps/users', {
-  query: {
-    q: searchQuery,
-    status: selectedStatus,
-    plan: selectedPlan,
-    role: selectedRole,
-    itemsPerPage,
-    page,
-    sortBy,
-    orderBy,
-  },
-}))
+// API
+const wordsData = ref([])
+const totalWords = ref(0)
+const loading = ref(true)
 
-const users = computed(() => usersData.value.users)
-const totalUsers = computed(() => usersData.value.totalUsers)
+// Format date
+const formatDateTime = dateStr => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  })
+}
 
-// 👉 search filters
-const roles = [
-  {
-    title: 'Admin',
-    value: 'admin',
-  },
-  {
-    title: 'Author',
-    value: 'author',
-  },
-  {
-    title: 'Editor',
-    value: 'editor',
-  },
-  {
-    title: 'Maintainer',
-    value: 'maintainer',
-  },
-  {
-    title: 'Subscriber',
-    value: 'subscriber',
-  },
-]
+// Fetch data
+const fetchWords = async () => {
+  loading.value = true
+  try {
+    const params = {
+      search: searchQuery.value || undefined,
+      user_name: filterUserName.value || undefined,
+      folder_name: filterFolderName.value || undefined,
+      created_from: filterCreatedFrom.value || undefined,
+      created_to: filterCreatedTo.value || undefined,
+      per_page: itemsPerPage.value,
+      page: page.value,
+      sort_by: sortBy.value,
+      sort_order: orderBy.value,
+    }
 
-const plans = [
-  {
-    title: 'Basic',
-    value: 'basic',
-  },
-  {
-    title: 'Company',
-    value: 'company',
-  },
-  {
-    title: 'Enterprise',
-    value: 'enterprise',
-  },
-  {
-    title: 'Team',
-    value: 'team',
-  },
-]
-
-const status = [
-  {
-    title: 'Pending',
-    value: 'pending',
-  },
-  {
-    title: 'Active',
-    value: 'active',
-  },
-  {
-    title: 'Inactive',
-    value: 'inactive',
-  },
-]
-
-const resolveUserRoleVariant = role => {
-  const roleLowerCase = role.toLowerCase()
-  if (roleLowerCase === 'subscriber')
-    return {
-      color: 'success',
-      icon: 'tabler-user',
+    const response = await $api('/words', { method: 'GET', params })
+    if (response.status === 'success') {
+      wordsData.value = response.data
+      totalWords.value = response.meta?.total || 0
     }
-  if (roleLowerCase === 'author')
-    return {
-      color: 'error',
-      icon: 'tabler-device-desktop',
-    }
-  if (roleLowerCase === 'maintainer')
-    return {
-      color: 'info',
-      icon: 'tabler-chart-pie',
-    }
-  if (roleLowerCase === 'editor')
-    return {
-      color: 'warning',
-      icon: 'tabler-edit',
-    }
-  if (roleLowerCase === 'admin')
-    return {
-      color: 'primary',
-      icon: 'tabler-crown',
-    }
-  
-  return {
-    color: 'primary',
-    icon: 'tabler-user',
+  } catch (err) {
+    console.error('Error fetching words', err)
+  } finally {
+    loading.value = false
   }
 }
 
-const resolveUserStatusVariant = stat => {
-  const statLowerCase = stat.toLowerCase()
-  if (statLowerCase === 'pending')
-    return 'warning'
-  if (statLowerCase === 'active')
-    return 'success'
-  if (statLowerCase === 'inactive')
-    return 'secondary'
-  
-  return 'primary'
+// Reset filters
+const resetFilters = () => {
+  searchQuery.value = ''
+  filterUserName.value = ''
+  filterFolderName.value = ''
+  filterCreatedFrom.value = ''
+  filterCreatedTo.value = ''
 }
 
-const isAddNewUserDrawerVisible = ref(false)
+onMounted(() => {
+  fetchWords()
+})
 
-const addNewUser = async userData => {
-  await $api('/apps/users', {
-    method: 'POST',
-    body: userData,
-  })
+watch(
+  [searchQuery, filterUserName, filterFolderName, filterCreatedFrom, filterCreatedTo, itemsPerPage, page, sortBy, orderBy],
+  fetchWords
+)
 
-  // Refetch User
-  fetchUsers()
+const words = computed(() => wordsData.value)
+
+// Add / Edit
+const isAddWordDrawerVisible = ref(false)
+const isEditWordDrawerVisible = ref(false)
+const wordToEdit = ref(null)
+
+const openEditDrawer = word => {
+  wordToEdit.value = word
+  isEditWordDrawerVisible.value = true
 }
 
-const deleteUser = async id => {
-  await $api(`/apps/users/${ id }`, { method: 'DELETE' })
-
-  // Delete from selectedRows
-  const index = selectedRows.value.findIndex(row => row === id)
-  if (index !== -1)
-    selectedRows.value.splice(index, 1)
-
-  // Refetch User
-  fetchUsers()
+// API Actions
+const addNewWord = async formData => {
+  try {
+    await $api('/words', { method: 'POST', body: formData })
+    triggerToast('تم إضافة الكلمة بنجاح', 'success')
+    fetchWords()
+  } catch (err) {
+    triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
+  }
 }
 
-const widgetData = ref([
-  {
-    title: 'Session',
-    value: '21,459',
-    change: 29,
-    desc: 'Total Users',
-    icon: 'tabler-users',
-    iconColor: 'primary',
-  },
-  {
-    title: 'Paid Users',
-    value: '4,567',
-    change: 18,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-plus',
-    iconColor: 'error',
-  },
-  {
-    title: 'Active Users',
-    value: '19,860',
-    change: -14,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-check',
-    iconColor: 'success',
-  },
-  {
-    title: 'Pending Users',
-    value: '237',
-    change: 42,
-    desc: 'Last Week Analytics',
-    icon: 'tabler-user-search',
-    iconColor: 'warning',
-  },
-])
+const updateWord = async (id, formData) => {
+  try {
+    await $api(`/words/${id}/update`, { method: 'POST', body: formData })
+    triggerToast('تم تعديل الكلمة بنجاح', 'success')
+    fetchWords()
+  } catch (err) {
+    triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
+  }
+}
+
+const deleteWord = async id => {
+  try {
+    await $api(`/words/${id}/delete`, { method: 'POST' })
+    triggerToast('تم حذف الكلمة بنجاح', 'success')
+    fetchWords()
+  } catch (err) {
+    triggerToast('حدث خطأ أثناء الحذف', 'error')
+  }
+}
+
+// ✅ التحكم في تشغيل الصوت
+const currentAudio = ref(null)
+const playingWordId = ref(null)
+
+const toggleAudio = (item) => {
+  if (!item.audio_url) return
+
+  // لو فيه صوت شغال
+  if (currentAudio.value) {
+    currentAudio.value.pause()
+    currentAudio.value.currentTime = 0
+  }
+
+  if (playingWordId.value === item.id) {
+    // كان شغال ونوقفه
+    playingWordId.value = null
+    currentAudio.value = null
+  } else {
+    // نشغل الجديد
+    const audio = new Audio(item.audio_url)
+    currentAudio.value = audio
+    playingWordId.value = item.id
+
+    audio.play()
+    audio.onended = () => {
+      playingWordId.value = null
+      currentAudio.value = null
+    }
+  }
+}
 </script>
 
 <template>
   <section>
-    <!-- 👉 Widgets -->
-    <div class="d-flex mb-6">
-      <VRow>
-        <template
-          v-for="(data, id) in widgetData"
-          :key="id"
-        >
-          <VCol
-            cols="12"
-            md="3"
-            sm="6"
-          >
-            <VCard>
-              <VCardText>
-                <div class="d-flex justify-space-between">
-                  <div class="d-flex flex-column gap-y-1">
-                    <div class="text-body-1 text-high-emphasis">
-                      {{ data.title }}
-                    </div>
-                    <div class="d-flex gap-x-2 align-center">
-                      <h4 class="text-h4">
-                        {{ data.value }}
-                      </h4>
-                      <div
-                        class="text-base"
-                        :class="data.change > 0 ? 'text-success' : 'text-error'"
-                      >
-                        ({{ prefixWithPlus(data.change) }}%)
-                      </div>
-                    </div>
-                    <div class="text-sm">
-                      {{ data.desc }}
-                    </div>
-                  </div>
-                  <VAvatar
-                    :color="data.iconColor"
-                    variant="tonal"
-                    rounded
-                    size="42"
-                  >
-                    <VIcon
-                      :icon="data.icon"
-                      size="26"
-                    />
-                  </VAvatar>
-                </div>
-              </VCardText>
-            </VCard>
-          </VCol>
-        </template>
-      </VRow>
-    </div>
-
     <VCard class="mb-6">
       <VCardItem class="pb-4">
-        <VCardTitle>Filters</VCardTitle>
+        <VCardTitle>الكلمات</VCardTitle>
       </VCardItem>
 
-      <VCardText>
-        <VRow>
-          <!-- 👉 Select Role -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedRole"
-              placeholder="Select Role"
-              :items="roles"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-          <!-- 👉 Select Plan -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedPlan"
-              placeholder="Select Plan"
-              :items="plans"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-          <!-- 👉 Select Status -->
-          <VCol
-            cols="12"
-            sm="4"
-          >
-            <AppSelect
-              v-model="selectedStatus"
-              placeholder="Select Status"
-              :items="status"
-              clearable
-              clear-icon="tabler-x"
-            />
-          </VCol>
-        </VRow>
-      </VCardText>
-
-      <VDivider />
-
-      <VCardText class="d-flex flex-wrap gap-4">
+      <VCardText class="d-flex flex-wrap gap-4 align-center">
         <div class="me-3 d-flex gap-3">
           <AppSelect
+            label="عرض"
             :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
+            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
             style="inline-size: 6.25rem;"
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
+
+        <div style="min-width: 220px;">
+          <AppTextField v-model="searchQuery" placeholder="بحث بالكلمة أو الترجمة" label="بحث بالكلمة أو الترجمة" />
+        </div>
+
+        <div style="min-width: 200px;">
+          <AppTextField v-model="filterUserName" placeholder="بحث باسم المستخدم" label="اسم المستخدم" />
+        </div>
+
+        <div style="min-width: 200px;">
+          <AppTextField v-model="filterFolderName" placeholder="بحث باسم المجلد" label="اسم المجلد" />
+        </div>
+
+        <div style="min-width: 160px;">
+          <AppDateTimePicker v-model="filterCreatedFrom" label="تاريخ الإنشاء من" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
+        </div>
+        <div style="min-width: 160px;">
+          <AppDateTimePicker v-model="filterCreatedTo" label="تاريخ الإنشاء إلى" :config="{ enableTime: false, dateFormat: 'Y-m-d' }" />
+        </div>
+
         <VSpacer />
 
-        <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
-          <!-- 👉 Search  -->
-          <div style="inline-size: 15.625rem;">
-            <AppTextField
-              v-model="searchQuery"
-              placeholder="Search User"
-            />
-          </div>
+        <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">إعادة تعيين</VBtn>
 
-          <!-- 👉 Export button -->
-          <VBtn
-            variant="tonal"
-            color="secondary"
-            prepend-icon="tabler-upload"
-          >
-            Export
-          </VBtn>
-
-          <!-- 👉 Add user button -->
-          <VBtn
-            prepend-icon="tabler-plus"
-            @click="isAddNewUserDrawerVisible = true"
-          >
-            Add New User
-          </VBtn>
-        </div>
+        <VBtn prepend-icon="tabler-plus" @click="isAddWordDrawerVisible = true">إضافة كلمة جديدة</VBtn>
       </VCardText>
 
       <VDivider />
 
-      <!-- SECTION datatable -->
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
         v-model:page="page"
-        :items="users"
+        :items="words"
         item-value="id"
-        :items-length="totalUsers"
+        :items-length="totalWords"
         :headers="headers"
         class="text-no-wrap"
-        show-select
+        :loading="loading"
         @update:options="updateOptions"
       >
-        <!-- User -->
-        <template #item.user="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar
-              size="34"
-              :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
-            >
-              <VImg
-                v-if="item.avatar"
-                :src="item.avatar"
-              />
-              <span v-else>{{ avatarText(item.fullName) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                <RouterLink
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
-                  class="font-weight-medium text-link"
-                >
-                  {{ item.fullName }}
-                </RouterLink>
-              </h6>
-              <div class="text-sm">
-                {{ item.email }}
-              </div>
-            </div>
-          </div>
+        <template #item.word="{ item }">{{ item.word }}</template>
+        <template #item.translation="{ item }">{{ item.translation }}</template>
+        <template #item.example_sentence="{ item }">{{ item.example_sentence }}</template>
+
+        <!-- ✅ Play / Pause audio -->
+        <template #item.audio="{ item }">
+          <IconBtn v-if="item.audio_url" @click="toggleAudio(item)" title="تشغيل/إيقاف">
+            <VIcon :icon="playingWordId === item.id ? 'tabler-pause' : 'tabler-play'" />
+          </IconBtn>
+          <span v-else>-</span>
         </template>
 
-        <!-- 👉 Role -->
-        <template #item.role="{ item }">
-          <div class="d-flex align-center gap-x-2">
-            <VIcon
-              :size="22"
-              :icon="resolveUserRoleVariant(item.role).icon"
-              :color="resolveUserRoleVariant(item.role).color"
-            />
-
-            <div class="text-capitalize text-high-emphasis text-body-1">
-              {{ item.role }}
-            </div>
-          </div>
+        <template #item.folder_name="{ item }">
+          <a v-if="item.folder_id" @click.prevent="router.push(`/admin/folders/${item.folder_id}`)" class="text-primary cursor-pointer">
+            {{ item.folder_name }}
+          </a>
+          <span v-else>-</span>
         </template>
 
-        <!-- Plan -->
-        <template #item.plan="{ item }">
-          <div class="text-body-1 text-high-emphasis text-capitalize">
-            {{ item.currentPlan }}
-          </div>
+        <template #item.user_name="{ item }">
+          <a v-if="item.user_id" @click.prevent="router.push(`/admin/users/${item.user_id}`)" class="text-primary cursor-pointer">
+            {{ item.user_name }}
+          </a>
+          <span v-else>-</span>
         </template>
 
-        <!-- Status -->
-        <template #item.status="{ item }">
-          <VChip
-            :color="resolveUserStatusVariant(item.status)"
-            size="small"
-            label
-            class="text-capitalize"
-          >
-            {{ item.status }}
-          </VChip>
-        </template>
+        <template #item.created_at="{ item }">{{ formatDateTime(item.created_at) }}</template>
 
-        <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteUser(item.id)">
-            <VIcon icon="tabler-trash" />
-          </IconBtn>
-
-          <IconBtn>
-            <VIcon icon="tabler-eye" />
-          </IconBtn>
-
-          <VBtn
-            icon
-            variant="text"
-            color="medium-emphasis"
-          >
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem :to="{ name: 'apps-user-view-id', params: { id: item.id } }">
-                  <template #prepend>
-                    <VIcon icon="tabler-eye" />
-                  </template>
-
-                  <VListItemTitle>View</VListItemTitle>
-                </VListItem>
-
-                <VListItem link>
-                  <template #prepend>
-                    <VIcon icon="tabler-pencil" />
-                  </template>
-                  <VListItemTitle>Edit</VListItemTitle>
-                </VListItem>
-
-                <VListItem @click="deleteUser(item.id)">
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Delete</VListItemTitle>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </VBtn>
+          <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil"/></IconBtn>
+          <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash"/></IconBtn>
         </template>
 
-        <!-- pagination -->
         <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="totalUsers"
-          />
+          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="totalWords" />
         </template>
       </VDataTableServer>
-      <!-- SECTION -->
     </VCard>
-    <!-- 👉 Add New User -->
-    <AddNewUserDrawer
-      v-model:is-drawer-open="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
+
+    <AddWordDrawer v-model:is-drawer-open="isAddWordDrawerVisible" @word-data="addNewWord" />
+    <EditWordDrawer v-model:is-drawer-open="isEditWordDrawerVisible" :word-data="wordToEdit" @word-data="updateWord" />
+
+    <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
+      <template #prepend>
+        <VIcon v-if="color==='success'" icon="tabler-check"/>
+        <VIcon v-else-if="color==='error'" icon="tabler-alert-circle"/>
+      </template>
+      {{ message }}
+      <template #actions>
+        <VBtn icon variant="text" color="white" @click="showToast=false"><VIcon icon="tabler-x"/></VBtn>
+      </template>
+    </VSnackbar>
+
+    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
+      <VCard>
+        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardText>هل أنت متأكد أنك تريد حذف هذه الكلمة؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
+        <VCardActions class="px-6 pb-4">
+          <VSpacer/>
+          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>
+          <VBtn color="success" variant="flat" @click="executeDelete">موافق</VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </section>
 </template>

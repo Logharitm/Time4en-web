@@ -27,8 +27,9 @@ class WordController extends Controller
         $user = $request->user();
 
         $query = $user->role === 'admin'
-            ? Word::query()
-            : Word::whereHas('folder', fn($q) => $q->where('user_id', $user->id));
+            ? Word::query()->with(['user', 'folder'])
+            : Word::whereHas('folder', fn($q) => $q->where('user_id', $user->id))
+                ->with(['user', 'folder']);
 
         if ($request->filled('folder_id')) {
             $query->where('folder_id', $request->folder_id);
@@ -36,11 +37,31 @@ class WordController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(fn($q) => $q
-                ->where('word', 'like', "%{$search}%")
-                ->orWhere('translation', 'like', "%{$search}%")
-                ->orWhere('example_sentence', 'like', "%{$search}%")
-            );
+            $query->where(function ($q) use ($search) {
+                $q->where('word', 'like', "%{$search}%")
+                    ->orWhere('translation', 'like', "%{$search}%")
+                    ->orWhere('example_sentence', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('user_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->user_name}%");
+            });
+        }
+
+        if ($request->filled('folder_name')) {
+            $query->whereHas('folder', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->folder_name}%");
+            });
+        }
+
+        if ($request->filled('created_from')) {
+            $query->whereDate('created_at', '>=', $request->created_from);
+        }
+
+        if ($request->filled('created_to')) {
+            $query->whereDate('created_at', '<=', $request->created_to);
         }
 
         $query->orderBy(
@@ -55,6 +76,7 @@ class WordController extends Controller
             WordResource::collection($words)
         );
     }
+
 
 
 
