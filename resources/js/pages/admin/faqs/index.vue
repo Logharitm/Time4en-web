@@ -149,7 +149,7 @@ const truncateText = text => {
   <section>
     <VCard class="mb-6">
       <VCardItem class="pb-4">
-        <VCardTitle>الأسئلة المتكررة</VCardTitle>
+        <VCardTitle>اسألة واجوبة</VCardTitle>
       </VCardItem>
 
       <!-- Search + Add -->

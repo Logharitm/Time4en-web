@@ -41,52 +41,34 @@ export default [
   {
     title: 'باقات الاشتراك',
     icon: { icon: 'tabler-plant-2' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-plans' },
   },
   {
     title: 'الاشتراكات',
     icon: { icon: 'tabler-paywall' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-subscriptions' },
   },
   {
     title: 'المدفوعات',
     icon: { icon: 'tabler-brand-cashapp' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-payments' },
   },
   {
     title: 'الرسائل الواردة',
     icon: { icon: 'tabler-brand-messenger' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-messages' },
   },
 
   {
     title: 'الشروط والاحكام',
     icon: { icon: 'tabler-gavel' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-policy' },
   },
 
   {
     title: 'بيانات الاتصال',
     icon: { icon: 'tabler-phone' },
-    children: [
-      { title: 'List', to: { name: 'admin-plans' } },
-      { title: 'Add', to: { name: 'admin-plans-add' } },
-    ],
+    to: { name: 'admin-contact' },
   },
   {
     title: 'اسألة واجوبة',

@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import AddNewPlanDrawer from './AddNewPlanDrawer.vue'
-import EditPlanDrawer from './EditPlanDrawer.vue'
+import AddSubscriptionDrawer from './AddSubscriptionDrawer.vue'
+import EditSubscriptionDrawer from './EditSubscriptionDrawer.vue'
 
 // Router
 const router = useRouter()
@@ -34,37 +34,39 @@ const triggerToast = (msg, type = 'success') => {
 
 // Delete
 const isDeleteConfirmDialogVisible = ref(false)
-const planToDeleteId = ref(null)
+const subscriptionToDeleteId = ref(null)
 const confirmDelete = id => {
-  planToDeleteId.value = id
+  subscriptionToDeleteId.value = id
   isDeleteConfirmDialogVisible.value = true
 }
 const executeDelete = async () => {
-  if (!planToDeleteId.value) return
-  await deletePlan(planToDeleteId.value)
+  if (!subscriptionToDeleteId.value) return
+  await deleteSubscription(subscriptionToDeleteId.value)
   isDeleteConfirmDialogVisible.value = false
-  planToDeleteId.value = null
+  subscriptionToDeleteId.value = null
 }
 
 // Headers
 const headers = [
-  { title: 'اسم باقة الاشتراك', key: 'name' },
-  { title: 'عدد الكلمات', key: 'words_limit' },
-  { title: 'السعر', key: 'price' },
-  { title: 'المدة (شهور)', key: 'duration_months' },
-  { title: 'الوصف', key: 'description' },
+  { title: 'اسم المستخدم', key: 'user_name' },
+  { title: 'الباقة', key: 'plan_name' },
+  { title: 'تاريخ البداية', key: 'start_date' },
+  { title: 'تاريخ النهاية', key: 'end_date' },
+  { title: 'الوقت المتبقي', key: 'time_left' },
+  { title: 'الحالة', key: 'status' },
+  { title: 'المبلغ المدفوع', key: 'amount_paid' },
   { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
-const plansData = ref([])
-const totalPlans = ref(0)
+const subscriptionsData = ref([])
+const totalSubscriptions = ref(0)
 const loading = ref(true)
 
-const fetchPlans = async () => {
+const fetchSubscriptions = async () => {
   loading.value = true
   try {
-    const response = await $api('/plans', {
+    const response = await $api('/subscriptions', {
       method: 'GET',
       params: {
         search: searchQuery.value,
@@ -75,74 +77,82 @@ const fetchPlans = async () => {
       },
     })
     if (response.status === 'success') {
-      plansData.value = response.data
-      totalPlans.value = response.meta?.total || 0
+      subscriptionsData.value = response.data
+      totalSubscriptions.value = response.meta?.total || 0
     }
   } catch (err) {
-    console.error('Error fetching plans', err)
+    console.error('Error fetching subscriptions', err)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(fetchPlans)
-watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchPlans)
-const plans = computed(() => plansData.value)
+onMounted(fetchSubscriptions)
+watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchSubscriptions)
+const subscriptions = computed(() => subscriptionsData.value)
 
-// Add
-const isAddNewPlanDrawerVisible = ref(false)
-const addNewPlan = async planData => {
+// حساب الوقت المتبقي بالدقائق/أيام
+const getTimeLeft = endDate => {
+  const end = new Date(endDate)
+  const now = new Date()
+  const diffMs = end - now
+  if (diffMs <= 0) return 'انتهى'
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24)
+  return `${diffDays} يوم ${diffHours} ساعة`
+}
+
+// Add / Edit
+const isAddSubscriptionDrawerVisible = ref(false)
+const isEditSubscriptionDrawerVisible = ref(false)
+const subscriptionToEdit = ref(null)
+
+const openEditDrawer = subscription => {
+  subscriptionToEdit.value = subscription
+  isEditSubscriptionDrawerVisible.value = true
+}
+
+const openView = (id) => {
+  router.push(`/admin/subscriptions/${id}`)
+}
+
+const addNewSubscription = async formData => {
   try {
-    await $api('/plans/store', {
-      method: 'POST',
-      body: planData,
-    })
-    triggerToast('تم إضافة باقة الاشتراك بنجاح', 'success')
-    fetchPlans()
+    await $api('/subscriptions/store', { method: 'POST', body: formData })
+    triggerToast('تم إضافة الاشتراك بنجاح', 'success')
+    fetchSubscriptions()
   } catch (err) {
     triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
   }
 }
 
-// Edit
-const isEditPlanDrawerVisible = ref(false)
-const planToEdit = ref(null)
-const openEditDrawer = plan => {
-  planToEdit.value = plan
-  isEditPlanDrawerVisible.value = true
-}
-const updatePlan = async (id, planData) => {
+const updateSubscription = async (id, formData) => {
   try {
-    await $api(`/plans/update/${id}`, {
-      method: 'POST',
-      body: planData,
-    })
-    triggerToast('تم تعديل باقة الاشتراك بنجاح', 'success')
-    fetchPlans()
+    await $api(`/subscriptions/update/${id}`, { method: 'POST', body: formData })
+    triggerToast('تم تعديل الاشتراك بنجاح', 'success')
+    fetchSubscriptions()
   } catch (err) {
     triggerToast('حدث خطأ، حاول مرة أخرى', 'error')
   }
 }
 
-// Delete plan
-const deletePlan = async id => {
+const deleteSubscription = async id => {
   try {
-    await $api(`/plans/delete/${id}`, { method: 'POST' })
-    const index = selectedRows.value.findIndex(row => row === id)
-    if (index !== -1) selectedRows.value.splice(index, 1)
-    triggerToast('تم حذف باقة الاشتراك بنجاح', 'success')
-    fetchPlans()
+    await $api(`/subscriptions/delete/${id}`, { method: 'POST' })
+    triggerToast('تم حذف الاشتراك بنجاح', 'success')
+    fetchSubscriptions()
   } catch (err) {
     triggerToast('حدث خطأ أثناء الحذف', 'error')
   }
 }
+
 </script>
 
 <template>
   <section>
     <VCard class="mb-6">
       <VCardItem class="pb-4">
-        <VCardTitle>باقات الاشتراك</VCardTitle>
+        <VCardTitle>الاشتراكات</VCardTitle>
       </VCardItem>
 
       <VCardText class="d-flex flex-wrap gap-4">
@@ -160,8 +170,8 @@ const deletePlan = async id => {
             <AppTextField v-model="searchQuery" placeholder="بحث"/>
           </div>
 
-          <VBtn prepend-icon="tabler-plus" @click="isAddNewPlanDrawerVisible = true">
-            اضافة خطة جديدة
+          <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">
+            إضافة اشتراك جديد
           </VBtn>
         </div>
       </VCardText>
@@ -172,15 +182,35 @@ const deletePlan = async id => {
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
         v-model:page="page"
-        :items="plans"
+        :items="subscriptions"
         item-value="id"
-        :items-length="totalPlans"
+        :items-length="totalSubscriptions"
         :headers="headers"
         class="text-no-wrap"
         :loading="loading"
         @update:options="updateOptions"
       >
+        <template #item.user_name="{ item }">
+          <a @click.prevent="router.push(`/admin/users/${item.user.id}`)" class="text-primary cursor-pointer">
+            {{ item.user.name }}
+          </a>
+        </template>
+
+        <template #item.plan_name="{ item }">
+          {{ item.plan.name }}
+        </template>
+
+        <template #item.time_left="{ item }">
+          {{ getTimeLeft(item.end_date) }}
+        </template>
+
         <template #item.actions="{ item }">
+
+          <IconBtn @click="openView(item.id)">
+            <VIcon icon="tabler-eye"/>
+          </IconBtn>
+
+
           <IconBtn @click="openEditDrawer(item)">
             <VIcon icon="tabler-pencil"/>
           </IconBtn>
@@ -191,15 +221,15 @@ const deletePlan = async id => {
       </VDataTableServer>
     </VCard>
 
-    <AddNewPlanDrawer
-      v-model:is-drawer-open="isAddNewPlanDrawerVisible"
-      @plan-data="addNewPlan"
+    <AddSubscriptionDrawer
+      v-model:is-drawer-open="isAddSubscriptionDrawerVisible"
+      @plan-data="addNewSubscription"
     />
 
-    <EditPlanDrawer
-      v-model:is-drawer-open="isEditPlanDrawerVisible"
-      :plan-data="planToEdit"
-      @plan-data="updatePlan"
+    <EditSubscriptionDrawer
+      v-model:is-drawer-open="isEditSubscriptionDrawerVisible"
+      :plan-data="subscriptionToEdit"
+      @plan-data="updateSubscription"
     />
 
     <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
@@ -218,7 +248,7 @@ const deletePlan = async id => {
     <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
       <VCard>
         <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
-        <VCardText>هل أنت متأكد أنك تريد حذف هذه باقة الاشتراك؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
+        <VCardText>هل أنت متأكد أنك تريد حذف هذا الاشتراك؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer/>
           <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>
