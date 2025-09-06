@@ -14,6 +14,17 @@ const filterStatus = ref(null)
 const filterStartDate = ref(null)
 const filterEndDate = ref(null)
 
+// Plans data for the select field
+const plans = ref([])
+const fetchPlans = async () => {
+  try {
+    const plansResp = await $api('/plans', { method: 'GET' })
+    plans.value = plansResp.data || []
+  } catch (err) {
+    console.error('Error fetching plans', err)
+  }
+}
+
 // Data table
 const itemsPerPage = ref(10)
 const page = ref(1)
@@ -68,13 +79,11 @@ const totalSubscriptions = ref(0)
 const loading = ref(true)
 
 // Fetch data with backend filtering
-// Vue.js code
 const fetchSubscriptions = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const params = {
       search: searchQuery.value || undefined,
-      // الحل هنا: قم بإرسال معرف الباقة مباشرة
       plan_id: filterPlan.value || undefined,
       status: filterStatus.value || undefined,
       start_date: filterStartDate.value || undefined,
@@ -83,21 +92,34 @@ const fetchSubscriptions = async () => {
       page: page.value,
       sort_by: sortBy.value,
       sort_order: orderBy.value,
-    };
+    }
 
-    const response = await $api('/subscriptions', { method: 'GET', params });
+    const response = await $api('/subscriptions', { method: 'GET', params })
     if (response.status === 'success') {
-      subscriptionsData.value = response.data;
-      totalSubscriptions.value = response.meta?.total || 0;
+      subscriptionsData.value = response.data
+      totalSubscriptions.value = response.meta?.total || 0
     }
   } catch (err) {
-    console.error('Error fetching subscriptions', err);
+    console.error('Error fetching subscriptions', err)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-onMounted(fetchSubscriptions)
+// Reset filters function
+const resetFilters = () => {
+  searchQuery.value = ''
+  filterPlan.value = null
+  filterStatus.value = null
+  filterStartDate.value = null
+  filterEndDate.value = null
+}
+
+onMounted(() => {
+  fetchPlans()
+  fetchSubscriptions()
+})
+
 watch(
   [searchQuery, filterPlan, filterStatus, filterStartDate, filterEndDate, itemsPerPage, page, sortBy, orderBy],
   fetchSubscriptions
@@ -165,11 +187,8 @@ const deleteSubscription = async id => {
         <VCardTitle>الاشتراكات</VCardTitle>
       </VCardItem>
 
-      <!-- Filters -->
-      <!-- Filters -->
       <VCardText class="d-flex flex-wrap gap-4 align-center">
 
-        <!-- حقل البحث مع ليبل -->
         <div style="min-width: 200px;">
           <AppTextField
             v-model="searchQuery"
@@ -178,58 +197,56 @@ const deleteSubscription = async id => {
           />
         </div>
 
-        <!-- اختيار الباقة -->
-        <AppSelect
-          v-model="filterPlan"
-          :items="subscriptionsData.map(s => ({ value: s.plan.id, title: s.plan.name }))"
-          label="الباقة"
-          item-value="value"
-          item-title="title"
-        />
+        <div style="min-width: 150px;">
+          <AppSelect
+            v-model="filterPlan"
+            :items="plans"
+            label="الباقة"
+            item-value="id"
+            item-title="name"
+          />
+        </div>
 
-        <!-- اختيار الحالة -->
         <div style="min-width: 150px;">
           <AppSelect
             v-model="filterStatus"
             :items="[
-        { value: 'active', title: 'نشط' },
-        { value: 'expired', title: 'منتهي' },
-        { value: 'canceled', title: 'ملغى' }
-      ]"
+              { value: 'active', title: 'نشط' },
+              { value: 'expired', title: 'منتهي' },
+              { value: 'canceled', title: 'ملغى' }
+            ]"
             label="الحالة"
           />
         </div>
 
-        <!-- تاريخ البداية -->
-        <div>
-          <label for="startDate">تاريخ البداية</label>
-          <input
-            id="startDate"
-            type="date"
-            v-model="filterStartDate"
-            class="form-control"
-          />
-        </div>
+        <AppTextField
+          v-model="filterStartDate"
+          type="date"
+          label="تاريخ البداية"
+          style="min-width: 200px;"
+        />
 
-        <!-- تاريخ النهاية -->
-        <div>
-          <label for="endDate">تاريخ النهاية</label>
-          <input
-            id="endDate"
-            type="date"
-            v-model="filterEndDate"
-            class="form-control"
-          />
-        </div>
+        <AppTextField
+          v-model="filterEndDate"
+          type="date"
+          label="تاريخ النهاية"
+          style="min-width: 200px;"
+        />
 
         <VSpacer/>
+
+        <VBtn
+          prepend-icon="tabler-rotate-clockwise"
+          @click="resetFilters"
+          variant="outlined"
+        >
+          إعادة تعيين
+        </VBtn>
 
         <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">
           إضافة اشتراك جديد
         </VBtn>
-
       </VCardText>
-
 
       <VDivider/>
 

@@ -18,12 +18,38 @@ class PaymentController extends Controller
     {
         $query = Payment::with(['subscription','subscription.user','subscription.plan']);
 
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('subscription_id')) {
-            $query->where('subscription_id', $request->subscription_id);
+        if ($request->filled('plan_id')) {
+            $query->whereHas('subscription.plan', function ($q) use ($request) {
+                $q->where('id', $request->plan_id);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $query->whereHas('subscription.user', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%");
+            });
+        }
+
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        if ($request->filled('paid_from')) {
+            $query->whereDate('paid_at', '>=', $request->paid_from);
+        }
+
+        if ($request->filled('paid_to')) {
+            $query->whereDate('paid_at', '<=', $request->paid_to);
+        }
+
+        if ($request->filled('sort_by') && $request->filled('sort_order')) {
+            $query->orderBy($request->sort_by, $request->sort_order);
+        } else {
+            $query->latest('paid_at'); // default sort by paid_at desc
         }
 
         $payments = $query->paginate($request->get('per_page', 20));
@@ -33,6 +59,7 @@ class PaymentController extends Controller
             PaymentResource::collection($payments)
         );
     }
+
 
     public function show(Payment $payment): JsonResponse
     {
