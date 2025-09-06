@@ -17,18 +17,35 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = User::query();
+        $query = User::query()->with(['subscription.plan']);
 
-        // filter by role (admin or user)
         if ($request->has('role') && in_array($request->role, ['admin', 'user'])) {
             $query->where('role', $request->role);
         }
-        // search by name or email
+
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('plan_id')) {
+            $query->whereHas('subscription.plan', function ($q) use ($request) {
+                $q->where('id', $request->plan_id);
+            });
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereHas('subscription', function ($q) use ($request) {
+                $q->whereDate('start_date', '>=', $request->start_date);
+            });
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereHas('subscription', function ($q) use ($request) {
+                $q->whereDate('end_date', '<=', $request->end_date);
             });
         }
 
@@ -42,8 +59,8 @@ class UserController extends Controller
             'Users retrieved successfully.',
             UserResource::collection($users)
         );
-
     }
+
 
     public function store(StoreUserRequest $request): JsonResponse
     {

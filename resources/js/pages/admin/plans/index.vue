@@ -189,6 +189,13 @@ const deletePlan = async id => {
             <VIcon icon="tabler-trash"/>
           </IconBtn>
         </template>
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalPlans"
+          />
+        </template>
       </VDataTableServer>
     </VCard>
 

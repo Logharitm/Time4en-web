@@ -189,6 +189,16 @@ const deleteSubscription = async id => {
 
       <VCardText class="d-flex flex-wrap gap-4 align-center">
 
+        <div class="me-3 d-flex gap-3">
+          <AppSelect
+            label="عرض"
+            :model-value="itemsPerPage"
+            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
+            style="inline-size: 6.25rem;"
+            @update:model-value="itemsPerPage = parseInt($event, 10)"
+          />
+        </div>
+
         <div style="min-width: 200px;">
           <AppTextField
             v-model="searchQuery"
@@ -197,7 +207,7 @@ const deleteSubscription = async id => {
           />
         </div>
 
-        <div style="min-width: 150px;">
+        <div style="min-width: 200px;">
           <AppSelect
             v-model="filterPlan"
             :items="plans"
@@ -207,7 +217,7 @@ const deleteSubscription = async id => {
           />
         </div>
 
-        <div style="min-width: 150px;">
+        <div style="min-width: 200px;">
           <AppSelect
             v-model="filterStatus"
             :items="[
@@ -273,6 +283,13 @@ const deleteSubscription = async id => {
           <IconBtn @click="openView(item.id)"><VIcon icon="tabler-eye"/></IconBtn>
           <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil"/></IconBtn>
           <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash"/></IconBtn>
+        </template>
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalSubscriptions"
+          />
         </template>
       </VDataTableServer>
     </VCard>

@@ -207,6 +207,7 @@ const resetFilters = () => {
       <VCardText class="d-flex flex-wrap gap-4 align-center">
         <div class="me-3 d-flex gap-3">
           <AppSelect
+            label="عرض"
             :model-value="itemsPerPage"
             :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
             style="inline-size: 6.25rem;"
@@ -312,6 +313,13 @@ const resetFilters = () => {
           <IconBtn @click="openView(item.subscription?.id)"><VIcon icon="tabler-eye"/></IconBtn>
           <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil"/></IconBtn>
           <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash"/></IconBtn>
+        </template>
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalPayments"
+          />
         </template>
       </VDataTableServer>
     </VCard>

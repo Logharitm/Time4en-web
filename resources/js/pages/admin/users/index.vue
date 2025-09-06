@@ -1,83 +1,86 @@
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-  onMounted
-} from 'vue';
-import {
-  useRouter
-} from 'vue-router'; // ✅ استيراد useRouter
-import AddNewUserDrawer from './AddNewUserDrawer.vue';
-import EditUserDrawer from './EditUserDrawer.vue';
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import AddNewUserDrawer from './AddNewUserDrawer.vue'
+import EditUserDrawer from './EditUserDrawer.vue'
 
 // Router instance
-const router = useRouter(); // ✅ الحصول على كائن router
+const router = useRouter()
 
-// filters
-const searchQuery = ref('');
+// Filters
+const searchQuery = ref('')
+const filterRole = ref(null)
+const filterPlan = ref(null)
+const filterStartDate = ref(null)
+const filterEndDate = ref(null)
+
+// Plans list (جلب من API احتياطياً)
+const plans = ref([])
+const fetchPlans = async () => {
+  try {
+    const resp = await $api('/plans', { method: 'GET', params: { per_page: 200 } })
+    if (resp && resp.status === 'success') {
+      // handle both paginated and raw array
+      plans.value = Array.isArray(resp.data) ? resp.data : (resp.data?.data ?? resp.data ?? [])
+    } else {
+      plans.value = []
+    }
+  } catch (e) {
+    console.error('Error fetching plans', e)
+    plans.value = []
+  }
+}
 
 // Data table options
-const itemsPerPage = ref(10);
-const page = ref(1);
-const sortBy = ref();
-const orderBy = ref();
-const selectedRows = ref([]);
+const itemsPerPage = ref(10)
+const page = ref(1)
+const sortBy = ref()
+const orderBy = ref()
+const selectedRows = ref([])
 
 const updateOptions = options => {
-  sortBy.value = options.sortBy[0]?.key;
-  orderBy.value = options.sortBy[0]?.order;
-};
+  sortBy.value = options.sortBy?.[0]?.key
+  orderBy.value = options.sortBy?.[0]?.order
+}
 
-// 👉 Toast state
-const showToast = ref(false);
-const message = ref('');
-const color = ref('success');
-
+// Toast state
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
 const triggerToast = (msg, type = 'success') => {
-  message.value = msg;
-  color.value = type;
-  showToast.value = true;
-};
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
 
-// 👈 إضافة متغيرات ودوال نافذة التأكيد
-const isDeleteConfirmDialogVisible = ref(false);
-const userToDeleteId = ref(null);
-
-const confirmDelete = (userId) => {
-  userToDeleteId.value = userId;
-  isDeleteConfirmDialogVisible.value = true;
-};
-
+// Delete confirm dialog
+const isDeleteConfirmDialogVisible = ref(false)
+const userToDeleteId = ref(null)
+const confirmDelete = userId => {
+  userToDeleteId.value = userId
+  isDeleteConfirmDialogVisible.value = true
+}
 const executeDelete = async () => {
   if (userToDeleteId.value) {
-    await deleteUser(userToDeleteId.value);
-    isDeleteConfirmDialogVisible.value = false;
-    userToDeleteId.value = null;
+    await deleteUser(userToDeleteId.value)
+    isDeleteConfirmDialogVisible.value = false
+    userToDeleteId.value = null
   }
-};
+}
 
-const calculateRemainingDays = (endDateString) => {
-  if (!endDateString) return 'غير محدد';
-
-  const today = new Date();
-  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-  const endDate = new Date(endDateString);
-  const endDateMidnight = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-  const differenceInTime = endDateMidnight.getTime() - todayMidnight.getTime();
-  const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
-
-  if (differenceInDays > 0) {
-    return `متبقي ${differenceInDays} يوم`;
-  } else if (differenceInDays === 0) {
-    return 'ينتهي اليوم';
-  } else {
-    return 'منتهية';
-  }
-};
-
+// Helpers
+const calculateRemainingDays = endDateString => {
+  if (!endDateString) return 'غير محدد'
+  const today = new Date()
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  const endDate = new Date(endDateString)
+  const endDateMidnight = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+  const differenceInTime = endDateMidnight.getTime() - todayMidnight.getTime()
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24))
+  if (differenceInDays > 0) return `متبقي ${differenceInDays} يوم`
+  if (differenceInDays === 0) return 'ينتهي اليوم'
+  return 'منتهية'
+}
 
 // Headers
 const headers = [
@@ -86,118 +89,126 @@ const headers = [
   { title: 'باقة الاشتراك', key: 'plan' },
   { title: 'بداية الاشتراك', key: 'start_at' },
   { title: 'نهاية الاشتراك', key: 'expires_at' },
-  { title: ' الوقت المتبقي', key: 'remain' },
+  { title: 'الوقت المتبقي', key: 'remain' },
   { title: 'العمليات', key: 'actions', sortable: false },
-];
+]
 
 // API
-const usersData = ref([]);
-const totalUsers = ref(0);
-const loading = ref(true);
+const usersData = ref([])
+const totalUsers = ref(0)
+const loading = ref(true)
 
 const fetchUsers = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await $api('/users', {
-      method: 'GET',
-      params: {
-        role: 'user',
-        search: searchQuery.value,
-        per_page: itemsPerPage.value,
-        page: page.value,
-        sort_by: sortBy.value,
-        sort_order: orderBy.value,
-      },
-    });
+    const params = {
+      role: filterRole.value || undefined,
+      search: searchQuery.value || undefined,
+      plan_id: filterPlan.value || undefined,
+      start_date: filterStartDate.value || undefined,
+      end_date: filterEndDate.value || undefined,
+      per_page: itemsPerPage.value,
+      page: page.value,
+      sort_by: sortBy.value || undefined,
+      sort_order: orderBy.value || undefined,
+    }
 
-    if (response.status === 'success') {
-      usersData.value = response.data;
-      totalUsers.value = response.meta?.total || 0;
+    const response = await $api('/users', { method: 'GET', params })
+    if (response && response.status === 'success') {
+      usersData.value = response.data
+      totalUsers.value = response.meta?.total || 0
+    } else {
+      usersData.value = []
+      totalUsers.value = 0
     }
   } catch (err) {
-    console.error('Error fetching users', err);
+    console.error('Error fetching users', err)
+    usersData.value = []
+    totalUsers.value = 0
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-onMounted(fetchUsers);
+// Reset filters
+const resetFilters = () => {
+  searchQuery.value = ''
+  filterRole.value = null
+  filterPlan.value = null
+  filterStartDate.value = null
+  filterEndDate.value = null
+}
 
-watch([searchQuery, itemsPerPage, page, sortBy, orderBy], fetchUsers);
+onMounted(async () => {
+  await fetchPlans()
+  fetchUsers()
+})
 
-const users = computed(() => usersData.value);
+// Watch filters and table controls -> backend fetch
+watch(
+  [searchQuery, filterRole, filterPlan, filterStartDate, filterEndDate, itemsPerPage, page, sortBy, orderBy],
+  () => {
+    page.value = 1
+    fetchUsers()
+  }
+)
 
-// helpers
+const users = computed(() => usersData.value)
+
+// Role display
 const resolveUserRoleVariant = role => {
-  const roleLowerCase = role?.toLowerCase();
-  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' };
-  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' };
-  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' };
-  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' };
-  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' };
+  const roleLowerCase = role?.toLowerCase()
+  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' }
+  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' }
+  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
+  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
+  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
+  return { color: 'primary', icon: 'tabler-user' }
+}
 
-  return { color: 'primary', icon: 'tabler-user' };
-};
-
-const prefixWithPlus = value => (value > 0 ? `+${value}` : value);
-
-const isAddNewUserDrawerVisible = ref(false);
+// Add / Edit / Delete
+const isAddNewUserDrawerVisible = ref(false)
+const isEditUserDrawerVisible = ref(false)
+const userToEdit = ref(null)
 
 const addNewUser = async userData => {
   try {
-    await $api('/users/store', {
-      method: 'POST',
-      body: userData,
-    });
-    triggerToast('تم اضافة البيانات بنجاح', 'success');
-    fetchUsers();
+    await $api('/users/store', { method: 'POST', body: userData })
+    triggerToast('تم اضافة البيانات بنجاح', 'success')
+    fetchUsers()
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error');
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
   }
-};
-
-const deleteUser = async id => {
-  try {
-    await $api(`/users/delete/${id}`, {
-      method: 'POST',
-    });
-    const index = selectedRows.value.findIndex(row => row === id);
-    if (index !== -1) selectedRows.value.splice(index, 1);
-
-    triggerToast('تم الحذف بنجاح', 'success');
-    fetchUsers();
-  } catch (err) {
-    console.error('Error deleting user:', err);
-    triggerToast('حدث خطأ أثناء الحذف', 'error');
-  }
-};
-
-// 👈 إضافة متغيرات ودوال التعديل
-const isEditUserDrawerVisible = ref(false);
-const userToEdit = ref(null);
-
-const openEditDrawer = user => {
-  userToEdit.value = user;
-  isEditUserDrawerVisible.value = true;
-};
+}
 
 const updateUser = async (id, userData) => {
   try {
-    await $api(`/users/update/${id}`, {
-      method: 'POST',
-      body: userData,
-    });
-    triggerToast('تم تعديل البيانات بنجاح', 'success');
-    fetchUsers();
+    await $api(`/users/update/${id}`, { method: 'POST', body: userData })
+    triggerToast('تم تعديل البيانات بنجاح', 'success')
+    fetchUsers()
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error');
+    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
   }
-};
+}
 
-// ✅ الدالة الجديدة للتوجيه إلى صفحة المستخدم
-const viewUser = (userId) => {
-  router.push({name: 'admin-users-id', params: {id: userId}});
-};
+const deleteUser = async id => {
+  try {
+    await $api(`/users/delete/${id}`, { method: 'POST' })
+    triggerToast('تم الحذف بنجاح', 'success')
+    fetchUsers()
+  } catch (err) {
+    triggerToast('حدث خطأ أثناء الحذف', 'error')
+  }
+}
+
+const openEditDrawer = user => {
+  userToEdit.value = user
+  isEditUserDrawerVisible.value = true
+}
+
+const viewUser = userId => {
+  router.push({ name: 'admin-users-id', params: { id: userId } })
+}
 </script>
 
 <template>
@@ -207,41 +218,85 @@ const viewUser = (userId) => {
         <VCardTitle>المستخدمين</VCardTitle>
       </VCardItem>
 
-      <VCardText class="d-flex flex-wrap gap-4">
+      <!-- Filters -->
+      <VCardText class="d-flex flex-wrap gap-4 align-center">
+        <!-- عرض كل صفحة -->
         <div class="me-3 d-flex gap-3">
           <AppSelect
+            label="عرض"
             :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
+            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
             style="inline-size: 6.25rem;"
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
-        <VSpacer/>
-        <div class="app-user-search-filter d-flex align-center flex-wrap gap-4">
-          <div style="inline-size: 15.625rem;">
-            <AppTextField
-              v-model="searchQuery"
-              placeholder="بحث"
-            />
-          </div>
 
-          <VBtn
-            prepend-icon="tabler-plus"
-            @click="isAddNewUserDrawerVisible = true"
-          >
-            اضافة مستخدم جديد
-          </VBtn>
+        <!-- بحث -->
+        <div style="min-width: 200px;">
+          <AppTextField v-model="searchQuery" placeholder="بحث بالاسم أو الايميل" label="بحث" />
         </div>
+
+        <!-- نوع المستخدم -->
+        <div style="min-width: 200px;">
+          <AppSelect
+            v-model="filterRole"
+            :items="[
+              { value: 'user', title: 'مستخدم' },
+              { value: 'admin', title: 'مدير' }
+            ]"
+            label="النوع"
+            clearable
+          />
+        </div>
+
+        <!-- باقة الاشتراك -->
+        <div style="min-width: 200px;">
+          <AppSelect
+            v-model="filterPlan"
+            :items="plans"
+            item-value="id"
+            item-title="name"
+            label="الباقة"
+            clearable
+            placeholder="اختر باقة"
+          />
+        </div>
+
+        <!-- تاريخ البداية -->
+        <div style="min-width: 200px;">
+          <!-- استخدم AppDateTimePicker إن متوفر عندك، وإلا غيّره إلى AppTextField type="date" -->
+          <AppDateTimePicker
+            v-model="filterStartDate"
+            label="تاريخ البداية"
+            placeholder="اختر التاريخ"
+            clearable
+          />
+        </div>
+
+        <!-- تاريخ النهاية -->
+        <div style="min-width: 200px;">
+          <AppDateTimePicker
+            v-model="filterEndDate"
+            label="تاريخ النهاية"
+            placeholder="اختر التاريخ"
+            clearable
+          />
+        </div>
+
+        <VSpacer />
+
+        <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">
+          إعادة تعيين
+        </VBtn>
+
+        <VBtn prepend-icon="tabler-plus" @click="isAddNewUserDrawerVisible = true">
+          إضافة مستخدم جديد
+        </VBtn>
       </VCardText>
 
-      <VDivider/>
+      <VDivider />
 
+      <!-- Data table -->
       <VDataTableServer
         v-model:items-per-page="itemsPerPage"
         v-model:model-value="selectedRows"
@@ -256,160 +311,94 @@ const viewUser = (userId) => {
       >
         <template #item.user="{ item }">
           <div class="d-flex align-center gap-x-4">
-            <VAvatar
-              size="34"
-              :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
-            >
-              <VImg
-                v-if="item.avatar"
-                :src="item.avatar"
-              />
+            <VAvatar size="34" :variant="!item.avatar ? 'tonal' : undefined" :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined">
+              <VImg v-if="item.avatar" :src="item.avatar" />
               <span v-else>{{ item.name?.charAt(0).toUpperCase() }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                <RouterLink
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
-                  class="font-weight-medium text-link"
-                >
+                <RouterLink :to="{ name: 'apps-user-view-id', params: { id: item.id } }" class="font-weight-medium text-link">
                   {{ item.name }}
                 </RouterLink>
               </h6>
-              <div class="text-sm">
-                {{ item.email }}
-              </div>
+              <div class="text-sm">{{ item.email }}</div>
             </div>
           </div>
         </template>
 
         <template #item.role="{ item }">
           <div class="d-flex align-center gap-x-2">
-            <VIcon
-              :size="22"
-              :icon="resolveUserRoleVariant(item.role).icon"
-              :color="resolveUserRoleVariant(item.role).color"
-            />
+            <VIcon :size="22" :icon="resolveUserRoleVariant(item.role).icon" :color="resolveUserRoleVariant(item.role).color" />
             <div class="text-capitalize text-high-emphasis text-body-1">
-              {{
-                item.role == 'user' ? 'عميل' : 'ادمن'
-              }}
+              {{ item.role == 'user' ? 'عميل' : 'ادمن' }}
             </div>
           </div>
         </template>
 
         <template #item.plan="{ item }">
-          <div class="text-body-1 text-high-emphasis text-capitalize">
-            {{ item.subscription?.plan?.name || 'غير مشترك' }}
-          </div>
+          {{ item.subscription?.plan?.name || 'غير مشترك' }}
         </template>
 
         <template #item.start_at="{ item }">
-          <div class="text-body-1 text-high-emphasis">
-            {{ item.subscription?.start_date ?? 'غير محدد' }}
-          </div>
+          {{ item.subscription?.start_date ?? 'غير محدد' }}
         </template>
 
         <template #item.expires_at="{ item }">
-          <div class="text-body-1 text-high-emphasis">
-            {{ item.subscription?.end_date ?? 'غير محدد' }}
-          </div>
+          {{ item.subscription?.end_date ?? 'غير محدد' }}
         </template>
 
         <template #item.remain="{ item }">
-          <div class="text-body-1 text-high-emphasis">
-            {{ calculateRemainingDays(item.subscription?.end_date) }}
-          </div>
+          {{ calculateRemainingDays(item.subscription?.end_date) }}
         </template>
 
         <template #item.actions="{ item }">
-          <IconBtn @click="openEditDrawer(item)">
-            <VIcon icon="tabler-pencil"/>
-          </IconBtn>
-          <IconBtn @click="confirmDelete(item.id)">
-            <VIcon icon="tabler-trash"/>
-          </IconBtn>
-          <IconBtn @click="viewUser(item.id)">
-            <VIcon icon="tabler-eye"/>
-          </IconBtn>
+          <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil" /></IconBtn>
+          <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash" /></IconBtn>
+          <IconBtn @click="viewUser(item.id)"><VIcon icon="tabler-eye" /></IconBtn>
         </template>
 
+        <!-- استخدم نفس نظام الباجنيشن القديم -->
         <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="totalUsers"
-          />
+          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="totalUsers" />
         </template>
       </VDataTableServer>
     </VCard>
 
-    <AddNewUserDrawer
-      v-model:is-drawer-open="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    />
+    <!-- Drawers -->
+    <AddNewUserDrawer v-model:is-drawer-open="isAddNewUserDrawerVisible" @user-data="addNewUser" />
+    <EditUserDrawer v-model:is-drawer-open="isEditUserDrawerVisible" :user-data="userToEdit" @user-data="updateUser" />
 
-    <EditUserDrawer
-      v-model:is-drawer-open="isEditUserDrawerVisible"
-      :user-data="userToEdit"
-      @user-data="updateUser"
-    />
-
-    <VSnackbar
-      v-model="showToast"
-      :color="color"
-      location="top end"
-      timeout="5000"
-    >
+    <!-- Snackbar -->
+    <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
       <template #prepend>
-        <VIcon v-if="color === 'success'" icon="tabler-check"/>
-        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle"/>
-        <VIcon v-else icon="tabler-info-circle"/>
+        <VIcon v-if="color === 'success'" icon="tabler-check" />
+        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
       </template>
-
       {{ message }}
-
       <template #actions>
-        <VBtn
-          icon
-          variant="text"
-          color="white"
-          @click="showToast = false"
-        >
-          <VIcon icon="tabler-x"/>
-        </VBtn>
+        <VBtn icon variant="text" color="white" @click="showToast=false"><VIcon icon="tabler-x" /></VBtn>
       </template>
     </VSnackbar>
 
-    <VDialog
-      v-model="isDeleteConfirmDialogVisible"
-      max-width="500px"
-    >
+    <!-- Delete dialog -->
+    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
       <VCard>
-        <VCardTitle class="text-h6">
-          تأكيد الحذف
-        </VCardTitle>
-        <VCardText>
-          هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.
-        </VCardText>
+        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardText>هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
         <VCardActions class="px-6 pb-4">
-          <VSpacer/>
-          <VBtn
-            color="error"
-            variant="flat"
-            @click="isDeleteConfirmDialogVisible = false"
-          >
-            إلغاء
-          </VBtn>
-          <VBtn
-            color="success"
-            variant="flat"
-            @click="executeDelete"
-          >
-            موافق
-          </VBtn>
+          <VSpacer />
+          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>
+          <VBtn color="success" variant="flat" @click="executeDelete">موافق</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
   </section>
 </template>
+
+<style scoped>
+/* تحسين مظهر مدخلات التاريخ إن استعملت AppTextField type="date" كبديل */
+.v-card-text .v-field input[type="date"] {
+  height: 36px;
+  padding: 6px 10px;
+}
+</style>
