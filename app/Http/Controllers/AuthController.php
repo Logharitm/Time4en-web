@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Storage;
@@ -174,17 +175,32 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = User::where('email', $request->email)->first();
 
-        if ($status !== Password::RESET_LINK_SENT) {
+        if (!$user) {
             throw ValidationException::withMessages([
-                'email' => ['Unable to send password reset link.'],
+                'email' => ['هذا البريد غير مسجل لدينا.'],
             ]);
         }
 
-        return $this->successResponse('Password reset link sent to your email.');
+        $status = Password::createToken($user);
+
+        if (!$status) {
+            throw ValidationException::withMessages([
+                'email' => ['تعذر إرسال رابط إعادة تعيين كلمة المرور.'],
+            ]);
+        }
+
+        // اختيار اللغة
+        if ($user->language === 'ar') {
+            Mail::to($user->email)->send(new ResetPasswordMailAr($user, $status));
+        } else {
+            Mail::to($user->email)->send(new ResetPasswordMailEn($user, $status));
+        }
+
+        return response()->json([
+            'message' => 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.'
+        ]);
     }
 
     /**
