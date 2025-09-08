@@ -114,7 +114,9 @@
                                         <tr>
                                             <td class="pad" style="padding-bottom:15px;padding-top:15px;width:100%;padding-right:0px;padding-left:0px;">
                                                 <div class="alignment" align="center">
-                                                    <div style="max-width: 195px;"><img src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/yourlogopassword.png" style="display: block; height: auto; border: 0; width: 100%;" width="195" alt="شعار شركتك" title="شعار شركتك" height="auto"></div>
+                                                    <div style="max-width: 195px;">
+                                                        Time4En
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
