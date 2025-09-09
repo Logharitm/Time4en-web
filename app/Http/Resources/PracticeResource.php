@@ -20,7 +20,7 @@ class PracticeResource extends JsonResource
             'folder_name'     => optional($this->folder)->name,
             'total_words'     => $this->total_words,
             'correct_answers' => $this->correct_answers,
-            'wrong_answers'   => $this->wrong_answers,
+            'wrong_answers'   => $this->total_words - $this->correct_answers,
             'score_percentage'=> $this->total_words > 0
                 ? round(($this->correct_answers / $this->total_words) * 100, 2)
                 : 0,
