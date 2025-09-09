@@ -31,7 +31,7 @@ class CheckUserSubscription
 
             $usedWords = $user->words()->count() ?? 0;
             $allowedWords = $subscription->plan->words_limit;
-
+dd($usedWords, $allowedWords);
             if ($usedWords >= $allowedWords) {
                 return response()->json(['message' => 'لقد استهلكت جميع كلمات الباقة الخاصة بك.'], 403);
             }
