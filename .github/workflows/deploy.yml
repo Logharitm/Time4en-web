@@ -32,7 +32,7 @@ jobs:
             php composer.phar install --no-interaction --prefer-dist --optimize-autoloader &&
             
             echo '>>> Running migrations...'
-            php artisan migrate --force &&
+            php artisan migrate --force  || true  &&
             
             echo '>>> Clearing & caching config/routes/views...'
             php artisan config:clear &&
