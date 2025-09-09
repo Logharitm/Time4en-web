@@ -31,7 +31,7 @@ class UserController extends Controller
             });
         }
 
-        if ($request->filled('plan_id')) {
+        if ($request->filled('plaapp/Http/Controllers/UserController.phpn_id')) {
             $query->whereHas('subscription.plan', function ($q) use ($request) {
                 $q->where('id', $request->plan_id);
             });
@@ -60,8 +60,6 @@ class UserController extends Controller
             UserResource::collection($users)
         );
     }
-
-
 
     public function store(StoreUserRequest $request): JsonResponse
     {
