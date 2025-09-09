@@ -86,8 +86,8 @@ const calculateRemainingDays = endDateString => {
 const headers = [
   { title: 'المستخدم', key: 'user' },
   { title: 'النوع', key: 'role' },
-  { title: 'عدد الفولدرات', key: 'folders_count' },
-  { title: 'عدد الكلمات', key: 'words_count' },
+  { title: 'عدد الفولدرات', key: 'folders' },
+  { title: 'عدد الكلمات', key: 'words' },
   { title: 'باقة الاشتراك', key: 'plan' },
   { title: 'بداية الاشتراك', key: 'start_at' },
   { title: 'نهاية الاشتراك', key: 'expires_at' },
