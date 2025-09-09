@@ -214,6 +214,11 @@
     "light": "فاتح",
     "dark": "داكن",
     "system": "النظام"
-  }
+  },
+  "Back to login": "العودة إلى تسجيل الدخول",
+  "Set New Password": "اعادة تعيين كلمة المرور",
+  "Confirm Password": "تأكيد كلمة المرور",
+  "New Password": "كلمة المرور الجديدة",
+  "Your new password must be different from previously used passwords": "كلمة المرور الجديدة يجب ان تكون مختلفة عن كلمة المرور القديمة"
 
 }

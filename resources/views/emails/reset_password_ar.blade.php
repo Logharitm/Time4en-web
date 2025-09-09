@@ -39,7 +39,7 @@
             overflow: hidden;
         }
 
-        .image_block img+div {
+        .image_block img + div {
             display: none;
         }
 
@@ -49,7 +49,7 @@
             line-height: 0;
         }
 
-        @media (max-width:670px) {
+        @media (max-width: 670px) {
             .desktop_hide table.icons-inner,
             .social_block.desktop_hide .social-table {
                 display: inline-block !important;
@@ -97,25 +97,38 @@
     </style>
 </head>
 
-<body class="body" style="background-color: #000000; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #000000;">
+<body class="body"
+      style="background-color: #000000; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #000000;">
     <tbody>
     <tr>
         <td>
-            <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
+            <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0"
+                   role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
                 <tbody>
                 <tr>
                     <td>
-                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 650px; margin: 0 auto;" width="650">
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 650px; margin: 0 auto;"
+                               width="650">
                             <tbody>
                             <tr>
-                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
-                                    <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <td class="column column-1" width="100%"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
+                                    <table class="image_block block-1" width="100%" border="0" cellpadding="0"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
-                                            <td class="pad" style="padding-bottom:15px;padding-top:15px;width:100%;padding-right:0px;padding-left:0px;">
+                                            <td class="pad"
+                                                style="padding-bottom:15px;padding-top:15px;width:100%;padding-right:0px;padding-left:0px;">
                                                 <div class="alignment" align="center">
                                                     <div style="max-width: 195px;">
-                                                        <img src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/yourlogopassword.png" style="display: block; height: auto; border: 0; width: 100%;" width="195" alt="شعار شركتك" title="شعار شركتك" height="auto"></div>
+                                                        <img src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/yourlogopassword.png"
+                                                             style="display: block; height: auto; border: 0; width: 100%;"
+                                                             width="195" alt="شعار شركتك" title="شعار شركتك"
+                                                             height="auto"></div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -128,87 +141,144 @@
                 </tr>
                 </tbody>
             </table>
-            <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
+            <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0"
+                   role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
                 <tbody>
                 <tr>
                     <td>
-                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; background-image: url('https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/ResetPassword_BG_2.png'); background-position: center top; background-repeat: no-repeat; color: #000000; width: 650px; margin: 0 auto;" width="650">
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; background-image: url('https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/ResetPassword_BG_2.png'); background-position: center top; background-repeat: no-repeat; color: #000000; width: 650px; margin: 0 auto;"
+                               width="650">
                             <tbody>
                             <tr>
-                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-top: 45px; vertical-align: top;">
-                                    <table class="divider_block block-1" width="100%" border="0" cellpadding="20" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <td class="column column-1" width="100%"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-top: 45px; vertical-align: top;">
+                                    <table class="divider_block block-1" width="100%" border="0" cellpadding="20"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad">
                                                 <div class="alignment" align="center">
-                                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                    <table border="0" cellpadding="0" cellspacing="0"
+                                                           role="presentation" width="100%"
+                                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
-                                                            <td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 0px solid #BBBBBB;"><span style="word-break: break-word;">&#8202;</span></td>
+                                                            <td class="divider_inner"
+                                                                style="font-size: 1px; line-height: 1px; border-top: 0px solid #BBBBBB;">
+                                                                <span style="word-break: break-word;">&#8202;</span>
+                                                            </td>
                                                         </tr>
                                                     </table>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="image_block block-2" width="100%" border="0" cellpadding="20" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <table class="image_block block-2" width="100%" border="0" cellpadding="20"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad">
                                                 <div class="alignment" align="center">
-                                                    <div class="fullWidth" style="max-width: 357.5px;"><img src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/lock5.png" style="display: block; height: auto; border: 0; width: 100%;" width="357.5" alt="هل نسيت كلمة المرور؟" title="هل نسيت كلمة المرور؟" height="auto"></div>
+                                                    <div class="fullWidth" style="max-width: 357.5px;"><img
+                                                                src="https://d1oco4z2z1fhwp.cloudfront.net/templates/default/2971/lock5.png"
+                                                                style="display: block; height: auto; border: 0; width: 100%;"
+                                                                width="357.5" alt="هل نسيت كلمة المرور؟"
+                                                                title="هل نسيت كلمة المرور؟" height="auto"></div>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="heading_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <table class="heading_block block-3" width="100%" border="0" cellpadding="0"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad" style="padding-top:35px;text-align:center;width:100%;">
-                                                <h1 style="margin: 0; color: #8412c0; direction: rtl; font-family: 'Cabin', Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 28px; font-weight: 400; letter-spacing: normal; line-height: 1.2; text-align: center; mso-line-height-alt: 34px;"><strong>هل نسيت كلمة المرور؟</strong></h1>
+                                                <h1 style="margin: 0; color: #8412c0; direction: rtl; font-family: 'Cabin', Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 28px; font-weight: 400; letter-spacing: normal; line-height: 1.2; text-align: center; mso-line-height-alt: 34px;">
+                                                    <strong>هل نسيت كلمة المرور؟</strong></h1>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="paragraph_block block-4" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                    <table class="paragraph_block block-4" width="100%" border="0" cellpadding="0"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                         <tr>
-                                            <td class="pad" style="padding-left:45px;padding-right:45px;padding-top:10px;">
+                                            <td class="pad"
+                                                style="padding-left:45px;padding-right:45px;padding-top:10px;">
                                                 <div style="color:#393d47;font-family:'Cabin',Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:18px;line-height:1.5;text-align:center;mso-line-height-alt:27px;">
-                                                    <p style="margin: 0; word-break: break-word;"><span style="word-break: break-word; color: #aa67cf;">لقد تلقينا طلبًا لإعادة تعيين كلمة المرور الخاصة بك.</span></p>
-                                                    <p style="margin: 0; word-break: break-word;"><span style="word-break: break-word; color: #aa67cf;">إذا لم تقم بتقديم هذا الطلب، فما عليك سوى تجاهل هذا البريد الإلكتروني.</span></p>
+                                                    <p style="margin: 0; word-break: break-word;"><span
+                                                                style="word-break: break-word; color: #aa67cf;">لقد تلقينا طلبًا لإعادة تعيين كلمة المرور الخاصة بك.</span>
+                                                    </p>
+                                                    <p style="margin: 0; word-break: break-word;"><span
+                                                                style="word-break: break-word; color: #aa67cf;">إذا لم تقم بتقديم هذا الطلب، فما عليك سوى تجاهل هذا البريد الإلكتروني.</span>
+                                                    </p>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="divider_block block-5" width="100%" border="0" cellpadding="20" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <table class="divider_block block-5" width="100%" border="0" cellpadding="20"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad">
                                                 <div class="alignment" align="center">
-                                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="80%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                    <table border="0" cellpadding="0" cellspacing="0"
+                                                           role="presentation" width="80%"
+                                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
-                                                            <td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 1px solid #E1B4FC;"><span style="word-break: break-word;">&#8202;</span></td>
+                                                            <td class="divider_inner"
+                                                                style="font-size: 1px; line-height: 1px; border-top: 1px solid #E1B4FC;">
+                                                                <span style="word-break: break-word;">&#8202;</span>
+                                                            </td>
                                                         </tr>
                                                     </table>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="paragraph_block block-6" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                    <table class="paragraph_block block-6" width="100%" border="0" cellpadding="0"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                         <tr>
-                                            <td class="pad" style="padding-bottom:10px;padding-left:45px;padding-right:45px;padding-top:10px;">
+                                            <td class="pad"
+                                                style="padding-bottom:10px;padding-left:45px;padding-right:45px;padding-top:10px;">
                                                 <div style="color:#393d47;font-family:'Cabin',Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:13px;line-height:1.5;text-align:right;mso-line-height-alt:20px;">
-                                                    <p style="margin: 0; word-break: break-word;"><span style="word-break: break-word; color: #8412c0;">إذا كنت من قام بتقديم هذا الطلب، ما عليك سوى الضغط على الزر أدناه:</span></p>
+                                                    <p style="margin: 0; word-break: break-word;"><span
+                                                                style="word-break: break-word; color: #8412c0;">إذا كنت من قام بتقديم هذا الطلب، ما عليك سوى الضغط على الزر أدناه:</span>
+                                                    </p>
                                                 </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="button_block block-7" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <table class="button_block block-7" width="100%" border="0" cellpadding="10"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad">
-                                                <div class="alignment" align="center"><a href="http://www.example.com" target="_blank" style="color:#ffffff;text-decoration:none;"><span class="button" style="background-color: #8412c0; border-bottom: 1px solid transparent; border-left: 1px solid transparent; border-radius: 0px; border-right: 1px solid transparent; border-top: 1px solid transparent; color: #ffffff; display: inline-block; font-family: 'Cabin', Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; font-weight: 400; mso-border-alt: none; padding-bottom: 10px; padding-top: 10px; padding-left: 40px; padding-right: 40px; text-align: center; width: auto; word-break: keep-all; letter-spacing: normal;"><span style="word-break: break-word;"><span style="word-break: break-word; line-height: 28px;" data-mce-style>إعادة تعيين كلمة المرور</span></span></span></a></div>
+                                                <div class="alignment" align="center">
+                                                    <a href="{{ $resetUrl }}" target="_blank" style="color:#ffffff;text-decoration:none;">
+                                                        <span class="button" style="background-color: #8412c0; border-bottom: 1px solid transparent; border-left: 1px solid transparent; border-radius: 0px; border-right: 1px solid transparent; border-top: 1px solid transparent; color: #ffffff; display: inline-block; font-family: 'Cabin', Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; font-weight: 400; mso-border-alt: none; padding-bottom: 10px; padding-top: 10px; padding-left: 40px; padding-right: 40px; text-align: center; width: auto; word-break: keep-all; letter-spacing: normal;">
+                                                            <span style="word-break: break-word;">
+                                                                <span style="word-break: break-word; line-height: 28px;" data-mce-style>إعادة تعيين كلمة المرور</span>
+                                                            </span>
+                                                        </span>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     </table>
-                                    <table class="paragraph_block block-8" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                    <table class="paragraph_block block-8" width="100%" border="0" cellpadding="0"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
                                         <tr>
-                                            <td class="pad" style="padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:10px;">
+                                            <td class="pad"
+                                                style="padding-bottom:15px;padding-left:10px;padding-right:10px;padding-top:10px;">
                                                 <div style="color:#393d47;font-family:'Cabin',Arial,'Helvetica Neue',Helvetica,sans-serif;font-size:10px;line-height:1.2;text-align:center;mso-line-height-alt:12px;">
-                                                    <p style="margin: 0; word-break: break-word;"><span style="word-break: break-word; color: #aa67cf;"><span style="word-break: break-word;">إذا لم تطلب تغيير كلمة المرور الخاصة بك، </span><span style="word-break: break-word;">فلست بحاجة إلى القيام بأي شيء. الأمر بهذه السهولة.</span></span></p>
+                                                    <p style="margin: 0; word-break: break-word;"><span
+                                                                style="word-break: break-word; color: #aa67cf;"><span
+                                                                    style="word-break: break-word;">إذا لم تطلب تغيير كلمة المرور الخاصة بك، </span><span
+                                                                    style="word-break: break-word;">فلست بحاجة إلى القيام بأي شيء. الأمر بهذه السهولة.</span></span>
+                                                    </p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -221,21 +291,33 @@
                 </tr>
                 </tbody>
             </table>
-            <table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
+            <table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0"
+                   role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f3e6f8;">
                 <tbody>
                 <tr>
                     <td>
-                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 650px; margin: 0 auto;" width="650">
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 650px; margin: 0 auto;"
+                               width="650">
                             <tbody>
                             <tr>
-                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 10px; padding-top: 5px; vertical-align: top;">
-                                    <table class="divider_block block-1" width="100%" border="0" cellpadding="5" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <td class="column column-1" width="100%"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 10px; padding-top: 5px; vertical-align: top;">
+                                    <table class="divider_block block-1" width="100%" border="0" cellpadding="5"
+                                           cellspacing="0" role="presentation"
+                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                         <tr>
                                             <td class="pad">
                                                 <div class="alignment" align="center">
-                                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                    <table border="0" cellpadding="0" cellspacing="0"
+                                                           role="presentation" width="100%"
+                                                           style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                                         <tr>
-                                                            <td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 0px solid #BBBBBB;"><span style="word-break: break-word;">&#8202;</span></td>
+                                                            <td class="divider_inner"
+                                                                style="font-size: 1px; line-height: 1px; border-top: 0px solid #BBBBBB;">
+                                                                <span style="word-break: break-word;">&#8202;</span>
+                                                            </td>
                                                         </tr>
                                                     </table>
                                                 </div>
@@ -255,5 +337,6 @@
         </td>
     </tr>
     </tbody>
-</table></body>
+</table>
+</body>
 </html>

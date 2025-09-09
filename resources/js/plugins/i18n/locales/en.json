@@ -214,5 +214,10 @@
   "light": "Light",
   "dark": "Dark",
   "system": "System"
-  }
+  },
+  "Back to login": "Back to login",
+  "Set new password": "Set new password",
+  "Confirm Password": "Confirm Password",
+  "New Password": "New Password",
+  "Your new password must be different from previously used passwords": "Your new password must be different from previously used passwords"
 }
