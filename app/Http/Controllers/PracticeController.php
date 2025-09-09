@@ -20,11 +20,7 @@ class PracticeController extends Controller
     public function index(): JsonResponse
     {
         $practices = Practice::all();
-
-        return response()->json([
-            'status' => true,
-            'data'   => $practices,
-        ], 200);
+        return $this->successResponse("تم جلب البيانات بنجاح", $practices);
     }
 
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
