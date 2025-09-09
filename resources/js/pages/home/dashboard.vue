@@ -15,16 +15,9 @@ import LogisticsVehicleOverview from '@/views/apps/logistics/LogisticsVehicleOve
     </VCol>
     <VCol
       cols="12"
-      md="6"
+      md="12"
     >
       <LogisticsVehicleOverview />
-    </VCol>
-
-    <VCol
-      cols="12"
-      md="6"
-    >
-      <LogisticsShipmentStatistics />
     </VCol>
 
 

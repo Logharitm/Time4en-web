@@ -25,7 +25,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
 
 
-    Route::group(['middleware' => 'auth:sanctum'], function() {
+    Route::group(['middleware' => ['auth:sanctum','check.subscription']], function() {
 
         Route::get('/statistics', [StatisticsController::class, 'index']);
         Route::get('/plans/statistics', [StatisticsController::class, 'plans']);
