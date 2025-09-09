@@ -15,7 +15,7 @@ class PracticeResource extends JsonResource
         return [
             'id'              => $this->id,
             'user_id'         => $this->user_id,
-            'user_name'       => optional($this->user)->name,
+            'user_name'       => $this->user->name,
             'folder_id'       => $this->folder_id,
             'folder_name'     => optional($this->folder)->name,
             'total_words'     => $this->total_words,
