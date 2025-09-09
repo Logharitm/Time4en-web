@@ -73,6 +73,7 @@ class UserController extends Controller
             $user->avatar = $avatar;
             $user->update();
         }
+        ////////////
 
         return $this->successResponse('User created successfully.', new UserResource($user), 200);
     }
