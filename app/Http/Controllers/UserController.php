@@ -74,6 +74,7 @@ class UserController extends Controller
             $user->update();
         }
 
+
         return $this->successResponse('User created successfully.', new UserResource($user), 200);
     }
 
