@@ -259,13 +259,10 @@ const deletePractice = async id => {
             variant="outlined"
             size="small"
             color="primary"
-            @click="router.push(`/admin/practices/${item.id}/report`)"
+            @click="router.push(`/admin/quizzes/${item.id}`)"
           >
-            عرض التقرير
+            عرض النتيجة
           </VBtn>
-          <IconBtn @click="confirmDelete(item.id)">
-            <VIcon icon="tabler-trash" />
-          </IconBtn>
         </template>
 
         <template #bottom>
@@ -306,34 +303,5 @@ const deletePractice = async id => {
         </VBtn>
       </template>
     </VSnackbar>
-
-    <VDialog
-      v-model="isDeleteConfirmDialogVisible"
-      max-width="500px"
-    >
-      <VCard>
-        <VCardTitle class="text-h6">
-          تأكيد الحذف
-        </VCardTitle>
-        <VCardText>هل أنت متأكد أنك تريد حذف هذا الاختبار؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
-        <VCardActions class="px-6 pb-4">
-          <VSpacer />
-          <VBtn
-            color="error"
-            variant="flat"
-            @click="isDeleteConfirmDialogVisible=false"
-          >
-            إلغاء
-          </VBtn>
-          <VBtn
-            color="success"
-            variant="flat"
-            @click="executeDelete"
-          >
-            موافق
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
   </section>
 </template>

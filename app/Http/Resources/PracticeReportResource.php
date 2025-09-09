@@ -40,7 +40,7 @@ class PracticeReportResource extends JsonResource
             }),
             'wrong_answers' => $wrongAnswers->map(function ($answer) {
                 return [
-                    'word' => $answer->word->word,
+                    'word' => "ما هي ترجمة كلمة '{$answer->word->word}'؟",
                     'correct_translation' => $answer->word->translation,
                     'your_answer' => $answer->selected_option,
                 ];
