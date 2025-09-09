@@ -59,6 +59,8 @@ class UserController extends Controller
             'Users retrieved successfully.',
             UserResource::collection($users)
         );
+
+        //hello
     }
 
     public function store(StoreUserRequest $request): JsonResponse
