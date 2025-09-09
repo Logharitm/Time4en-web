@@ -1,6 +1,9 @@
 /.phpunit.cache
 /node_modules
 /vendor
+/git
+/github
+/vscode
 .env
 .env.backup
 .env.production
