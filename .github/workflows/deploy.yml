@@ -25,7 +25,8 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }} &&
             
             echo '>>> Pulling latest code...'
-            git pull origin main &&
+           git fetch --all && git reset --hard origin/main &&
+
             
             echo '>>> Installing dependencies (Composer v2)...'
             php composer.phar self-update --2 &&
