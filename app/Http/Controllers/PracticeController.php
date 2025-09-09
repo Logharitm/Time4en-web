@@ -59,11 +59,6 @@ class PracticeController extends Controller
         return $this->successResponse(
             "تم جلب البيانات بنجاح",
             PracticeResource::collection($practices),
-            [
-                'total' => $practices->total(),
-                'per_page' => $practices->perPage(),
-                'current_page' => $practices->currentPage(),
-            ]
         );
     }
 
