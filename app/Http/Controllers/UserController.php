@@ -61,6 +61,7 @@ class UserController extends Controller
         );
     }
 
+
     public function store(StoreUserRequest $request): JsonResponse
     {
         $data = $request->validated();
