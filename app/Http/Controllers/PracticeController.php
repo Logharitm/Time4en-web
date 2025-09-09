@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateQuizRequest;
 use App\Http\Requests\SubmitAnswerRequest;
 use App\Http\Resources\PracticeReportResource;
+use App\Http\Resources\PracticeResource;
 use App\Models\Practice;
 use App\Models\PracticeAnswer;
 use App\Models\Word;
@@ -20,7 +21,7 @@ class PracticeController extends Controller
     public function index(): JsonResponse
     {
         $practices = Practice::all();
-        return $this->successResponse("تم جلب البيانات بنجاح", $practices);
+        return $this->successResponse("تم جلب البيانات بنجاح", PracticeResource::collection($practices) );
     }
 
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
