@@ -25,7 +25,7 @@ class CheckUserSubscription
                 return response()->json(['message' => 'أنت غير مشترك في أي باقة.'], 403);
             }
 
-            if (is_null($subscription->end_date) || now()->gt($subscription->ends_date)) {
+            if (is_null($subscription->end_date) || now()->gt($subscription->end_date)) {
                 return response()->json(['message' => 'انتهت صلاحية اشتراكك.'], 403);
             }
 
