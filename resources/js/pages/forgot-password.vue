@@ -27,7 +27,7 @@ const submitForgotPassword = async () => {
   loading.value = true
   message.value = ''
   try {
-    const response = await $api('http://time4en.test/api/auth/forgot-password', {
+    const response = await $api('/forgot-password', {
       method: 'POST',
       body: {
         email: email.value,

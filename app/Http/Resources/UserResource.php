@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'avatar' => $this->avatar,
             'language' => $this->language,
-            'folders_count' => $this->folders_count,
+            'folders_count' => $this->folders()->count(),
             'words_count' => $this->words_count,
             'subscription_plan' => $this->subscription_plan,
             'subscription_expires_at' => $this->subscription_expires_at,
