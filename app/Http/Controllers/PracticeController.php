@@ -18,11 +18,55 @@ class PracticeController extends Controller
 {
     use ApiResponse;
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $practices = Practice::all();
-        return $this->successResponse("تم جلب البيانات بنجاح", PracticeResource::collection($practices) );
+        $query = Practice::query()->with(['user', 'folder']);
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn($uq) => $uq->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('folder', fn($fq) => $fq->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($userName = $request->get('user_name')) {
+            $query->whereHas('user', fn($uq) => $uq->where('name', 'like', "%{$userName}%"));
+        }
+
+        if ($folderName = $request->get('folder_name')) {
+            $query->whereHas('folder', fn($fq) => $fq->where('name', 'like', "%{$folderName}%"));
+        }
+
+        if ($createdFrom = $request->get('created_from')) {
+            $query->whereDate('created_at', '>=', $createdFrom);
+        }
+
+        if ($createdTo = $request->get('created_to')) {
+            $query->whereDate('created_at', '<=', $createdTo);
+        }
+
+        if ($sortBy = $request->get('sort_by')) {
+            $order = $request->get('sort_order', 'asc');
+            $query->orderBy($sortBy, $order);
+        } else {
+            $query->latest();
+        }
+
+        $perPage = $request->get('per_page', 10);
+        $practices = $query->paginate($perPage);
+
+        return $this->successResponse(
+            "تم جلب البيانات بنجاح",
+            PracticeResource::collection($practices),
+            [
+                'total' => $practices->total(),
+                'per_page' => $practices->perPage(),
+                'current_page' => $practices->currentPage(),
+            ]
+        );
     }
+
 
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
     {
