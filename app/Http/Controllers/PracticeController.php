@@ -17,6 +17,16 @@ class PracticeController extends Controller
 {
     use ApiResponse;
 
+    public function index(): JsonResponse
+    {
+        $practices = Practice::all();
+
+        return response()->json([
+            'status' => true,
+            'data'   => $practices,
+        ], 200);
+    }
+
     public function createQuiz(CreateQuizRequest $request): JsonResponse // Updated
     {
         $folderId = $request->input('folder_id');

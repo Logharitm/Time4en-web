@@ -58,6 +58,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('words/{word}/delete', [WordController::class, 'destroy']);
 
         // --------------------------------- Practice ---------------------------------
+        Route::get('/practices', [PracticeController::class, 'index']);
         Route::post('/practice/start', [PracticeController::class, 'createQuiz']);
         Route::post('/practice/submit-answer', [PracticeController::class, 'submitAnswer']);
         Route::get('/practice/report/{practice}', [PracticeController::class, 'showReport']);

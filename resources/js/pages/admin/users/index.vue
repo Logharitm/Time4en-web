@@ -16,6 +16,7 @@ const filterEndDate = ref(null)
 
 // Plans list (جلب من API احتياطياً)
 const plans = ref([])
+
 const fetchPlans = async () => {
   try {
     const resp = await $api('/plans', { method: 'GET', params: { per_page: 200 } })
@@ -47,6 +48,7 @@ const updateOptions = options => {
 const showToast = ref(false)
 const message = ref('')
 const color = ref('success')
+
 const triggerToast = (msg, type = 'success') => {
   message.value = msg
   color.value = type
@@ -56,10 +58,12 @@ const triggerToast = (msg, type = 'success') => {
 // Delete confirm dialog
 const isDeleteConfirmDialogVisible = ref(false)
 const userToDeleteId = ref(null)
+
 const confirmDelete = userId => {
   userToDeleteId.value = userId
   isDeleteConfirmDialogVisible.value = true
 }
+
 const executeDelete = async () => {
   if (userToDeleteId.value) {
     await deleteUser(userToDeleteId.value)
@@ -79,6 +83,7 @@ const calculateRemainingDays = endDateString => {
   const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24))
   if (differenceInDays > 0) return `متبقي ${differenceInDays} يوم`
   if (differenceInDays === 0) return 'ينتهي اليوم'
+  
   return 'منتهية'
 }
 
@@ -86,8 +91,8 @@ const calculateRemainingDays = endDateString => {
 const headers = [
   { title: 'المستخدم', key: 'user' },
   { title: 'النوع', key: 'role' },
-  { title: 'عدد الفولدرات', key: 'folders' },
-  { title: 'عدد الكلمات', key: 'words' },
+  { title: 'عدد الفولدرات', key: 'folders', sortable: false },
+  { title: 'عدد الكلمات', key: 'words', sortable: false },
   { title: 'باقة الاشتراك', key: 'plan' },
   { title: 'بداية الاشتراك', key: 'start_at' },
   { title: 'نهاية الاشتراك', key: 'expires_at' },
@@ -152,7 +157,7 @@ watch(
   () => {
     page.value = 1    // Reset فقط مع الفلاتر
     fetchUsers()
-  }
+  },
 )
 
 // مراقبة تغيير الصفحة فقط
@@ -170,6 +175,7 @@ const resolveUserRoleVariant = role => {
   if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
   if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
   if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
+  
   return { color: 'primary', icon: 'tabler-user' }
 }
 
@@ -240,7 +246,11 @@ const viewUser = userId => {
 
         <!-- بحث -->
         <div style="min-width: 200px;">
-          <AppTextField v-model="searchQuery" placeholder="بحث بالاسم أو الايميل" label="بحث" />
+          <AppTextField
+            v-model="searchQuery"
+            placeholder="بحث بالاسم أو الايميل"
+            label="بحث"
+          />
         </div>
 
         <!-- نوع المستخدم -->
@@ -292,11 +302,18 @@ const viewUser = userId => {
 
         <VSpacer />
 
-        <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">
+        <VBtn
+          prepend-icon="tabler-rotate-clockwise"
+          variant="outlined"
+          @click="resetFilters"
+        >
           إعادة تعيين
         </VBtn>
 
-        <VBtn prepend-icon="tabler-plus" @click="isAddNewUserDrawerVisible = true">
+        <VBtn
+          prepend-icon="tabler-plus"
+          @click="isAddNewUserDrawerVisible = true"
+        >
           إضافة مستخدم جديد
         </VBtn>
       </VCardText>
@@ -318,24 +335,40 @@ const viewUser = userId => {
       >
         <template #item.user="{ item }">
           <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.avatar ? 'tonal' : undefined" :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined">
-              <VImg v-if="item.avatar" :src="item.avatar" />
+            <VAvatar
+              size="34"
+              :variant="!item.avatar ? 'tonal' : undefined"
+              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
+            >
+              <VImg
+                v-if="item.avatar"
+                :src="item.avatar"
+              />
               <span v-else>{{ item.name?.charAt(0).toUpperCase() }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                <RouterLink :to="{ name: 'apps-user-view-id', params: { id: item.id } }" class="font-weight-medium text-link">
+                <RouterLink
+                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
+                  class="font-weight-medium text-link"
+                >
                   {{ item.name }}
                 </RouterLink>
               </h6>
-              <div class="text-sm">{{ item.email }}</div>
+              <div class="text-sm">
+                {{ item.email }}
+              </div>
             </div>
           </div>
         </template>
 
         <template #item.role="{ item }">
           <div class="d-flex align-center gap-x-2">
-            <VIcon :size="22" :icon="resolveUserRoleVariant(item.role).icon" :color="resolveUserRoleVariant(item.role).color" />
+            <VIcon
+              :size="22"
+              :icon="resolveUserRoleVariant(item.role).icon"
+              :color="resolveUserRoleVariant(item.role).color"
+            />
             <div class="text-capitalize text-high-emphasis text-body-1">
               {{ item.role == 'user' ? 'عميل' : 'ادمن' }}
             </div>
@@ -359,43 +392,95 @@ const viewUser = userId => {
         </template>
 
         <template #item.actions="{ item }">
-          <IconBtn @click="openEditDrawer(item)"><VIcon icon="tabler-pencil" /></IconBtn>
-          <IconBtn @click="confirmDelete(item.id)"><VIcon icon="tabler-trash" /></IconBtn>
-          <IconBtn @click="viewUser(item.id)"><VIcon icon="tabler-eye" /></IconBtn>
+          <IconBtn @click="openEditDrawer(item)">
+            <VIcon icon="tabler-pencil" />
+          </IconBtn>
+          <IconBtn @click="confirmDelete(item.id)">
+            <VIcon icon="tabler-trash" />
+          </IconBtn>
+          <IconBtn @click="viewUser(item.id)">
+            <VIcon icon="tabler-eye" />
+          </IconBtn>
         </template>
 
         <!-- استخدم نفس نظام الباجنيشن القديم -->
         <template #bottom>
-          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="totalUsers" />
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="totalUsers"
+          />
         </template>
       </VDataTableServer>
     </VCard>
 
     <!-- Drawers -->
-    <AddNewUserDrawer v-model:is-drawer-open="isAddNewUserDrawerVisible" @user-data="addNewUser" />
-    <EditUserDrawer v-model:is-drawer-open="isEditUserDrawerVisible" :user-data="userToEdit" @user-data="updateUser" />
+    <AddNewUserDrawer
+      v-model:is-drawer-open="isAddNewUserDrawerVisible"
+      @user-data="addNewUser"
+    />
+    <EditUserDrawer
+      v-model:is-drawer-open="isEditUserDrawerVisible"
+      :user-data="userToEdit"
+      @user-data="updateUser"
+    />
 
     <!-- Snackbar -->
-    <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
+    <VSnackbar
+      v-model="showToast"
+      :color="color"
+      location="top end"
+      timeout="5000"
+    >
       <template #prepend>
-        <VIcon v-if="color === 'success'" icon="tabler-check" />
-        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
+        <VIcon
+          v-if="color === 'success'"
+          icon="tabler-check"
+        />
+        <VIcon
+          v-else-if="color === 'error'"
+          icon="tabler-alert-circle"
+        />
       </template>
       {{ message }}
       <template #actions>
-        <VBtn icon variant="text" color="white" @click="showToast=false"><VIcon icon="tabler-x" /></VBtn>
+        <VBtn
+          icon
+          variant="text"
+          color="white"
+          @click="showToast=false"
+        >
+          <VIcon icon="tabler-x" />
+        </VBtn>
       </template>
     </VSnackbar>
 
     <!-- Delete dialog -->
-    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
+    <VDialog
+      v-model="isDeleteConfirmDialogVisible"
+      max-width="500px"
+    >
       <VCard>
-        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardTitle class="text-h6">
+          تأكيد الحذف
+        </VCardTitle>
         <VCardText>هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer />
-          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible=false">إلغاء</VBtn>
-          <VBtn color="success" variant="flat" @click="executeDelete">موافق</VBtn>
+          <VBtn
+            color="error"
+            variant="flat"
+            @click="isDeleteConfirmDialogVisible=false"
+          >
+            إلغاء
+          </VBtn>
+          <VBtn
+            color="success"
+            variant="flat"
+            @click="executeDelete"
+          >
+            موافق
+          </VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
