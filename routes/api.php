@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactInfoController;
 use App\Http\Controllers\FaqController;
@@ -102,7 +103,19 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/payments/update/{payment}', [PaymentController::class, 'update']);
         Route::post('/payments/delete/{payment}', [PaymentController::class, 'destroy']);
 
-
-
     });
+
+    Route::middleware(['auth:sanctum', 'can:admin'])->prefix('admin')->group(function () {
+        Route::get('/messages', [MessageController::class, 'index']);
+        Route::post('/messages/send', [MessageController::class, 'send']);
+        Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
+    });
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/messages/{message}/read', [MessageController::class, 'markRead']);
+        Route::post('/messages/{message}/unread', [MessageController::class, 'markUnread']);
+        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount']);
+        Route::get('/messages', [MessageController::class, 'index']); // user can list their messages via user_id filter
+    });
+
 });
