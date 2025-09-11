@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactInfoController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PolicyController;
@@ -114,19 +115,11 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/payments/update/{payment}', [PaymentController::class, 'update']);
         Route::post('/payments/delete/{payment}', [PaymentController::class, 'destroy']);
 
-    });
 
-    Route::middleware(['auth:sanctum', 'can:admin'])->prefix('admin')->group(function () {
-        Route::get('/messages', [MessageController::class, 'index']);
-        Route::post('/messages/send', [MessageController::class, 'send']);
-        Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
-    });
-
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::post('/messages/{message}/read', [MessageController::class, 'markRead']);
-        Route::post('/messages/{message}/unread', [MessageController::class, 'markUnread']);
-        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount']);
-        Route::get('/messages', [MessageController::class, 'index']); // user can list their messages via user_id filter
+        //---------------------------------- Notifications --------------------------------------
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::post('notifications', [NotificationController::class, 'store']);
+        Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
     });
 
 });

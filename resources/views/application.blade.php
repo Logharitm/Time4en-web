@@ -51,6 +51,6 @@
     if (primaryColor)
       document.documentElement.style.setProperty('--initial-loader-color', primaryColor)
     </script>
-  <script src="{{ asset('js/echo.js') }}"></script>
+{{--  <script src="{{ asset('js/echo.js') }}"></script>--}}
   </body>
 </html>
