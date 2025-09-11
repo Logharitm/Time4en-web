@@ -18,6 +18,17 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
+
+
+    Route::get('clear', function (){
+        Artisan::call('cache:clear');
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+        Artisan::call('optimize:clear');
+        return 'Done';
+    });
+
+
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
