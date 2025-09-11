@@ -66,6 +66,11 @@ export default [
     icon: { icon: 'tabler-help-hexagon' },
     to: { name: 'admin-faqs' },
   },
+  {
+    title: 'الاشعارات',
+    icon: { icon: 'tabler-bell' },
+    to: { name: 'admin-notifications' },
+  },
 
 
 ]
