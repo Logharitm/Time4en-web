@@ -48,6 +48,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::get('user', [AuthController::class, 'user']);
         Route::post('update-profile', [AuthController::class, 'updateProfile']);
         Route::post('change-password', [AuthController::class, 'changePassword']);
+        Route::post('update-device-token', [UserController::class, 'updateDeviceToken']);
 
         // --------------------------------- Users ---------------------------------
         Route::get('/users', [UserController::class, 'index']);
@@ -55,7 +56,6 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/users/store', [UserController::class, 'store']);
         Route::post('/users/update/{user}', [UserController::class, 'update']);
         Route::post('/users/delete/{user}', [UserController::class, 'destroy']);
-        Route::post('/users/update-device-token/{user}', [UserController::class, 'updateDeviceToken']);
 
         // --------------------------------- Folders ---------------------------------
         Route::get('folders', [FolderController::class, 'index']);
