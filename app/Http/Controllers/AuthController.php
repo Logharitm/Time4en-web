@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Events\UserRegistered;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
@@ -9,12 +10,15 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\ResetPasswordMailAr;
 use App\Mail\ResetPasswordMailEn;
+use App\Models\Payment;
+use App\Models\Plan;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
@@ -48,6 +52,14 @@ class AuthController extends Controller
 
         // Create token
         $tokenResult = $user->createToken('Personal Access Token');
+        $plan = Plan::find(1);
+
+        $payment = new Payment();
+        $payment->amount = 0;
+        $payment->payment_method = 'trial';
+        $payment->status = 'completed';
+
+        event(new UserRegistered($user,$plan,$payment));
 
         // Return success response with formatted user resource
         return $this->successResponse('User successfully registered.', [
@@ -242,6 +254,25 @@ class AuthController extends Controller
         $user->device_token = $request->device_token;
         $user->update();
         return $this->successResponse('User updated successfully.', new UserResource($user));
+    }
+
+    public function subscribe(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $plan = Plan::findOrFail($request->plan_id);
+
+        $payment = new Payment();
+        $payment->amount = $request->amount;
+        $payment->payment_method = $request->payment_method;
+        $payment->status = $request->status;
+
+        event(new UserRegistered($user,$plan,$payment));
+
+        // Return success response with formatted user resource
+        return $this->successResponse('User successfully subscriped.', [
+            'user' => new UserResource($user),
+        ], 200);
+
     }
 
 }

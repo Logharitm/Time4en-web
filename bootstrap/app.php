@@ -1,6 +1,8 @@
 <?php
 
+use App\Events\UserRegistered;
 use App\Http\Middleware\CheckUserSubscription as CheckUserSubscriptionAlias;
+use App\Listeners\AssignSubscription;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'check.subscription' => CheckUserSubscriptionAlias::class,
         ]);
+    })
+    ->withEvents(function ($events) {
+        $events->listen(
+            UserRegistered::class,
+            AssignSubscription::class
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
