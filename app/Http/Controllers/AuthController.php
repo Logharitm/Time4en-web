@@ -77,6 +77,9 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
+        $user->device_token = $request->device_token;
+        $user->save();
+
         $tokenResult = $user->createToken('Personal Access Token');
 
         return $this->successResponse('User successfully login.', [
