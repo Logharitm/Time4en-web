@@ -48,7 +48,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::get('user', [AuthController::class, 'user']);
         Route::post('update-profile', [AuthController::class, 'updateProfile']);
         Route::post('change-password', [AuthController::class, 'changePassword']);
-        Route::post('update-device-token', [UserController::class, 'updateDeviceToken']);
+        Route::post('update-device-token', [AuthController::class, 'updateDeviceToken']);
 
         // --------------------------------- Users ---------------------------------
         Route::get('/users', [UserController::class, 'index']);

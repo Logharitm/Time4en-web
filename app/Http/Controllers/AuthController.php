@@ -233,5 +233,12 @@ class AuthController extends Controller
         ]);
     }
 
+    public function updateDeviceToken(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->device_token = $request->device_token;
+        $user->update();
+        return $this->successResponse('User updated successfully.', new UserResource($user));
+    }
 
 }
