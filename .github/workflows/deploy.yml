@@ -21,25 +21,32 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            set -e  # وقف لو فيه أي Error
+            set -e
 
-            cd ${{ secrets.DEPLOY_PATH }} &&
-            
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # نعمل نسخة احتياطية قبل التحديث
+            BACKUP_DIR=releases/backup-\$(date +%Y%m%d%H%M%S)
+            mkdir -p releases
+            cp -r . \$BACKUP_DIR
+
             echo '>>> Pulling latest code...'
-            git fetch --all &&
-            git checkout origin/main -- . &&
-            
-            echo '>>> Installing dependencies...'
-            php composer.phar install --no-interaction --prefer-dist --optimize-autoloader ||
-            composer install --no-interaction --prefer-dist --optimize-autoloader &&
-            
+            if git fetch --all && git reset --hard origin/main; then
+              echo '>>> Code updated successfully.'
+            else
+              echo '!!! Error while updating code, restoring backup...'
+              rm -rf ./*
+              cp -r \$BACKUP_DIR/* .
+              exit 1
+            fi
+
             echo '>>> Clearing & caching config/routes/views...'
-            php artisan config:clear &&
-            php artisan cache:clear &&
-            php artisan route:clear &&
-            php artisan view:clear &&
-            php artisan optimize &&
-            php artisan config:cache &&
-            php artisan route:cache &&
-            php artisan view:cache
+            php artisan config:clear || true
+            php artisan cache:clear || true
+            php artisan route:clear || true
+            php artisan view:clear || true
+            php artisan optimize || true
+            php artisan config:cache || true
+            php artisan route:cache || true
+            php artisan view:cache || true
           "
