@@ -28,7 +28,6 @@ jobs:
            git fetch --all && git reset --hard origin/main &&
 
             
-            echo '>>> Installing dependencies (Composer v2)...'
             
          
             
