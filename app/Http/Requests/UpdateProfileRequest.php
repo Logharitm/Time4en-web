@@ -34,6 +34,7 @@ class UpdateProfileRequest extends FormRequest
             ],
             'language' => 'sometimes|string|max:10',
             'avatar' => 'nullable|file|image|mimes:jpg,gif,png|max:2048', // 2MB
+            'device_token' => 'sometimes|string',
         ];
     }
 }
