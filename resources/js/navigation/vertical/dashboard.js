@@ -71,6 +71,22 @@ export default [
     icon: { icon: 'tabler-bell' },
     to: { name: 'admin-notifications' },
   },
+  {
+    title: 'الاشعارات',
+    icon: { icon: 'tabler-bell' },
+    children: [
+      {
+        title: 'اضافة اشعار',
+        to: { name: 'admin-notifications-add' },
+        icon: { icon: 'tabler-circle' }, // أيقونة صغيرة أو مختلفة
+      },
+      {
+        title: 'الاشعارات',
+        to: { name: 'admin-notifications' },
+        icon: { icon: 'tabler-circle' },
+      }
+    ],
+  },
 
 
 ]

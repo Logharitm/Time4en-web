@@ -13,22 +13,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // اسم المستخدم
-            $table->string('email')->unique(); // البريد الإلكتروني
+            $table->string('name');
+            $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable();
-            // تمييز بين المستخدم العادي والمدير
+
             $table->enum('role', ['user', 'admin'])->default('user');
 
-            // إعدادات إضافية
-            $table->string('language', 10)->default('en'); // اللغة المفضلة
+            $table->string('language', 10)->default('en');
+            $table->string('device_token', 255);
 
-            // إحصائيات
             $table->unsignedInteger('folders_count')->default(0);
             $table->unsignedInteger('words_count')->default(0);
 
-            // الاشتراكات
             $table->string('subscription_plan', 50)->default('free');
             $table->date('subscription_expires_at')->nullable();
 

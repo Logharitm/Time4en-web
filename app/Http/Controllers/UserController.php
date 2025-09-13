@@ -109,6 +109,14 @@ class UserController extends Controller
         return $this->successResponse('User updated successfully.', new UserResource($user));
     }
 
+    public function updateDeviceToken(Request $request, $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+        $user->device_token = $request->device_token;
+        $user->update();
+        return $this->successResponse('User updated successfully.', new UserResource($user));
+    }
+
     public function destroy(User $user): JsonResponse
     {
         $user->delete();

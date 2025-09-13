@@ -26,7 +26,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'language',  // إضافة اللغة
+        'language',
+        'device_token'
     ];
 
     /**

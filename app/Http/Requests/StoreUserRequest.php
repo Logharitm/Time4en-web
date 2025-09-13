@@ -19,6 +19,7 @@ class StoreUserRequest extends FormRequest
             'password'              => 'required|string|min:8',
             'role'                  => 'required|in:admin,user',
             'language'              => 'nullable|string|max:10',
+            'device_token'          => 'nullable|string',
             'avatar'                => 'nullable|file|image|mimes:jpg,gif,png|max:2048', // 2MB
             'subscription_plan'     => 'nullable|string|max:255',
             'subscription_expires_at' => 'nullable|date',
