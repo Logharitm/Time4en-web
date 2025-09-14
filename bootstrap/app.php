@@ -21,12 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.subscription' => CheckUserSubscriptionAlias::class,
         ]);
     })
-    ->withEvents(function ($events) {
-        $events->listen(
-            UserRegistered::class,
-            AssignSubscription::class
-        );
-    })
+    ->withEvents([
+        UserRegistered::class,
+        AssignSubscription::class
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             $className = get_class($e);
