@@ -69,11 +69,6 @@ export default [
   {
     title: 'الاشعارات',
     icon: { icon: 'tabler-bell' },
-    to: { name: 'admin-notifications' },
-  },
-  {
-    title: 'الاشعارات',
-    icon: { icon: 'tabler-bell' },
     children: [
       {
         title: 'اضافة اشعار',
@@ -81,10 +76,10 @@ export default [
         icon: { icon: 'tabler-circle' }, // أيقونة صغيرة أو مختلفة
       },
       {
-        title: 'الاشعارات',
+        title: 'عرض الكل',
         to: { name: 'admin-notifications' },
         icon: { icon: 'tabler-circle' },
-      }
+      },
     ],
   },
 
