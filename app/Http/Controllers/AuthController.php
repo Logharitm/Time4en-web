@@ -242,7 +242,6 @@ class AuthController extends Controller
             return $this->successResponse('Password has been reset successfully.');
         }
 
-        // استخدام ValidationException لربط الخطأ بحقل email
         throw ValidationException::withMessages([
             'email' => ['Invalid token or email.'],
         ]);
