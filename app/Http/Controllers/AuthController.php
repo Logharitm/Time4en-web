@@ -259,7 +259,6 @@ class AuthController extends Controller
     {
         $user = $request->user();
         $plan = Plan::findOrFail($request->plan_id);
-
         $payment = new Payment();
         $payment->amount = $request->amount;
         $payment->payment_method = $request->payment_method;
