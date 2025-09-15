@@ -21,10 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.subscription' => CheckUserSubscriptionAlias::class,
         ]);
     })
-    ->withEvents([
-        UserRegistered::class,
-        AssignSubscription::class
-    ])
+    ->withEvents(discover: true)
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             $className = get_class($e);

@@ -73,7 +73,7 @@ export default [
       {
         title: 'اضافة اشعار',
         to: { name: 'admin-notifications-add' },
-        icon: { icon: 'tabler-circle' }, // أيقونة صغيرة أو مختلفة
+        icon: { icon: 'tabler-circle' },
       },
       {
         title: 'عرض الكل',

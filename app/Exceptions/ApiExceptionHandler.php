@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Throwable;
 
 class ApiExceptionHandler
@@ -32,6 +33,7 @@ class ApiExceptionHandler
         HttpException::class => 'handleHttpException',
         QueryException::class => 'handleQueryException',
         ErrorException::class => 'handleErrorException',
+        InvalidSignatureException::class => 'handleInvalidSignatureException',
     ];
 
     /**
@@ -235,5 +237,22 @@ class ApiExceptionHandler
                 'line' => $e->getLine(),
             ] : [],
         ], 500);
+    }
+
+    public function handleInvalidSignatureException(
+        InvalidSignatureException $e,
+        Request $request
+    ) {
+        $this->logException($e, 'Invalid verification link');
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'The verification link is invalid or has expired.',
+                'errors' => [],
+            ], 400);
+        }
+
+        return redirect('/verified-error');
     }
 }

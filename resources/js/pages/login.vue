@@ -1,4 +1,5 @@
 <!-- ❗Errors in the form are set on line 60 -->
+<script src="../../../../newEverest/resources/js/src/navigation/vertical/index.js"></script>
 <script setup>
 import { VForm } from 'vuetify/components/VForm'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
@@ -51,30 +52,34 @@ const login = async () => {
         password: credentials.value.password,
       },
       onResponseError({ response }) {
-        // لو الـ API بيرجع errors زي { errors: { email: ["Invalid email or password"] } }
         if (response._data?.errors) {
           errors.value = response._data.errors
         } else if (response._data?.message) {
-          // لو بيرجع رسالة عامة
-          errors.value = {
-            email: [response._data.message],
-          }
+          errors.value = { email: [response._data.message] }
         }
       },
     })
 
-    // ✅ في حالة النجاح
     const accessToken = res.data.accessToken
 
     useCookie('accessToken').value = accessToken
-    useCookie('userData').value = { name: res.data.name, role: 'Admin', email: credentials.value.email, avatar: res.data.avatar || null }
+    useCookie('userData').value = {
+      name: res.data.name,
+      role: res.data.role, // هنا نأخذ الدور من الـ API مباشرة
+      email: credentials.value.email,
+      avatar: res.data.avatar || null,
+    }
     useCookie('userAbilityRules').value = [{ action: 'manage', subject: 'all' }]
     ability.update([{ action: 'manage', subject: 'all' }])
 
+    // التوجيه للـ index فقط ليترك redirects يحدد الصفحة حسب الدور
+    const target = route.query.to ? String(route.query.to) : '/'
+    if (router.currentRoute.value.fullPath !== target) {
+      await nextTick(() => {
+        router.replace(target)
+      })
+    }
 
-    await nextTick(() => {
-      router.replace(route.query.to ? String(route.query.to) : 'home/dashboard')
-    })
   } catch (err) {
     console.error('Login error:', err)
     errors.value = {
@@ -82,6 +87,7 @@ const login = async () => {
     }
   }
 }
+
 
 
 const onSubmit = () => {

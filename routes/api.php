@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactInfoController;
 use App\Http\Controllers\FaqController;
@@ -13,15 +12,18 @@ use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WordController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
+
 Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
 
-
-    Route::get('clear', function (){
+    Route::get('clear', function () {
         Artisan::call('cache:clear');
         Artisan::call('config:clear');
         Artisan::call('config:cache');
@@ -29,7 +31,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         return 'Done';
     });
 
-
+    // --------------------------------- Auth ---------------------------------
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
@@ -37,8 +39,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/faqs', [FaqController::class, 'index']);
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
 
-
-    Route::group(['middleware' => ['auth:sanctum','check.subscription']], function() {
+    Route::group(['middleware' => ['auth:sanctum', 'check.subscription']], function () {
 
         Route::get('/statistics', [StatisticsController::class, 'index']);
         Route::get('/plans/statistics', [StatisticsController::class, 'plans']);
@@ -101,7 +102,6 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/plans/update/{plan}', [PlanController::class, 'update']);
         Route::post('/plans/delete/{plan}', [PlanController::class, 'destroy']);
 
-
         // --------------------------------- Subscriptions ---------------------------------
         Route::get('/subscriptions', [SubscriptionController::class, 'index']);
         Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show']);
@@ -116,8 +116,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/payments/update/{payment}', [PaymentController::class, 'update']);
         Route::post('/payments/delete/{payment}', [PaymentController::class, 'destroy']);
 
-
-        //---------------------------------- Notifications --------------------------------------
+        // --------------------------------- Notifications ---------------------------------
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications', [NotificationController::class, 'store']);
         Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);

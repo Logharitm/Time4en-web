@@ -13,6 +13,7 @@ use App\Mail\ResetPasswordMailEn;
 use App\Models\Payment;
 use App\Models\Plan;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +44,6 @@ class AuthController extends Controller
     {
         $validated = $request->validated();
 
-
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -59,6 +59,7 @@ class AuthController extends Controller
         $payment->payment_method = 'trial';
         $payment->status = 'completed';
 
+        event(new Registered($user));
         event(new UserRegistered($user,$plan,$payment));
 
         // Return success response with formatted user resource
@@ -92,12 +93,21 @@ class AuthController extends Controller
         $user->device_token = $request->device_token;
         $user->save();
 
+        if (is_null($user->email_verified_at)) {
+            return response()->json([
+                'message' => 'من فضلك فعّل بريدك الإلكتروني أولاً'
+            ], 403);
+        }
+
         $tokenResult = $user->createToken('Personal Access Token');
+
+
 
         return $this->successResponse('User successfully login.', [
             'accessToken' => $tokenResult->plainTextToken,
             'token_type' => 'Bearer',
             'name' => $user->name,
+            'role' => $user->role,
             'avatar' => $user->avatar,
         ], 200);
 
