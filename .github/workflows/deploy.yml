@@ -24,20 +24,6 @@ jobs:
 
             cd ${{ secrets.DEPLOY_PATH }}
 
-            # نعمل نسخة احتياطية مضغوطة قبل التحديث
-            BACKUP_DIR=releases/backup-\$(date +%Y%m%d%H%M%S).tar.gz
-            mkdir -p releases
-            tar -czf \$BACKUP_DIR .
-
-            echo '>>> Pulling latest code...'
-            if git fetch --all && git reset --hard origin/main; then
-              echo '>>> Code updated successfully.'
-            else
-              echo '!!! Error while updating code, restoring backup...'
-              rm -rf ./*
-              tar -xzf \$BACKUP_DIR -C .
-              exit 1
-            fi
 
             echo '>>> Clearing & caching config/routes/views...'
             php artisan config:clear || true
