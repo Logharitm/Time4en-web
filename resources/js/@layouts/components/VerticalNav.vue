@@ -42,7 +42,7 @@ const resolveNavItemComponent = item => {
     return VerticalNavSectionTitle
   if ('children' in item)
     return VerticalNavGroup
-  
+
   return VerticalNavLink
 }
 

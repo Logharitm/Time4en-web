@@ -219,5 +219,30 @@
   "Set new password": "Set new password",
   "Confirm Password": "Confirm Password",
   "New Password": "New Password",
-  "Your new password must be different from previously used passwords": "Your new password must be different from previously used passwords"
+  "Your new password must be different from previously used passwords": "Your new password must be different from previously used passwords",
+  "contact": {
+    "chip": "Contact Us",
+    "title": "Get in Touch",
+    "subtitle": "Have a question or inquiry? Just send us a message ✍️",
+    "send_title": "Send a Message",
+    "send_subtitle": "If you would like to discuss anything regarding payment, account, licensing, partnerships, or you have questions before subscribing, you are in the right place.",
+    "form": {
+      "name": "Full Name",
+      "name_placeholder": "Enter your full name",
+      "email": "Email",
+      "subject": "Subject",
+      "subject_placeholder": "Enter the subject",
+      "message": "Message",
+      "message_placeholder": "Write your message here",
+      "submit": "Send Inquiry"
+    },
+    "info": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "visit": "Visit Page"
+    }
+  }
 }

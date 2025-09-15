@@ -1,33 +1,60 @@
 export default [
   {
     title: 'Dashboards',
+    to: 'dashboards-analytics',
     icon: { icon: 'tabler-smart-home' },
-    children: [
-      {
-        title: 'Analytics',
-        to: 'dashboards-analytics',
-        icon: { icon: 'tabler-chart-pie-2' },
-      },
-      {
-        title: 'CRM',
-        to: 'dashboards-crm',
-        icon: { icon: 'tabler-cube' },
-      },
-      {
-        title: 'Ecommerce',
-        to: 'dashboards-ecommerce',
-        icon: { icon: 'tabler-shopping-cart' },
-      },
-      {
-        title: 'Academy',
-        to: 'dashboards-academy',
-        icon: { icon: 'tabler-book' },
-      },
-      {
-        title: 'Logistics',
-        to: 'dashboards-logistics',
-        icon: { icon: 'tabler-truck' },
-      },
-    ],
+    action: 'read',
+    subject: 'Home',
+  },
+  {
+    title: 'Folders',
+    to: 'dashboards-analytics',
+    icon: { icon: 'tabler-folders' },
+    action: 'read',
+    subject: 'Home',
+  },
+  {
+    title: 'Practices',
+    to: 'dashboards-analytics',
+    icon: { icon: 'tabler-shield-question' },
+    action: 'read',
+    subject: 'Home',
+  },
+  {
+    title: 'Plans',
+    to: 'plans',
+    icon: { icon: 'tabler-plant-2' },
+    action: 'read',
+    subject: 'Home',
+  },
+  {
+    title: 'Terms and Conditions',
+    to: 'dashboards-analytics',
+    icon: { icon: 'tabler-gavel' },
+    action: 'read',
+    subject: 'Home',
+  },
+  {
+    title: 'FAQs',
+    to: 'faq',
+    icon: { icon: 'tabler-help-hexagon' },
+    action: 'read',
+    subject: 'Home',
+  },
+  
+  {
+    title: 'Contact Us',
+    to: 'dashboards-analytics',
+    icon: { icon: 'tabler-phone' },
+    action: 'read',
+    subject: 'Home',
+  },
+
+  {
+    title: 'About Us',
+    to: 'dashboards-analytics',
+    icon: { icon: 'tabler-phone' },
+    action: 'read',
+    subject: 'Home',
   },
 ]

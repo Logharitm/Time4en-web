@@ -1,11 +1,13 @@
 <script setup>
 import LogisticsCardStatistics from '@/views/apps/logistics/LogisticsCardStatistics.vue'
-import LogisticsDeliveryExpectations from '@/views/apps/logistics/LogisticsDeliveryExpectations.vue'
-import LogisticsDeliveryPerformance from '@/views/apps/logistics/LogisticsDeliveryPerformance.vue'
-import LogisticsOrderByCountries from '@/views/apps/logistics/LogisticsOrderByCountries.vue'
-import LogisticsOverviewTable from '@/views/apps/logistics/LogisticsOverviewTable.vue'
-import LogisticsShipmentStatistics from '@/views/apps/logistics/LogisticsShipmentStatistics.vue'
 import LogisticsVehicleOverview from '@/views/apps/logistics/LogisticsVehicleOverview.vue'
+
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'Home',
+  },
+})
 </script>
 
 <template>
@@ -19,7 +21,5 @@ import LogisticsVehicleOverview from '@/views/apps/logistics/LogisticsVehicleOve
     >
       <LogisticsVehicleOverview />
     </VCol>
-
-
   </VRow>
 </template>

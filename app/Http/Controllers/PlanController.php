@@ -25,8 +25,8 @@ class PlanController extends Controller
                 ->orWhere('description', 'like', "%{$search}%");
         }
 
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort_order', 'asc');
         $query->orderBy($sortBy, $sortOrder);
 
         $plans = $query->paginate($request->get('per_page', 20));

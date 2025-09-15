@@ -1,77 +1,44 @@
 <script setup>
+import { ref, onMounted } from "vue"
 import paperPlane from '@images/front-pages/icons/paper-airplane.png'
 import plane from '@images/front-pages/icons/plane.png'
-import pricingPlanArrow from '@images/front-pages/icons/pricing-plans-arrow.png'
 import shuttleRocket from '@images/front-pages/icons/shuttle-rocket.png'
+import pricingPlanArrow from '@images/front-pages/icons/pricing-plans-arrow.png'
 
-const annualMonthlyPlanPriceToggler = ref(true)
+// بيانات الباقات
+const pricingPlans = ref([])
+const loading = ref(false)
 
-const pricingPlans = [
-  {
-    title: 'Basic',
-    image: paperPlane,
-    monthlyPrice: 19,
-    yearlyPrice: 168,
-    features: [
-      'Timeline',
-      'Basic search',
-      'Live chat widget',
-      'Email marketing',
-      'Custom Forms',
-      'Traffic analytics',
-      'Basic Support',
-    ],
-    supportType: 'Basic',
-    supportMedium: 'Only Email',
-    respondTime: 'AVG. Time: 24h',
-    current: false,
-  },
-  {
-    title: 'Favourite',
-    image: plane,
-    monthlyPrice: 29,
-    yearlyPrice: 264,
-    features: [
-      'Everything in basic',
-      'Timeline with database',
-      'Advanced search',
-      'Marketing automation',
-      'Advanced chatbot',
-      'Campaign management',
-      'Collaboration tools',
-    ],
-    supportType: 'Standard',
-    supportMedium: 'Email & Chat',
-    respondTime: 'AVG. Time: 6h',
-    current: true,
-  },
-  {
-    title: 'Standard',
-    image: shuttleRocket,
-    monthlyPrice: 49,
-    yearlyPrice: 444,
-    features: [
-      'Campaign management',
-      'Timeline with database',
-      'Fuzzy search',
-      'A/B testing sanbox',
-      'Custom permissions',
-      'Social media automation',
-      'Sales automation tools',
-    ],
-    supportType: 'Exclusive',
-    supportMedium: 'Email, Chat & Google Meet',
-    respondTime: 'Live Support',
-    current: false,
-  },
-]
+// أيقونات احتياطية لكل خطة
+const defaultIcons = [paperPlane, plane, shuttleRocket]
+
+// جلب البيانات من API
+const fetchPlans = async () => {
+  loading.value = true
+  try {
+    const res = await $api("/plans", { method: "GET" })
+    if (res.status === "success" && Array.isArray(res.data)) {
+      pricingPlans.value = res.data.map((plan, index) => ({
+        ...plan,
+        image: defaultIcons[index] || paperPlane, // أيقونة احتياطية
+        current: index === 0, // الخطة الأولى محددة افتراضياً
+      }))
+    }
+  } catch (err) {
+    console.error("Error fetching plans", err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchPlans)
 </script>
 
 <template>
   <div id="pricing-plan">
     <VContainer>
       <div class="pricing-plans">
-        <!-- 👉 Headers  -->
+        <!-- Headers -->
         <div class="headers d-flex justify-center flex-column align-center flex-wrap">
           <VChip
             label
@@ -79,61 +46,25 @@ const pricingPlans = [
             class="mb-4"
             size="small"
           >
-            Pricing Plans
+            {{ $t("Pricing Plans") }}
           </VChip>
           <h4 class="d-flex align-center text-h4 mb-1 flex-wrap justify-center">
             <div class="position-relative me-2">
               <div class="section-title">
-                Tailored design plans
+                {{ $t("Tailored plans designed for you") }}
               </div>
             </div>
-            designed for you
+
           </h4>
-          <div class="text-center text-body-1">
-            <p class="mb-0">
-              All plans include 40+ advanced tools and features to boost your product.
-            </p>
-            <p class="mb-0">
-              Choose the best plan to fit your needs.
-            </p>
-          </div>
         </div>
-        <!-- 👉 Annual and monthly price toggler -->
-        <div class="d-flex align-center justify-center mx-auto mt-6 mb-16">
-          <VLabel
-            for="pricing-plan-toggle"
-            class="me-3"
-          >
-            Pay Monthly
-          </VLabel>
-          <div class="position-relative">
-            <VSwitch
-              id="pricing-plan-toggle"
-              v-model="annualMonthlyPlanPriceToggler"
-            >
-              <template #label>
-                <div class="text-body-1">
-                  Pay Annually
-                </div>
-              </template>
-            </VSwitch>
-            <div class="position-absolute pricing-plan-arrow d-md-flex d-none">
-              <VImg
-                :src="pricingPlanArrow"
-                class="flip-in-rtl"
-                width="60"
-                height="42"
-              />
-              <div class="text-no-wrap text-body-1 font-weight-medium">
-                Save 25%
-              </div>
-            </div>
-          </div>
-        </div>
-        <VRow>
+
+        <VRow class="mt-6">
           <VCol
             v-for="(plan, index) in pricingPlans"
-            :key="index"
+            :key="plan.id"
+            cols="12"
+            sm="6"
+            lg="4"
           >
             <VCard :style="plan.current ? 'border:2px solid rgb(var(--v-theme-primary))' : ''">
               <VCardText class="pa-8 pt-12">
@@ -144,60 +75,62 @@ const pricingPlans = [
                   class="mx-auto mb-8"
                 />
                 <h4 class="text-h4 text-center">
-                  {{ plan.title }}
+                  {{ plan.name }}
                 </h4>
-                <div class="d-flex justify-center mb-8 position-relative">
-                  <div class="d-flex align-end">
-                    <div class="pricing-title text-primary me-1">
-                      ${{ annualMonthlyPlanPriceToggler ? Math.floor(plan.yearlyPrice) / 12 : plan.monthlyPrice }}
-                    </div>
-                    <span class="text-disabled mb-2">/mo</span>
-                  </div>
+                <p class="text-body-2 text-center mb-6 mt-6">
+                  {{ plan.description }}
+                </p>
 
-                  <!-- 👉 Annual Price -->
-                  <span
-                    v-show="annualMonthlyPlanPriceToggler"
-                    class="annual-price-text position-absolute text-sm text-disabled"
-                  >
-                    {{ plan.yearlyPrice === 0 ? 'free' : `USD ${plan.yearlyPrice}/Year` }}
-                  </span>
+                <!-- السعر -->
+                <div class="d-flex justify-center mb-8">
+                  <div class="pricing-title text-primary me-1">
+                    {{ plan.price }}
+                  </div>
                 </div>
+
+                <!-- تفاصيل الباقة -->
                 <VList class="card-list">
-                  <VListItem
-                    v-for="(item, i) in plan.features"
-                    :key="i"
-                  >
+                  <VListItem>
                     <template #prepend>
-                      <VAvatar
-                        size="16"
-                        :variant="!plan.current ? 'tonal' : 'elevated'"
-                        color="primary"
-                        class="me-3"
-                      >
-                        <VIcon
-                          icon="tabler-check"
-                          size="12"
-                          :color="!plan.current ? 'primary' : 'white'"
-                        />
+                      <VAvatar size="16" variant="tonal" color="primary" class="me-3">
+                        <VIcon icon="tabler-check" size="12" color="primary" />
                       </VAvatar>
                       <h6 class="text-h6">
-                        {{ item }}
+                        {{ $t("Duration") }}: {{ plan.duration_months }} {{ $t("Months") }}
                       </h6>
                     </template>
                   </VListItem>
+
+                  <VListItem>
+                    <template #prepend>
+                      <VAvatar size="16" variant="tonal" color="primary" class="me-3">
+                        <VIcon icon="tabler-check" size="12" color="primary" />
+                      </VAvatar>
+                      <h6 class="text-h6">
+                        {{ $t("Words Limit") }}: {{ plan.words_limit }}
+                      </h6>
+                    </template>
+                  </VListItem>
+
                 </VList>
+
                 <VBtn
                   block
                   :variant="plan.current ? 'elevated' : 'tonal'"
                   class="mt-8"
-                  :to="{ name: 'front-pages-payment' }"
+                  href="register"
                 >
-                  Get Started
+                  {{ $t("Get Started") }}
                 </VBtn>
               </VCardText>
             </VCard>
           </VCol>
         </VRow>
+
+        <!-- Loading -->
+        <div v-if="loading" class="text-center py-6">
+          {{ $t("Loading") }}...
+        </div>
       </div>
     </VContainer>
   </div>
@@ -229,16 +162,6 @@ const pricingPlans = [
   }
 }
 
-.save-upto-chip {
-  inset-block-start: -1.5rem;
-  inset-inline-end: -7rem;
-}
-
-.pricing-plan-arrow {
-  inset-block-start: -0.5rem;
-  inset-inline-end: -8rem;
-}
-
 .section-title {
   font-size: 24px;
   font-weight: 800;
@@ -255,9 +178,5 @@ const pricingPlans = [
   inline-size: 120%;
   inset-block-end: 0;
   inset-inline-start: -12%;
-}
-
-.annual-price-text {
-  inset-block-end: -40%;
 }
 </style>

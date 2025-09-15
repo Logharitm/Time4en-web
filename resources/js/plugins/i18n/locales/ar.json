@@ -41,7 +41,7 @@
   "Chartjs": "تشارتجس",
   "Account Settings": "إعدادت الحساب",
   "User Profile": "ملف تعريفي للمستخدم",
-  "FAQ": "التعليمات",
+  "FAQ": "الاسئلة الشائعة",
   "Dialog Examples": "أمثلة على الحوار",
   "Pricing": "التسعير",
   "List": "عرض الكل",
@@ -219,6 +219,51 @@
   "Set New Password": "اعادة تعيين كلمة المرور",
   "Confirm Password": "تأكيد كلمة المرور",
   "New Password": "كلمة المرور الجديدة",
-  "Your new password must be different from previously used passwords": "كلمة المرور الجديدة يجب ان تكون مختلفة عن كلمة المرور القديمة"
+  "Your new password must be different from previously used passwords": "كلمة المرور الجديدة يجب ان تكون مختلفة عن كلمة المرور القديمة",
+  "Folders": "المجلدات",
+  "Practices": "الاختبارات",
+  "Plans": "باقات الاشتراك",
+  "Terms and Conditions": "الشروط والاحكام",
+  "FAQs": "الاسئلة الشائعة",
+  "Contact Us": "تواصل معنا",
+  "About Us": "من نحن؟",
+  "Home": "الرئيسية",
+  "contact": {
+    "chip": "تواصل معنا",
+    "title": "كن علي تواصل معنا",
+    "subtitle": "عندك سؤال أو استفسار؟ فقط اكتب لنا رسالة ✍️",
+    "send_title": "أرسل رسالة",
+    "send_subtitle": "إذا كنت ترغب في مناقشة أي شيء بخصوص الدفع، الحساب، التراخيص، الشراكات أو لديك أسئلة قبل الاشتراك، فأنت في المكان الصحيح.",
+    "form": {
+      "name": "الاسم الكامل",
+      "name_placeholder": "أدخل اسمك بالكامل",
+      "email": "البريد الإلكتروني",
+      "subject": "الموضوع",
+      "subject_placeholder": "اكتب موضوع الرسالة",
+      "message": "الرسالة",
+      "message_placeholder": "اكتب رسالتك هنا",
+      "submit": "إرسال الاستفسار"
+    },
+    "info": {
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "whatsapp": "واتساب",
+      "facebook": "فيسبوك",
+      "visit": "زيارة الصفحة"
+    }
+  },
+  "Ready to Get Started?": "هل انت مستعد للبدأ الان ؟",
+  "Ready msg": "قم بالتسجيل الان واشترك في الباقة المجانية مباشرة واستمتع بمتعة التعلم معنا",
+  "Get Started": "ابدأ الان",
+  "Frequently Asked questions": "اكثر الاسئلة المتكررة من عملائنا",
+  "Browse through these FAQs to find answers to commonly asked questions": "ابحث في هذه الأسئلة الأكثر شيوعاً للعثور على إجابات لاستفساراتك",
+  "Words Limit": "عدد الكلمات",
+  "Duration": "مدة الصلاحية",
+  "Months": "شهور / شهر",
+  "Tailored plans designed for you": "خطط معدّة خصيصاً لتناسب احتياجاتك",
+  "Pricing Plans": "باقات الاسعار",
+  "Join Community": "اشترك الان",
+  "Get early Access": "سجل الان في التطبيق"
 
 }

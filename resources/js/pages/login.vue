@@ -1,5 +1,3 @@
-<!-- ❗Errors in the form are set on line 60 -->
-<script src="../../../../newEverest/resources/js/src/navigation/vertical/index.js"></script>
 <script setup>
 import { VForm } from 'vuetify/components/VForm'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
@@ -12,6 +10,7 @@ import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { useAbility } from '@casl/vue'
 
 const authThemeImg = useGenerateImageVariant(authV2LoginIllustrationLight, authV2LoginIllustrationDark, authV2LoginIllustrationBorderedLight, authV2LoginIllustrationBorderedDark, true)
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
@@ -52,39 +51,49 @@ const login = async () => {
         password: credentials.value.password,
       },
       onResponseError({ response }) {
-        if (response._data?.errors) {
-          errors.value = response._data.errors
-        } else if (response._data?.message) {
-          errors.value = { email: [response._data.message] }
-        }
+        if (response._data?.errors) errors.value = response._data.errors
+        else if (response._data?.message) errors.value = { email: [response._data.message] }
       },
     })
 
-    const accessToken = res.data.accessToken
+    // دعم الحالتين: res أو res.data
+    const payload = res?.data ?? res
 
-    useCookie('accessToken').value = accessToken
-    useCookie('userData').value = {
-      name: res.data.name,
-      role: res.data.role, // هنا نأخذ الدور من الـ API مباشرة
+    const accessToken = payload.accessToken
+
+    const userFromApi = payload.userData ?? {
+      name: payload.name,
+      role: payload.role,
+      avatar: payload.avatar ?? null,
       email: credentials.value.email,
-      avatar: res.data.avatar || null,
     }
-    useCookie('userAbilityRules').value = [{ action: 'manage', subject: 'all' }]
-    ability.update([{ action: 'manage', subject: 'all' }])
 
-    // التوجيه للـ index فقط ليترك redirects يحدد الصفحة حسب الدور
+
+    let userAbilities = []
+    if (userFromApi.role === 'admin') {
+      userAbilities = [{ action: 'manage', subject: 'all' }]
+    } else {
+      // user عادي: خلي صلاحية قراءة الصفحة الرئيسية فقط
+      // **مهم**: غيّر 'Home' للـ subject اللي هتستخدمه في navigation/pages
+      userAbilities = [{ action: 'read', subject: 'Home' }]
+    }
+
+    // -------------- حفظ الحالة وتحديث الـ ability --------------
+    useCookie('accessToken').value = accessToken
+    useCookie('userData').value = userFromApi
+
+    // ✳️ اسم الكوكي لازم يتطابق مع ما هو مستخدم في src/plugins/casl/index.ts
+    useCookie('userAbilityRules').value = userAbilities
+    ability.update(userAbilities)
+
+    // -------------- إعادة التوجيه --------------
     const target = route.query.to ? String(route.query.to) : '/'
     if (router.currentRoute.value.fullPath !== target) {
-      await nextTick(() => {
-        router.replace(target)
-      })
+      await nextTick(() => router.replace(target))
     }
-
   } catch (err) {
     console.error('Login error:', err)
-    errors.value = {
-      email: ['Something went wrong, please try again.'],
-    }
+    errors.value = { email: ['Something went wrong, please try again.'] }
   }
 }
 

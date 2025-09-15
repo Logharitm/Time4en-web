@@ -10,47 +10,47 @@ const footerBg = useGenerateImageVariant(footerLightBg, footerDarkBg)
 
 const pagesList = [
   {
-    name: 'Pricing',
+    name: 'الأسعار',
     to: { name: 'front-pages-pricing' },
   },
   {
-    name: 'Payment',
+    name: 'الدفع',
     to: { name: 'front-pages-payment' },
     isNew: true,
   },
   {
-    name: 'Checkout',
+    name: 'الدفع',
     to: { name: 'front-pages-checkout' },
   },
   {
-    name: 'Help Center',
+    name: 'مركز المساعدة',
     to: { name: 'front-pages-help-center' },
   },
   {
-    name: 'Login/Register',
+    name: 'تسجيل الدخول / التسجيل',
     to: { name: 'pages-authentication-login-v2' },
   },
 ]
 
 const demoList = [
   {
-    title: 'Vertical Layout',
+    title: 'تخطيط عمودي',
     to: 'https://demos.pixinvent.com/vuexy-vuejs-laravel-admin-template/demo-1/dashboards/analytics',
   },
   {
-    title: 'Horizontal Layout',
+    title: 'تخطيط أفقي',
     to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-5/dashboards/analytics',
   },
   {
-    title: 'Bordered Layout',
+    title: 'تخطيط مُحدَّد',
     to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-2/dashboards/analytics',
   },
   {
-    title: 'Semi Dark Layout',
+    title: 'تخطيط شبه داكن',
     to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-3/dashboards/analytics',
   },
   {
-    title: 'Dark Layout',
+    title: 'تخطيط داكن',
     to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-4/dashboards/analytics',
   },
 ]
@@ -64,7 +64,6 @@ const demoList = [
     >
       <VContainer>
         <VRow>
-          <!-- 👉 Footer  -->
           <VCol
             cols="12"
             md="5"
@@ -84,21 +83,20 @@ const demoList = [
                 class="mb-6"
                 :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
               >
-                Most Powerful & Comprehensive 🤩 Vuejs Admin Template with Elegant Material Design & Unique Layouts.
+                أقوى وأشمل 🤩 قالب لوحة تحكم Vuejs مع تصميم Material Design أنيق وتخطيطات فريدة.
               </div>
               <VForm class="subscribe-form d-flex align-center">
                 <AppTextField
-                  label="Subscribe to newsletter"
+                  label="اشترك في النشرة الإخبارية"
                   placeholder="john@email.com"
                 />
                 <VBtn class="align-self-end rounded-s-0">
-                  Subscribe
+                  اشترك
                 </VBtn>
               </VForm>
             </div>
           </VCol>
 
-          <!-- 👉 Demos -->
           <VCol
             md="2"
             sm="4"
@@ -106,7 +104,7 @@ const demoList = [
           >
             <div class="footer-links">
               <h6 class="footer-title text-h6 mb-6">
-                Demos
+                العروض التوضيحية
               </h6>
               <ul style="list-style: none;">
                 <li
@@ -127,7 +125,6 @@ const demoList = [
             </div>
           </VCol>
 
-          <!-- 👉 Pages  -->
           <VCol
             md="2"
             sm="4"
@@ -135,7 +132,7 @@ const demoList = [
           >
             <div class="footer-links">
               <h6 class="footer-title text-h6 mb-6">
-                Pages
+                الصفحات
               </h6>
               <ul style="list-style: none;">
                 <li
@@ -157,7 +154,7 @@ const demoList = [
                       label
                       size="small"
                     >
-                      New
+                      جديد
                     </VChip>
                   </template>
                 </li>
@@ -165,7 +162,6 @@ const demoList = [
             </div>
           </VCol>
 
-          <!-- 👉 Download App -->
           <VCol
             cols="12"
             md="3"
@@ -173,7 +169,7 @@ const demoList = [
           >
             <div>
               <h6 class="footer-title text-h6 mb-6">
-                Download our app
+                حمّل تطبيقنا
               </h6>
 
               <div>
@@ -196,7 +192,7 @@ const demoList = [
                       />
                       <div class="d-flex flex-column justify-content-start">
                         <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
-                          Download on the
+                          متوفر على
                         </div>
                         <h6
                           class="text-h6 text-start"
@@ -215,7 +211,6 @@ const demoList = [
       </VContainer>
     </div>
 
-    <!-- 👉 Footer Line -->
     <div class="footer-line w-100">
       <VContainer>
         <div class="d-flex justify-space-between flex-wrap gap-y-5 align-center">
@@ -229,7 +224,7 @@ const demoList = [
               rel="noopener noreferrer"
               class="font-weight-bold ms-1 text-white"
             >Pixinvent</a>,
-            Made With ❤️ for a better web.
+            صُنع بـ ❤️ لويب أفضل.
           </div>
 
           <div class="d-flex gap-x-6">

@@ -1,5 +1,5 @@
 <script setup>
-import ctaDashborad from '@images/front-pages/landing-page/cta-dashboard.png'
+import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
 </script>
 
 <template>
@@ -11,18 +11,19 @@ import ctaDashborad from '@images/front-pages/landing-page/cta-dashboard.png'
       <div class="d-flex justify-center justify-md-space-between flex-wrap gap-6 gap-x-10 position-relative pt-12">
         <div class="align-self-center">
           <div class="banner-title text-primary mb-1">
-            Ready to Get Started?
+            {{ $t('Ready to Get Started?') }}
           </div>
           <h5 class="text-h5 text-medium-emphasis mb-8">
-            Start your project with a 14-day free trial
+           {{$t("Ready msg")}}
           </h5>
           <VBtn
             color="primary"
-            :to="{ name: 'front-pages-payment' }"
+            href="/register"
             :size="$vuetify.display.smAndUp ? 'large' : 'default' "
           >
-            Get Started
+            {{ $t("Get Started") }}
           </VBtn>
+
         </div>
 
         <div class="banner-img">

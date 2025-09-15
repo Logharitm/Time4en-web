@@ -38,10 +38,13 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
     Route::get('/faqs', [FaqController::class, 'index']);
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
+    Route::get('/statistics', [StatisticsController::class, 'index']);
+    Route::get('/plans', [PlanController::class, 'index']);
+
 
     Route::group(['middleware' => ['auth:sanctum', 'check.subscription']], function () {
 
-        Route::get('/statistics', [StatisticsController::class, 'index']);
+
         Route::get('/plans/statistics', [StatisticsController::class, 'plans']);
 
         // --------------------------------- Auth ---------------------------------

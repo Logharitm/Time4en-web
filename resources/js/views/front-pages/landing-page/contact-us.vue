@@ -1,43 +1,97 @@
 <script setup>
 import ConnectImg from '@images/front-pages/landing-page/contact-customer-service.png'
+import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
 
 const name = ref('')
 const email = ref('')
+const subject = ref('')
 const message = ref('')
+const contactInfo = ref(null)
+const loading = ref(false)
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('success')
+
+// ✅ جلب بيانات الاتصال
+onMounted(async () => {
+  try {
+    const res = await $api('/contact-info')
+    if (res.status === 'success') {
+      contactInfo.value = res.data
+    }
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+// ✅ العنوان حسب اللغة
+const contactAddress = computed(() => {
+  if (!contactInfo.value) return ''
+  return locale.value === 'en' ? contactInfo.value.address_en : contactInfo.value.address
+})
+
+// ✅ إرسال الرسالة
+const sendMessage = async () => {
+  loading.value = true
+  try {
+    const res = await $api('/messages', {
+      method: 'POST',
+      body: {
+        name: name.value,
+        email: email.value,
+        subject: subject.value,
+        message: message.value,
+      },
+    })
+
+    if (res.status === 'success') {
+      snackbarMessage.value = res.message
+      snackbarColor.value = 'success'
+      snackbar.value = true
+
+      // إعادة تعيين الحقول
+      name.value = ''
+      email.value = ''
+      subject.value = ''
+      message.value = ''
+    } else {
+      snackbarMessage.value = res.message || 'حدث خطأ ما'
+      snackbarColor.value = 'error'
+      snackbar.value = true
+    }
+  } catch (error) {
+    snackbarMessage.value = 'فشل الاتصال بالخادم'
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
   <VContainer id="contact-us">
-    <!-- 👉 Headers  -->
+    <!-- 👉 العناوين -->
     <div class="contact-us-section">
       <div class="headers d-flex justify-center flex-column align-center pb-16">
-        <VChip
-          label
-          color="primary"
-          class="mb-4"
-          size="small"
-        >
-          Contact Us
+        <VChip label color="primary" class="mb-4" size="small">
+          {{ t('contact.chip') }}
         </VChip>
         <h4 class="d-flex align-center text-h4 mb-1 flex-wrap justify-center">
-          <div class="position-relative me-2">
-            <div class="section-title">
-              let's work
-            </div>
-          </div>
-          together
+          {{ t('contact.title') }}
         </h4>
         <p class="text-body-1 mb-0">
-          Any question or remark? just write us a message
+          {{ t('contact.subtitle') }}
         </p>
       </div>
 
       <div class="mb-15">
         <VRow class="match-height">
-          <VCol
-            cols="12"
-            md="5"
-          >
+          <!-- 👉 بيانات التواصل -->
+          <VCol cols="12" md="5">
             <div class="contact-card h-100">
               <VCard
                 variant="outlined"
@@ -50,35 +104,60 @@ const message = ref('')
                   :style="{ borderRadius: '3.75rem 0.375rem 0.375rem 0.375rem' }"
                 />
                 <VCardText class="pa-4 pb-1">
-                  <div class="d-flex justify-space-between flex-wrap gap-y-4">
-                    <div
-                      v-for="(item, index) in [
-                        { title: 'Email', icon: 'tabler-mail', color: 'primary', value: 'example@gmail.com' },
-                        { title: 'Phone', icon: 'tabler-phone-call', color: 'success', value: '+1234 568 963' },
-                      ]"
-                      :key="index"
-                      class="d-flex gap-x-3 align-center"
-                    >
+                  <div v-if="contactInfo" class="d-flex flex-column gap-y-4">
+                    <!-- ايميل -->
+                    <div class="d-flex gap-x-3 align-center">
+                      <VAvatar size="36" color="primary" variant="tonal" class="rounded-sm">
+                        <VIcon icon="tabler-mail" size="24" />
+                      </VAvatar>
                       <div>
-                        <VAvatar
-                          size="36"
-                          :color="item.color"
-                          variant="tonal"
-                          class="rounded-sm"
-                        >
-                          <VIcon
-                            :icon="item.icon"
-                            size="24"
-                          />
-                        </VAvatar>
+                        <div class="text-body-1">{{ t('contact.info.email') }}</div>
+                        <h6 class="text-h6">{{ contactInfo.email }}</h6>
                       </div>
+                    </div>
 
+                    <!-- هاتف -->
+                    <div class="d-flex gap-x-3 align-center">
+                      <VAvatar size="36" color="success" variant="tonal" class="rounded-sm">
+                        <VIcon icon="tabler-phone-call" size="24" />
+                      </VAvatar>
                       <div>
-                        <div class="text-body-1">
-                          {{ item .title }}
-                        </div>
+                        <div class="text-body-1">{{ t('contact.info.phone') }}</div>
+                        <h6 class="text-h6">{{ contactInfo.phone }}</h6>
+                      </div>
+                    </div>
+
+                    <!-- العنوان -->
+                    <div class="d-flex gap-x-3 align-center">
+                      <VAvatar size="36" color="warning" variant="tonal" class="rounded-sm">
+                        <VIcon icon="tabler-map-pin" size="24" />
+                      </VAvatar>
+                      <div>
+                        <div class="text-body-1">{{ t('contact.info.address') }}</div>
+                        <h6 class="text-h6">{{ contactAddress }}</h6>
+                      </div>
+                    </div>
+
+                    <!-- واتساب -->
+                    <div class="d-flex gap-x-3 align-center">
+                      <VAvatar size="36" color="success" variant="tonal" class="rounded-sm">
+                        <VIcon icon="tabler-brand-whatsapp" size="24" />
+                      </VAvatar>
+                      <div>
+                        <div class="text-body-1">{{ t('contact.info.whatsapp') }}</div>
+                        <h6 class="text-h6">{{ contactInfo.whatsapp }}</h6>
+                      </div>
+                    </div>
+
+                    <!-- فيسبوك -->
+                    <div class="d-flex gap-x-3 align-center">
+                      <VAvatar size="36" color="blue" variant="tonal" class="rounded-sm">
+                        <VIcon icon="tabler-brand-facebook" size="24" />
+                      </VAvatar>
+                      <div>
+                        <div class="text-body-1">{{ t('contact.info.facebook') }}</div>
                         <h6 class="text-h6">
-                          {{ item.value }}
+                          <a :href="contactInfo.facebook" target="_blank">{{ t('contact.info.visit') }}</a>
                         </h6>
                       </div>
                     </div>
@@ -88,57 +167,55 @@ const message = ref('')
             </div>
           </VCol>
 
-          <VCol
-            cols="12"
-            md="7"
-          >
+          <!-- 👉 نموذج المراسلة -->
+          <VCol cols="12" md="7">
             <VCard>
               <VCardItem class="pb-0">
                 <h4 class="text-h4 mb-1">
-                  Send a message
+                  {{ t('contact.send_title') }}
                 </h4>
               </VCardItem>
 
               <VCardText>
-                <p class="mb-6">
-                  If you would like to discuss anything related to payment, account, licensing, partnerships, or have pre-sales questions, you’re at the right place.
-                </p>
-                <VForm @submit.prevent="() => {}">
+                <p class="mb-6">{{ t('contact.send_subtitle') }}</p>
+                <VForm @submit.prevent="sendMessage">
                   <VRow>
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
+                    <VCol cols="12" md="6">
                       <AppTextField
                         v-model="name"
-                        placeholder="John Doe"
-                        label="Full Name"
+                        :label="t('contact.form.name')"
+                        :placeholder="t('contact.form.name_placeholder')"
                       />
                     </VCol>
 
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
+                    <VCol cols="12" md="6">
                       <AppTextField
                         v-model="email"
-                        placeholder="johndoe@gmail.com"
-                        label="Email address"
+                        :label="t('contact.form.email')"
+                        placeholder="example@email.com"
+                      />
+                    </VCol>
+
+                    <VCol cols="12">
+                      <AppTextField
+                        v-model="subject"
+                        :label="t('contact.form.subject')"
+                        :placeholder="t('contact.form.subject_placeholder')"
                       />
                     </VCol>
 
                     <VCol cols="12">
                       <AppTextarea
                         v-model="message"
-                        placeholder="Write a message"
-                        rows="3"
-                        label="Message"
+                        :label="t('contact.form.message')"
+                        :placeholder="t('contact.form.message_placeholder')"
+                        rows="13"
                       />
                     </VCol>
 
                     <VCol>
-                      <VBtn type="submit">
-                        Send Inquiry
+                      <VBtn :loading="loading" type="submit">
+                        {{ t('contact.form.submit') }}
                       </VBtn>
                     </VCol>
                   </VRow>
@@ -149,6 +226,11 @@ const message = ref('')
         </VRow>
       </div>
     </div>
+
+    <!-- ✅ Snackbar -->
+    <VSnackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
+      {{ snackbarMessage }}
+    </VSnackbar>
   </VContainer>
 </template>
 

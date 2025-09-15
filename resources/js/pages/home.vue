@@ -45,21 +45,22 @@ useIntersectionObserver([
     <!-- 👉 Hero Section  -->
     <HeroSection ref="refHome" />
 
+
     <!-- 👉 Pricing Plans -->
     <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
       <PricingPlans />
     </div>
 
-    <!-- 👉 Product stats -->
-    <ProductStats />
 
+    <!-- 👉 Banner  -->
+    <Banner />
     <!-- 👉 FAQ Section -->
     <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
       <FaqSection ref="refFaq" />
     </div>
 
-    <!-- 👉 Banner  -->
-    <Banner />
+    <!-- 👉 Product stats -->
+    <ProductStats />
 
     <!-- 👉 Contact Us  -->
     <ContactUs ref="refContact" />

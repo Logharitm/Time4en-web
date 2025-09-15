@@ -1,35 +1,32 @@
 <script setup>
-import check from '@images/svg/Check.svg'
-import diamond from '@images/svg/Diamond.svg'
-import laptop from '@images/svg/laptop.svg'
-import user from '@images/svg/user.svg'
+import { ref, onMounted } from "vue"
+import { useI18n } from "vue-i18n"
 
-const statData = [
-  {
-    title: 'Support Tickets Resolved',
-    value: '7.1k+',
-    icon: laptop,
-    color: 'primary',
-  },
-  {
-    title: 'Join creatives community',
-    value: '50k+',
-    icon: user,
-    color: 'success',
-  },
-  {
-    title: 'Highly Rated Products',
-    value: '4.8/5',
-    icon: diamond,
-    color: 'info',
-  },
-  {
-    title: 'Money Back Guarantee',
-    value: '100%',
-    icon: check,
-    color: 'warning',
-  },
-]
+// i18n
+const { locale } = useI18n()
+
+// Refs
+const statData = ref([])
+const loading = ref(false)
+
+// Fetch statistics
+const fetchStatistics = async () => {
+  loading.value = true
+  try {
+    const response = await $api("/statistics", { method: "GET" })
+    if (Array.isArray(response)) {
+      // خذ فقط الأربع عناصر الأولى
+      statData.value = response.slice(0, 4)
+    }
+  } catch (err) {
+    console.error("Error fetching statistics", err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Load on mounted
+onMounted(fetchStatistics)
 </script>
 
 <template>
@@ -38,7 +35,7 @@ const statData = [
       <div class="py-12">
         <VRow>
           <VCol
-            v-for="(product, index) in statData"
+            v-for="(item, index) in statData"
             :key="index"
             cols="12"
             sm="6"
@@ -46,25 +43,30 @@ const statData = [
           >
             <VCard
               flat
-              :style="{ border: `1px solid rgba(var(--v-theme-${product.color}))` }"
+              :style="{ border: `1px solid rgba(var(--v-theme-${item.color}))` }"
             >
               <VCardText class="text-center">
                 <VIcon
-                  :color="product.color"
-                  :icon="product.icon"
+                  :color="item.color"
+                  :icon="item.icon"
                   size="64"
                   class="mb-4"
                 />
                 <h3 class="text-h3">
-                  {{ product.value }}
+                  {{ item.value }}
                 </h3>
                 <p class="text-body-1 font-weight-medium mb-0 text-wrap">
-                  {{ product.title }}
+                  {{ item.title }}
                 </p>
               </VCardText>
             </VCard>
           </VCol>
         </VRow>
+
+        <!-- Loading state -->
+        <div v-if="loading" class="text-center py-6">
+          {{ $t("Loading statistics...") }}
+        </div>
       </div>
     </VContainer>
   </div>
