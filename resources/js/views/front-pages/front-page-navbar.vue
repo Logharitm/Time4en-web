@@ -175,8 +175,7 @@ const isCurrentRoute = to => {
             <RouterLink
               v-for="(item, index) in [
               { label: 'الرئيسية', hash: 'home' },
-              { label: 'الميزات', hash: 'features' },
-              { label: 'الفريق', hash: 'team' },
+              { label: 'باقات الاشتراك', hash: 'pricing-plan' },
               { label: 'الأسئلة الشائعة', hash: 'faq' },
               { label: 'اتصل بنا', hash: 'contact-us' },
             ]"
@@ -186,14 +185,6 @@ const isCurrentRoute = to => {
               :class="[props.activeId === item.hash ? 'active-link' : '']"
             >
               {{ item.label }}
-            </RouterLink>
-
-            <RouterLink
-              to="/"
-              target="_blank"
-              class="font-weight-medium nav-link"
-            >
-              لوحة التحكم
             </RouterLink>
           </div>
 

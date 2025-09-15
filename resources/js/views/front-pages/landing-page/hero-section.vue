@@ -20,7 +20,7 @@ const heroImages = [heroImg1, heroImg2, heroImg3]
     >
       <VContainer>
         <div class="hero-text-box text-center px-6">
-          <h1 class="hero-title mb-4">تعلم الإنجليزية بسهولة وفي أي وقت مع تايم فور إنجلش</h1>
+          <h1 class="hero-title mb-4">تعلم الإنجليزية بسهولة وفي أي وقت مع Time4EN</h1>
           <div class="position-relative">
             <h6 class="position-absolute hero-btn-item d-md-flex d-none text-h6 text-medium-emphasis">
               {{ $t("Join Community") }}
