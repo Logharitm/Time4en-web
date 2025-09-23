@@ -16,35 +16,35 @@ class CheckUserSubscription
     {
         $user = $request->user();
 
-        // فقط نطبق الشروط على المستخدمين العاديين
+        // Apply checks only for normal users
         if ($user->role === 'user') {
-            // تحقق من تفعيل البريد
+            // Check email verification
             if (is_null($user->email_verified_at)) {
-                return $this->forbidden('يجب تفعيل البريد الإلكتروني أولاً.');
+                return $this->forbidden('You must verify your email first.');
             }
 
-            // اجلب الاشتراك الحالي
+            // Get the current subscription
             $subscription = Subscription::query()
                 ->where('user_id', $user->id)
                 ->where('status', 'active')
                 ->first();
 
             if (!$subscription) {
-                return $this->forbidden('أنت غير مشترك في أي باقة.');
+                return $this->forbidden('You are not subscribed to any plan.');
             }
 
-            // تحقق من انتهاء الاشتراك
+            // Check subscription expiration
             if (is_null($subscription->end_date) || now()->gt($subscription->end_date)) {
                 $subscription->update(['status' => 'expired']);
-                return $this->forbidden('انتهت صلاحية اشتراكك.');
+                return $this->forbidden('Your subscription has expired.');
             }
 
-            // تحقق من استهلاك الكلمات
+            // Check words usage
             $usedWords    = $user->words()->count() ?? 0;
             $allowedWords = $subscription->plan->words_limit;
 
             if ($usedWords >= $allowedWords) {
-                return $this->forbidden('لقد استهلكت جميع كلمات الباقة الخاصة بك.');
+                return $this->forbidden('You have used all the words included in your plan.');
             }
         }
 
@@ -56,6 +56,10 @@ class CheckUserSubscription
      */
     private function forbidden(string $message): Response
     {
-        return response()->json(['message' => $message], 403);
+        return response()->json([
+            'status'  => 'error',
+            'message' => $message,
+            'errors'  => []
+        ], 403);
     }
 }
