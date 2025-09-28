@@ -291,7 +291,7 @@ class AuthController extends Controller
     public function userNotification(Request $request): JsonResponse
     {
         $user = $request->user();
-        dd($user);
+        dd($request->all());
         $query = Notification::where('user_id',$user->id)
             ->orderBy('created_at', 'desc');
 
