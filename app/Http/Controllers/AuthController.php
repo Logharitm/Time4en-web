@@ -97,9 +97,12 @@ class AuthController extends Controller
 
         if (is_null($user->email_verified_at)) {
             return response()->json([
-                'message' => 'من فضلك فعّل بريدك الإلكتروني أولاً'
+                'status' => 'error',
+                'message' => 'You must verify your email first.',
+                'errors' => []
             ], 403);
         }
+
 
         $tokenResult = $user->createToken('Personal Access Token');
 
