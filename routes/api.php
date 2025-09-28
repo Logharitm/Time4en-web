@@ -40,6 +40,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
     Route::get('/statistics', [StatisticsController::class, 'index']);
     Route::get('/plans', [PlanController::class, 'index']);
+    Route::get('/user-notifications', [AuthController::class, 'userNotification']);
 
 
     Route::group(['middleware' => ['auth:sanctum', 'check.subscription']], function () {

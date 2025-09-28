@@ -7,9 +7,11 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserNotificationResource;
 use App\Http\Resources\UserResource;
 use App\Mail\ResetPasswordMailAr;
 use App\Mail\ResetPasswordMailEn;
+use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\Plan;
 use Illuminate\Auth\AuthenticationException;
@@ -281,6 +283,27 @@ class AuthController extends Controller
             'user' => new UserResource($user),
         ], 200);
 
+    }
+
+    public function userNotification(Request $request): JsonResponse
+    {
+        $query = Notification::where('user_id',$request->user_id)
+            ->orderBy('created_at', 'desc');
+
+        $query->when($request->has('is_read'), function ($q) use ($request) {
+            $isRead = $request->boolean('is_read');
+            $q->where('is_read', $isRead);
+        });
+
+        $perPage = $request->input('per_page', 20);
+
+
+        $notifications = $query->paginate($perPage);
+
+        return $this->successResponse(
+            'Notifications retrieved successfully.',
+            UserNotificationResource::collection($notifications)
+        );
     }
 
 }
