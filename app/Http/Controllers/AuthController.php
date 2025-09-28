@@ -289,10 +289,9 @@ class AuthController extends Controller
     }
 
     public function userNotification(Request $request): JsonResponse
-    {dd($request->all());
-        $user = $request->user();
-
-        $query = Notification::where('user_id',$user->id)
+    {
+        $user = auth('sanctum')->user();
+        $query = Notification::where('user_id', $user->id)
             ->orderBy('created_at', 'desc');
 
         $query->when($request->has('is_read'), function ($q) use ($request) {
@@ -301,7 +300,6 @@ class AuthController extends Controller
         });
 
         $perPage = $request->input('per_page', 20);
-
 
         $notifications = $query->paginate($perPage);
 
