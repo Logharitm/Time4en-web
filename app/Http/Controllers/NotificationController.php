@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNotificationRequest;
 use App\Http\Resources\NotificationResource;
+use App\Http\Resources\UserNotificationResource;
 use App\Models\Notification;
 use App\Models\User;
 use App\Traits\ApiResponse;
@@ -56,6 +57,50 @@ class NotificationController extends Controller
         return $this->successResponse(
             'Notifications retrieved successfully.',
             NotificationResource::collection($notifications)
+        );
+    }
+
+    public function userNotification(Request $request): JsonResponse
+    {
+        $query = Notification::with(['sender', 'user'])
+            ->orderBy('created_at', 'desc');
+
+        $query->when($request->has('search'), function ($q) use ($request) {
+            $search = $request->input('search');
+            $q->where('message', 'like', "%{$search}%");
+        });
+
+        $query->when($request->has('is_read'), function ($q) use ($request) {
+            $isRead = $request->boolean('is_read');
+            $q->where('is_read', $isRead);
+        });
+
+        $query->when($request->has('recipient'), function ($q) use ($request) {
+            $recipient = $request->input('recipient');
+            $q->whereHas('user', function ($subQuery) use ($recipient) {
+                $subQuery->where('name', 'like', "%{$recipient}%")
+                    ->orWhere('email', 'like', "%{$recipient}%");
+            });
+        });
+
+        $query->when($request->has('start_date'), function ($q) use ($request) {
+            $startDate = $request->input('start_date');
+            $q->whereDate('created_at', '>=', $startDate);
+        });
+
+        $query->when($request->has('end_date'), function ($q) use ($request) {
+            $endDate = $request->input('end_date');
+            $q->whereDate('created_at', '<=', $endDate);
+        });
+
+        $perPage = $request->input('per_page', 20);
+
+
+        $notifications = $query->paginate($perPage);
+
+        return $this->successResponse(
+            'Notifications retrieved successfully.',
+            UserNotificationResource::collection($notifications)
         );
     }
 
