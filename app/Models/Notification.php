@@ -10,7 +10,7 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['sender_id', 'user_id', 'message', 'is_read'];
+    protected $fillable = ['sender_id', 'user_id', 'message','message_en', 'is_read'];
 
 
     public function sender()

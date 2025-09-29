@@ -15,6 +15,7 @@ class StoreNotificationRequest extends FormRequest
     {
         return [
             'message'   => 'required|string|max:1000',
+            'message_en'   => 'required|string|max:1000',
             'user_ids'  => 'required|array|min:1',
             'user_ids.*'=> 'exists:users,id',
         ];

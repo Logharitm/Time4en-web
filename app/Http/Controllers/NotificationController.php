@@ -22,7 +22,7 @@ class NotificationController extends Controller
 
         $query->when($request->has('search'), function ($q) use ($request) {
             $search = $request->input('search');
-            $q->where('message', 'like', "%{$search}%");
+            $q->where('message', 'like', "%{$search}%")->orWhere('message_en', 'like', "%{$search}%");
         });
 
         $query->when($request->has('is_read'), function ($q) use ($request) {
@@ -71,14 +71,20 @@ class NotificationController extends Controller
                 'sender_id' => $senderId,
                 'user_id'   => $userId,
                 'message'   => $request->message,
+                'message_en'   => $request->message_en,
             ]);
 
             $user = User::find($userId);
             if ($user && $user->device_token) {
+                if ($user->language == 'ar'){
+                    $msg = $request->message;
+                }else{
+                    $msg = $request->message_en;
+                }
                 $this->sendFCMNotification(
                     $user->device_token,
                     'New Notification',
-                    $request->message
+                    $msg,
                 );
             }
 

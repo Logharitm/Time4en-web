@@ -12,6 +12,7 @@ class UserNotificationResource extends JsonResource
         return [
             'id'        => $this->id,
             'message'   => $this->message,
+            'message_en'   => $this->message_en,
             'is_read'   => (bool) $this->is_read,
             'created_at'=> $this->created_at->toDateTimeString(),
         ];

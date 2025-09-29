@@ -12,6 +12,7 @@ class NotificationResource extends JsonResource
         return [
             'id'        => $this->id,
             'message'   => $this->message,
+            'message_en'   => $this->message_en,
             'is_read'   => (bool) $this->is_read,
             'sender'    => $this->sender ? new UserResource($this->sender) : null,
             'user'      => new UserResource($this->user),
