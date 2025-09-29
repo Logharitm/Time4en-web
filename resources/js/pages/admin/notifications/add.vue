@@ -80,6 +80,7 @@ const calculateRemainingDays = endDateString => {
 
 
 const notificationText = ref('')
+const notificationTextEN = ref('')
 
 const loadingAllIds = ref(false)
 const allUserIds = ref([]) // cache IDs when fetched
@@ -147,7 +148,13 @@ const sendNotification = async () => {
   }
   if (!notificationText.value || !notificationText.value.trim()) {
     triggerToast('برجاء كتابة نص الإشعار', 'error')
-    
+
+    return
+  }
+
+  if (!notificationTextEN.value || !notificationTextEN.value.trim()) {
+    triggerToast('برجاء كتابة نص الإشعار', 'error')
+
     return
   }
 
@@ -157,10 +164,11 @@ const sendNotification = async () => {
       body: {
         user_ids: recipients,
         message: notificationText.value.trim(),
+        message_en: notificationTextEN.value.trim(),
       },
     })
     triggerToast('تم إرسال الإشعار بنجاح', 'success')
-    notificationText.value = ''
+    notificationText.value = notificationTextEN.value  = ''
   } catch (err) {
     console.error('Error sending notification', err)
     triggerToast('حدث خطأ أثناء إرسال الإشعار', 'error')
@@ -385,6 +393,14 @@ const viewUser = userId => {
             rows="3"
             placeholder="اكتب الإشعار هنا"
           />
+
+          <VTextarea
+            v-model="notificationTextEN"
+            label="نص الاشعار بالانجليزية"
+            rows="3"
+            placeholder="اكتب الإشعار بالانجليزية هنا"
+          />
+
           <div class="d-flex gap-2 align-center">
             <VBtn
               color="primary"
