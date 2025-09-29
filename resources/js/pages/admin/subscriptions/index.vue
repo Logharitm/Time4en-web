@@ -70,7 +70,7 @@ const headers = [
   { title: 'الوقت المتبقي', key: 'time_left' },
   { title: 'الحالة', key: 'status' },
   { title: 'المبلغ المدفوع', key: 'amount_paid' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -256,9 +256,9 @@ const deleteSubscription = async id => {
           إعادة تعيين
         </VBtn>
 
-        <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">
-          إضافة اشتراك جديد
-        </VBtn>
+<!--        <VBtn prepend-icon="tabler-plus" @click="isAddSubscriptionDrawerVisible = true">-->
+<!--          إضافة اشتراك جديد-->
+<!--        </VBtn>-->
       </VCardText>
 
       <VDivider/>

@@ -52,11 +52,11 @@ const executeDelete = async () => {
 // Headers
 const headers = [
   { title: 'اسم المجلد', key: 'name' },
-  { title: 'الوصف', key: 'description' },
-  { title: 'المستخدم', key: 'user_name' },
   { title: 'عدد الكلمات', key: 'words_count' },
+  { title: 'الوصف', key: 'description' },
   { title: 'تاريخ الإنشاء', key: 'created_at' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  { title: 'المستخدم', key: 'user_name' },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -228,9 +228,9 @@ const deleteFolder = async id => {
           إعادة تعيين
         </VBtn>
 
-        <VBtn prepend-icon="tabler-plus" @click="isAddFolderDrawerVisible = true">
-          إضافة مجلد جديد
-        </VBtn>
+<!--        <VBtn prepend-icon="tabler-plus" @click="isAddFolderDrawerVisible = true">-->
+<!--          إضافة مجلد جديد-->
+<!--        </VBtn>-->
       </VCardText>
 
       <VDivider/>
@@ -259,7 +259,7 @@ const deleteFolder = async id => {
         <!-- ✅ Format date -->
         <template #item.words_count="{ item }">
           {{ item.words_count }}
-          <IconBtn @click="openView(item.id)" title="عرض الكلمات"><VIcon icon="tabler-eye"/></IconBtn>
+<!--          <IconBtn @click="openView(item.id)" title="عرض الكلمات"><VIcon icon="tabler-eye"/></IconBtn>-->
         </template>
 
         <template #item.actions="{ item }">

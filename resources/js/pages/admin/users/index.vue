@@ -310,12 +310,12 @@ const viewUser = userId => {
           إعادة تعيين
         </VBtn>
 
-        <VBtn
-          prepend-icon="tabler-plus"
-          @click="isAddNewUserDrawerVisible = true"
-        >
-          إضافة مستخدم جديد
-        </VBtn>
+<!--        <VBtn-->
+<!--          prepend-icon="tabler-plus"-->
+<!--          @click="isAddNewUserDrawerVisible = true"-->
+<!--        >-->
+<!--          إضافة مستخدم جديد-->
+<!--        </VBtn>-->
       </VCardText>
 
       <VDivider />
@@ -392,12 +392,12 @@ const viewUser = userId => {
         </template>
 
         <template #item.actions="{ item }">
-          <IconBtn @click="openEditDrawer(item)">
-            <VIcon icon="tabler-pencil" />
-          </IconBtn>
-          <IconBtn @click="confirmDelete(item.id)">
-            <VIcon icon="tabler-trash" />
-          </IconBtn>
+<!--          <IconBtn @click="openEditDrawer(item)">-->
+<!--            <VIcon icon="tabler-pencil" />-->
+<!--          </IconBtn>-->
+<!--          <IconBtn @click="confirmDelete(item.id)">-->
+<!--            <VIcon icon="tabler-trash" />-->
+<!--          </IconBtn>-->
           <IconBtn @click="viewUser(item.id)">
             <VIcon icon="tabler-eye" />
           </IconBtn>

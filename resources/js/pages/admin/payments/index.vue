@@ -76,7 +76,7 @@ const headers = [
   { title: 'طريقة الدفع', key: 'payment_method' },
   { title: 'الحالة', key: 'status' },
   { title: 'تاريخ الدفع', key: 'paid_at' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -294,9 +294,9 @@ const resetFilters = () => {
           إعادة تعيين
         </VBtn>
 
-        <VBtn prepend-icon="tabler-plus" @click="isAddPaymentDrawerVisible = true">
-          إضافة دفع جديد
-        </VBtn>
+<!--        <VBtn prepend-icon="tabler-plus" @click="isAddPaymentDrawerVisible = true">-->
+<!--          إضافة دفع جديد-->
+<!--        </VBtn>-->
       </VCardText>
 
       <VDivider/>

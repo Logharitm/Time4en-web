@@ -66,8 +66,8 @@ const onSubmit = () => {
       if (password.value) {
         formData.append('password', password.value)
       }
-      formData.append('role', role.value)
-      formData.append('language', language.value)
+      formData.append('role', 'admin')
+      formData.append('language', 'ar')
 
       if (avatar.value instanceof File) {
         formData.append('avatar', avatar.value)
@@ -146,27 +146,6 @@ const handleDrawerModelValueUpdate = val => {
                 />
               </VCol>
 
-              <VCol cols="12">
-                <AppSelect
-                  v-model="role"
-                  label="الدور"
-                  placeholder="اختر الدور"
-                  :rules="[requiredValidator]"
-                  :items="[{ title: 'ادمن', value: 'admin' }, { title: 'مستخدم', value: 'user' }]"
-                />
-              </VCol>
-
-              <VCol cols="12">
-                <AppSelect
-                  v-model="language"
-                  label="اللغة"
-                  placeholder="اختر اللغة"
-                  :items="[
-                    { title: 'العربية', value: 'ar' },
-                    { title: 'الإنجليزية', value: 'en' }
-                  ]"
-                />
-              </VCol>
 
               <VCol cols="12">
                 <label class="text-sm mb-1 block">الصورة الرمزية</label>

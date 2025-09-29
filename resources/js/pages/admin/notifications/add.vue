@@ -186,7 +186,7 @@ const headers = [
   { title: 'بداية الاشتراك', key: 'start_at' },
   { title: 'نهاية الاشتراك', key: 'expires_at' },
   { title: 'الوقت المتبقي', key: 'remain' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API

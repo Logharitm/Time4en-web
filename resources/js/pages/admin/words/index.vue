@@ -54,12 +54,12 @@ const executeDelete = async () => {
 const headers = [
   { title: 'الكلمة', key: 'word' },
   { title: 'الترجمة', key: 'translation' },
-  { title: 'الجملة', key: 'example_sentence' },
+  // { title: 'الجملة', key: 'example_sentence' },
   { title: 'الصوت', key: 'audio', sortable: false },
   { title: 'المجلد', key: 'folder_name' },
   { title: 'المستخدم', key: 'user_name' },
   { title: 'تاريخ الإنشاء', key: 'created_at' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -247,7 +247,7 @@ const toggleAudio = (item) => {
         <!-- أزرار إعادة التعيين والإضافة في سطر جديد -->
         <div class="d-flex gap-3 mt-4">
           <VBtn prepend-icon="tabler-rotate-clockwise" @click="resetFilters" variant="outlined">إعادة تعيين</VBtn>
-          <VBtn prepend-icon="tabler-plus" @click="isAddWordDrawerVisible = true">إضافة كلمة جديدة</VBtn>
+<!--          <VBtn prepend-icon="tabler-plus" @click="isAddWordDrawerVisible = true">إضافة كلمة جديدة</VBtn>-->
         </div>
       </VCardText>
 

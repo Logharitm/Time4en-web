@@ -62,7 +62,7 @@ class NotificationController extends Controller
 
 
     public function store(StoreNotificationRequest $request): JsonResponse
-    {
+    {dd(1);
         $senderId = $request->user()->id;
 
         $notifications = [];
