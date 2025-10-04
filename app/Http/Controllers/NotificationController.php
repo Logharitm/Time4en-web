@@ -107,9 +107,8 @@ class NotificationController extends Controller
 
     function sendFCMNotification($deviceToken, $title, $body)
     {
-        dd(url('time4en-2cf44-163c8c65d3c2.json'));
         $accessToken = $this->getAccessToken();
-        $projectId   = json_decode(file_get_contents(public_path('time4en-2cf44-163c8c65d3c2.json')), true)['project_id'];
+        $projectId   = json_decode(file_get_contents(url('time4en-2cf44-163c8c65d3c2.json')), true)['project_id'];
 
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
 
