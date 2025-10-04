@@ -145,27 +145,44 @@ class NotificationController extends Controller
     function getAccessToken(): string
     {
         try {
-            $client = new GoogleClient();
+            $client = new Google\Client();
             $client->setAuthConfig(public_path('time4en-2cf44-163c8c65d3c2.json'));
             $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
 
-            // اطلب التوكن بشكل صريح مع متابعة الأخطاء
-            $tokenData = $client->fetchAccessTokenWithAssertion();
+            if ($client->isAccessTokenExpired()) {
+                $tokenData = $client->fetchAccessTokenWithAssertion();
 
-            if (isset($tokenData['error'])) {
-                // اطبع كل تفاصيل الخطأ
-                dd($tokenData);
+                if (isset($tokenData['error'])) {
+                    dd([
+                        'stage' => 'fetchAccessTokenWithAssertion',
+                        'error' => $tokenData['error'],
+                        'description' => $tokenData['error_description'] ?? '',
+                        'full_response' => $tokenData
+                    ]);
+                }
             }
 
-            return $tokenData['access_token'] ?? '';
+            $tokenData = $client->getAccessToken();
+
+            if (!isset($tokenData['access_token'])) {
+                dd([
+                    'stage' => 'getAccessToken',
+                    'message' => 'Access token not found',
+                    'full_response' => $tokenData
+                ]);
+            }
+
+            return $tokenData['access_token'];
+
         } catch (Exception $e) {
-            // اطبع الاستثناء نفسه
             dd([
-                'exception_message' => $e->getMessage(),
-                'exception_trace'   => $e->getTraceAsString(),
+                'stage' => 'exception',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
         }
     }
+
 
 
 
