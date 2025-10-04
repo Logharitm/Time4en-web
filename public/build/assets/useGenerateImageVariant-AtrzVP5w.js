@@ -1,0 +1,1 @@
+import{a4 as u,as as i,V as f}from"./main-Hb8XIVRF.js";const m=(e,s,t,o,r=!1)=>{const a=u(),{global:n}=i();return f(()=>n.name.value==="light"?a.skin==="bordered"&&r?t:e:n.name.value==="dark"?a.skin==="bordered"&&r?o:s:e)};export{m as u};

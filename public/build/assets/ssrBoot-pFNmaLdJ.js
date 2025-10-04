@@ -1,1 +1,0 @@
-import{ab as t,E as e,W as s,bP as n}from"./main-ati8xvH6.js";function i(){const o=t(!1);return e(()=>{window.requestAnimationFrame(()=>{o.value=!0})}),{ssrBootStyles:s(()=>o.value?void 0:{transition:"none !important"}),isBooted:n(o)}}export{i as u};
