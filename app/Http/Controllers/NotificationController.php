@@ -140,6 +140,7 @@ class NotificationController extends Controller
         return $response;
     }
 
+
     function getAccessToken(): string
     {
         $client = new GoogleClient();
