@@ -7,6 +7,7 @@ use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Google\Client as GoogleClient;
 use Illuminate\Http\Request;
@@ -108,7 +109,7 @@ class NotificationController extends Controller
     function sendFCMNotification($deviceToken, $title, $body)
     {
         $projectId   = json_decode(file_get_contents(public_path('time4en-2cf44-163c8c65d3c2.json')), true)['project_id'];
-        dd($projectId);
+
         $accessToken = $this->getAccessToken();
 
         $url = "https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send";
@@ -143,16 +144,29 @@ class NotificationController extends Controller
 
     function getAccessToken(): string
     {
-        $client = new GoogleClient();
-        $client->setAuthConfig(public_path('time4en-2cf44-163c8c65d3c2.json'));
-        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        try {
+            $client = new GoogleClient();
+            $client->setAuthConfig(public_path('time4en-2cf44-163c8c65d3c2.json'));
+            $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
 
-        if ($client->isAccessTokenExpired()) {
-            $client->fetchAccessTokenWithAssertion();
+            // اطلب التوكن بشكل صريح مع متابعة الأخطاء
+            $tokenData = $client->fetchAccessTokenWithAssertion();
+
+            if (isset($tokenData['error'])) {
+                // اطبع كل تفاصيل الخطأ
+                dd($tokenData);
+            }
+
+            return $tokenData['access_token'] ?? '';
+        } catch (Exception $e) {
+            // اطبع الاستثناء نفسه
+            dd([
+                'exception_message' => $e->getMessage(),
+                'exception_trace'   => $e->getTraceAsString(),
+            ]);
         }
-
-        $tokenData = $client->getAccessToken();
-        return $tokenData['access_token'];
     }
+
+
 
 }
