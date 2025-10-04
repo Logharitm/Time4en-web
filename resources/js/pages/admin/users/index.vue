@@ -97,7 +97,7 @@ const headers = [
   { title: 'بداية الاشتراك', key: 'start_at' },
   { title: 'نهاية الاشتراك', key: 'expires_at' },
   { title: 'الوقت المتبقي', key: 'remain' },
-  { title: 'العمليات', key: 'actions', sortable: false },
+  // { title: 'العمليات', key: 'actions', sortable: false },
 ]
 
 // API
@@ -398,9 +398,9 @@ const viewUser = userId => {
 <!--          <IconBtn @click="confirmDelete(item.id)">-->
 <!--            <VIcon icon="tabler-trash" />-->
 <!--          </IconBtn>-->
-          <IconBtn @click="viewUser(item.id)">
-            <VIcon icon="tabler-eye" />
-          </IconBtn>
+<!--          <IconBtn @click="viewUser(item.id)">-->
+<!--            <VIcon icon="tabler-eye" />-->
+<!--          </IconBtn>-->
         </template>
 
         <!-- استخدم نفس نظام الباجنيشن القديم -->
