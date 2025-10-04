@@ -52,6 +52,10 @@ class AuthController extends Controller
             'password' => bcrypt($validated['password']),
         ]);
 
+        if ($request->has('device_token') && $request->get('device_token') != null) {
+            $user->device_token = $request->device_token;
+            $user->update();
+        }
         // Create token
         $tokenResult = $user->createToken('Personal Access Token');
         $plan = Plan::find(1);
