@@ -145,7 +145,7 @@ class NotificationController extends Controller
     function getAccessToken(): string
     {
         try {
-            $client = new Google\Client();
+            $client = new GoogleClient();
             $client->setAuthConfig(public_path('time4en-2cf44-163c8c65d3c2.json'));
             $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
 
