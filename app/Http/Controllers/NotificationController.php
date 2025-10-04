@@ -108,7 +108,7 @@ class NotificationController extends Controller
 
     function sendFCMNotification($deviceToken, $title, $body)
     {
-        $projectId   = json_decode(file_get_contents(public_path('time4en-2cf44-163c8c65d3c2.json')), true)['project_id'];
+        $projectId   = json_decode(file_get_contents(public_path('time4en-2cf44-firebase-adminsdk-fbsvc-48fbc1bb67.json')), true)['project_id'];
 
         $accessToken = $this->getAccessToken();
 
@@ -146,7 +146,7 @@ class NotificationController extends Controller
     {
         try {
             $client = new GoogleClient();
-            $client->setAuthConfig(public_path('time4en-2cf44-163c8c65d3c2.json'));
+            $client->setAuthConfig(public_path('time4en-2cf44-firebase-adminsdk-fbsvc-48fbc1bb67.json'));
             $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
 
             if ($client->isAccessTokenExpired()) {
