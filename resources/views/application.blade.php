@@ -7,6 +7,12 @@
   <title>Vuexy - Vuejs Admin Dashboard Template</title>
   <link rel="stylesheet" type="text/css" href="{{ asset('loader.css') }}" />
     @vite('resources/js/main.js')
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
 </head>
 
 <body>
