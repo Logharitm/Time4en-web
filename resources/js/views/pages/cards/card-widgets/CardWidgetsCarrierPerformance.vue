@@ -1,6 +1,6 @@
 <script setup>
 const colors = {
-  series1: '#7367F0',
+  series1: '#451291',
   series2: '#8F85F3',
   series3: '#ABA4F6',
 }

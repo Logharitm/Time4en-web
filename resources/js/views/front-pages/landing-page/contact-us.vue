@@ -118,7 +118,7 @@ const sendMessage = async () => {
 
                     <!-- هاتف -->
                     <div class="d-flex gap-x-3 align-center">
-                      <VAvatar size="36" color="success" variant="tonal" class="rounded-sm">
+                      <VAvatar size="36" color="primary" variant="tonal" class="rounded-sm">
                         <VIcon icon="tabler-phone-call" size="24" />
                       </VAvatar>
                       <div>
@@ -129,7 +129,7 @@ const sendMessage = async () => {
 
                     <!-- العنوان -->
                     <div class="d-flex gap-x-3 align-center">
-                      <VAvatar size="36" color="warning" variant="tonal" class="rounded-sm">
+                      <VAvatar size="36" color="primary" variant="tonal" class="rounded-sm">
                         <VIcon icon="tabler-map-pin" size="24" />
                       </VAvatar>
                       <div>
@@ -140,7 +140,7 @@ const sendMessage = async () => {
 
                     <!-- واتساب -->
                     <div class="d-flex gap-x-3 align-center">
-                      <VAvatar size="36" color="success" variant="tonal" class="rounded-sm">
+                      <VAvatar size="36" color="primary" variant="tonal" class="rounded-sm">
                         <VIcon icon="tabler-brand-whatsapp" size="24" />
                       </VAvatar>
                       <div>
@@ -151,7 +151,7 @@ const sendMessage = async () => {
 
                     <!-- فيسبوك -->
                     <div class="d-flex gap-x-3 align-center">
-                      <VAvatar size="36" color="blue" variant="tonal" class="rounded-sm">
+                      <VAvatar size="36" color="primary" variant="tonal" class="rounded-sm">
                         <VIcon icon="tabler-brand-facebook" size="24" />
                       </VAvatar>
                       <div>

@@ -1,230 +1,27 @@
 <script setup>
-import appleImg from '@images/front-pages/landing-page/apple-icon.png'
-import googlePlayImg from '@images/front-pages/landing-page/google-play-icon.png'
-import footerDarkBg from '@images/front-pages/backgrounds/footer-bg-dark.png'
-import footerLightBg from '@images/front-pages/backgrounds/footer-bg-light.png'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
 
-const footerBg = useGenerateImageVariant(footerLightBg, footerDarkBg)
-
-const pagesList = [
-  {
-    name: 'الأسعار',
-    to: { name: 'front-pages-pricing' },
-  },
-  {
-    name: 'الدفع',
-    to: { name: 'front-pages-payment' },
-    isNew: true,
-  },
-  {
-    name: 'الدفع',
-    to: { name: 'front-pages-checkout' },
-  },
-  {
-    name: 'مركز المساعدة',
-    to: { name: 'front-pages-help-center' },
-  },
-  {
-    name: 'تسجيل الدخول / التسجيل',
-    to: { name: 'pages-authentication-login-v2' },
-  },
-]
-
-const demoList = [
-  {
-    title: 'تخطيط عمودي',
-    to: 'https://demos.pixinvent.com/vuexy-vuejs-laravel-admin-template/demo-1/dashboards/analytics',
-  },
-  {
-    title: 'تخطيط أفقي',
-    to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-5/dashboards/analytics',
-  },
-  {
-    title: 'تخطيط مُحدَّد',
-    to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-2/dashboards/analytics',
-  },
-  {
-    title: 'تخطيط شبه داكن',
-    to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-3/dashboards/analytics',
-  },
-  {
-    title: 'تخطيط داكن',
-    to: 'https://demos.pixinvent.com/vuexy-vuejs-admin-template/demo-4/dashboards/analytics',
-  },
-]
 </script>
 
 <template>
   <div class="footer">
-    <div
-      class="footer-top pt-11"
-      :style="{ 'background-image': `url(${footerBg})` }"
-    >
-      <VContainer>
-        <VRow>
-          <VCol
-            cols="12"
-            md="5"
-          >
-            <div
-              class="mb-4"
-              :class="$vuetify.display.smAndDown ? 'w-100' : 'w-75'"
-            >
-              <div class="app-logo mb-6">
-                <VNodeRenderer :nodes="themeConfig.app.logo" />
-                <h1 class="app-logo-title text-white">
-                  {{ themeConfig.app.title }}
-                </h1>
-              </div>
-
-              <div
-                class="mb-6"
-                :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-              >
-                أقوى وأشمل 🤩 قالب لوحة تحكم Vuejs مع تصميم Material Design أنيق وتخطيطات فريدة.
-              </div>
-              <VForm class="subscribe-form d-flex align-center">
-                <AppTextField
-                  label="اشترك في النشرة الإخبارية"
-                  placeholder="john@email.com"
-                />
-                <VBtn class="align-self-end rounded-s-0">
-                  اشترك
-                </VBtn>
-              </VForm>
-            </div>
-          </VCol>
-
-          <VCol
-            md="2"
-            sm="4"
-            xs="6"
-          >
-            <div class="footer-links">
-              <h6 class="footer-title text-h6 mb-6">
-                العروض التوضيحية
-              </h6>
-              <ul style="list-style: none;">
-                <li
-                  v-for="(item, index) in demoList"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <a
-                    :href="item.to"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-                  >
-                    {{ item.title }}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </VCol>
-
-          <VCol
-            md="2"
-            sm="4"
-            xs="6"
-          >
-            <div class="footer-links">
-              <h6 class="footer-title text-h6 mb-6">
-                الصفحات
-              </h6>
-              <ul style="list-style: none;">
-                <li
-                  v-for="(item, index) in pagesList"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <RouterLink
-                    :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-                    class="me-2"
-                    :to="item.to"
-                  >
-                    {{ item.name }}
-                  </RouterLink>
-                  <template v-if="item.isNew">
-                    <VChip
-                      color="primary"
-                      variant="elevated"
-                      label
-                      size="small"
-                    >
-                      جديد
-                    </VChip>
-                  </template>
-                </li>
-              </ul>
-            </div>
-          </VCol>
-
-          <VCol
-            cols="12"
-            md="3"
-            sm="4"
-          >
-            <div>
-              <h6 class="footer-title text-h6 mb-6">
-                حمّل تطبيقنا
-              </h6>
-
-              <div>
-                <VBtn
-                  v-for="(item, index) in [
-                    { image: appleImg, store: 'App Store' },
-                    { image: googlePlayImg, store: 'Google Play' },
-                  ]"
-                  :key="index"
-                  color="#282c3e"
-                  height="56"
-                  class="mb-4 d-block"
-                >
-                  <template #default>
-                    <div class="d-flex align-center gap-x-8 footer-logo-buttons">
-                      <VImg
-                        :src="item.image"
-                        height="34"
-                        width="34"
-                      />
-                      <div class="d-flex flex-column justify-content-start">
-                        <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
-                          متوفر على
-                        </div>
-                        <h6
-                          class="text-h6 text-start"
-                          :class="$vuetify.theme.current.dark ? 'text-body-1' : 'footer-title'"
-                        >
-                          {{ item.store }}
-                        </h6>
-                      </div>
-                    </div>
-                  </template>
-                </VBtn>
-              </div>
-            </div>
-          </VCol>
-        </VRow>
-      </VContainer>
-    </div>
-
     <div class="footer-line w-100">
       <VContainer>
         <div class="d-flex justify-space-between flex-wrap gap-y-5 align-center">
           <div class="text-body-1 text-white-variant text-wrap me-4">
-            &copy;
 
-            {{ new Date().getFullYear() }}
+
+
+            تصميم وبرمجة
             <a
-              href="https://pixinvent.com/"
+              href="https://logharitm.com/"
               target="_blank"
               rel="noopener noreferrer"
               class="font-weight-bold ms-1 text-white"
-            >Pixinvent</a>,
-            صُنع بـ ❤️ لويب أفضل.
+            >
+              Logharitm
+            </a>
+            &copy;
+            {{ new Date().getFullYear() }}
           </div>
 
           <div class="d-flex gap-x-6">
@@ -277,7 +74,7 @@ const demoList = [
 }
 
 .footer-line {
-  background: #282c3e;
+  background: #451291;
 }
 </style>
 

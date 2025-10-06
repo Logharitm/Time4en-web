@@ -3,12 +3,10 @@ import { useTheme } from 'vuetify'
 import joinArrow from '@images/front-pages/icons/Join-community-arrow.png'
 
 // صور الهيرو للSlider
-import heroImg1 from '@images/front-pages/landing-page/Banner-2.jpg'
-import heroImg2 from '@images/front-pages/landing-page/PEHome-Banner-1920.png'
-import heroImg3 from '@images/front-pages/landing-page/img_1.png'
+import heroImg1 from '@images/front-pages/landing-page/banner.png'
 
 const theme = useTheme()
-const heroImages = [heroImg1, heroImg2, heroImg3]
+const heroImages = [heroImg1]
 </script>
 
 <template>
@@ -72,12 +70,6 @@ const heroImages = [heroImg1, heroImg2, heroImg3]
   background-size: cover;
 }
 
-.landing-hero-light-bg {
-  background: url("@images/front-pages/backgrounds/hero-bg.png") center no-repeat,
-  linear-gradient(138.18deg, #eae8fd 0%, #fce5e6 94.44%);
-  background-size: cover;
-}
-
 .landing-hero {
   border-radius: 0 0 50px 50px;
   padding-block: 9.75rem 22rem;
@@ -102,7 +94,7 @@ const heroImages = [heroImg1, heroImg2, heroImg3]
   font-size: 42px;
   font-weight: 800;
   line-height: 48px;
-  background: linear-gradient(135deg, #28c76f 0%, #5a4aff 47.92%, #ff3739 100%);
+  background: #451291;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

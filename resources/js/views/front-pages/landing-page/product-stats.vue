@@ -43,19 +43,19 @@ onMounted(fetchStatistics)
           >
             <VCard
               flat
-              :style="{ border: `1px solid rgba(var(--v-theme-${item.color}))` }"
+              :style="{ border: `3px solid #44158f` }"
             >
               <VCardText class="text-center">
                 <VIcon
-                  :color="item.color"
+                  color="#44158f"
                   :icon="item.icon"
                   size="64"
                   class="mb-4"
                 />
-                <h3 class="text-h3">
+                <h3 class="text-h3" style="color:#44158f">
                   {{ item.value }}
                 </h3>
-                <p class="text-body-1 font-weight-medium mb-0 text-wrap">
+                <p class="text-body-1 font-weight-medium mb-0 text-wrap" style="color:#44158f">
                   {{ item.title }}
                 </p>
               </VCardText>

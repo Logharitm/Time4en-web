@@ -14,7 +14,7 @@ const colorVariables = themeColors => {
 export const getScatterChartConfig = themeColors => {
   const scatterColors = {
     series1: '#ff9f43',
-    series2: '#7367f0',
+    series2: '#451291',
     series3: '#28c76f',
   }
 
@@ -229,7 +229,7 @@ export const getRadialBarChartConfig = themeColors => {
     series1: '#fdd835',
     series2: '#32baff',
     series3: '#00d4bd',
-    series4: '#7367f0',
+    series4: '#451291',
     series5: '#FFA1A1',
   }
 
@@ -588,7 +588,7 @@ export const getHeatMapChartConfig = themeColors => {
             { to: 30, from: 21, name: '20-30', color: '#9d95f5' },
             { to: 40, from: 31, name: '30-40', color: '#8f85f3' },
             { to: 50, from: 41, name: '40-50', color: '#8176f2' },
-            { to: 60, from: 51, name: '50-60', color: '#7367f0' },
+            { to: 60, from: 51, name: '50-60', color: '#451291' },
           ],
         },
       },

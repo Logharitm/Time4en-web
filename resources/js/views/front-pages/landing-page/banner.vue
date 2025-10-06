@@ -10,14 +10,14 @@ import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
     <VContainer>
       <div class="d-flex justify-center justify-md-space-between flex-wrap gap-6 gap-x-10 position-relative pt-12">
         <div class="align-self-center">
-          <div class="banner-title text-primary mb-1">
+          <div class="banner-title text-primary mb-8" style="color: white !important;">
             {{ $t('Ready to Get Started?') }}
           </div>
-          <h5 class="text-h5 text-medium-emphasis mb-8">
+          <h5 class="text-h5 text-medium-emphasis mb-8" style="color: white !important;">
            {{$t("Ready msg")}}
           </h5>
           <VBtn
-            color="primary"
+            color="white"
             href="/register"
             :size="$vuetify.display.smAndUp ? 'large' : 'default' "
           >
@@ -54,7 +54,7 @@ import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
 }
 
 .banner-bg-light {
-  background-image: url("@images/front-pages/backgrounds/cta-bg.png");
+  background: #451291 !important;
 }
 
 .banner-bg-dark {

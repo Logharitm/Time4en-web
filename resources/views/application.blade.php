@@ -9,8 +9,8 @@
     @vite('resources/js/main.js')
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body, html {
-            font-family: 'Cairo', sans-serif;
+        body, html,.text-h4,label,.text-body-1,a,h1,h2,h3,h4,h5,h6{
+            font-family: 'Cairo', sans-serif !important;
         }
     </style>
 </head>
@@ -47,7 +47,7 @@
   
   <script>
     const loaderColor = localStorage.getItem('vuexy-initial-loader-bg') || '#FFFFFF'
-    const primaryColor = localStorage.getItem('vuexy-initial-loader-color') || '#7367F0'
+    const primaryColor = localStorage.getItem('vuexy-initial-loader-color') || '#451291'
 
     if (loaderColor)
       document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)
