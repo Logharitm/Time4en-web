@@ -42,7 +42,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/plans', [PlanController::class, 'index']);
 
 
-    Route::group(['middleware' => ['auth:sanctum', 'check.subscription']], function () {
+    Route::group(['middleware' => ['auth:sanctum']], function () {
 
         Route::get('user-notifications', [AuthController::class, 'userNotification']);
 
@@ -72,15 +72,15 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
 
         // --------------------------------- Words ---------------------------------
         Route::get('words', [WordController::class, 'index']);
-        Route::post('words', [WordController::class, 'store']);
+        Route::post('words', [WordController::class, 'store'])->middleware('check.subscription');
         Route::get('words/{word}', [WordController::class, 'show']);
         Route::post('words/{word}/update', [WordController::class, 'update']);
         Route::post('words/{word}/delete', [WordController::class, 'destroy']);
 
         // --------------------------------- Practice ---------------------------------
         Route::get('/practices', [PracticeController::class, 'index']);
-        Route::post('/practice/start', [PracticeController::class, 'createQuiz']);
-        Route::post('/practice/submit-answer', [PracticeController::class, 'submitAnswer']);
+        Route::post('/practice/start', [PracticeController::class, 'createQuiz'])->middleware('check.subscription');
+        Route::post('/practice/submit-answer', [PracticeController::class, 'submitAnswer'])->middleware('check.subscription');;
         Route::get('/practice/report/{practice}', [PracticeController::class, 'showReport']);
 
         // --------------------------------- FAQs ---------------------------------

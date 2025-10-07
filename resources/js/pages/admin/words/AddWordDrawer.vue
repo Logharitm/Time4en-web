@@ -3,10 +3,8 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
-  isDrawerOpen: {
-    type: Boolean,
-    required: true,
-  },
+  isDrawerOpen: { type: Boolean, required: true },
+  folderId: { type: Number, default: null },   // ✅ استقبل folderId
 })
 
 const emit = defineEmits(['update:isDrawerOpen', 'word-data'])
@@ -17,7 +15,7 @@ const refForm = ref()
 
 // Fields
 const userId = ref(null)
-const folderId = ref(null)
+const folderId = ref(props.folderId)   // ✅ يبدأ بالـ prop
 const word = ref('')
 const translation = ref('')
 const audioFile = ref(null)
@@ -30,14 +28,19 @@ const folders = ref([])
 // refs
 const audioInput = ref(null)
 
-// Fetch users with role=user
 onMounted(async () => {
   try {
     const resp = await $api('/users?role=user', { method: 'GET' })
+
     users.value = resp.data || []
   } catch (err) {
     console.error('Error fetching users', err)
   }
+})
+
+// لو الـ prop اتغير
+watch(() => props.folderId, val => {
+  folderId.value = val
 })
 
 // Watch userId => fetch folders
@@ -45,6 +48,7 @@ watch(userId, async val => {
   if (val) {
     try {
       const resp = await $api(`/folders?user_id=${val}`, { method: 'GET' })
+
       folders.value = resp.data || []
       folderId.value = null
     } catch (err) {
@@ -73,35 +77,30 @@ const onAudioChange = e => {
   }
 }
 
-// Close drawer
 const closeDrawer = () => {
   emit('update:isDrawerOpen', false)
   nextTick(() => {
     refForm.value?.reset()
     refForm.value?.resetValidation()
-    userId.value = null
-    folderId.value = null
+    if (!props.folderId) folderId.value = null
     word.value = ''
     translation.value = ''
     audioFile.value = null
     audioError.value = null
     if (audioInput.value) audioInput.value.value = null
-    folders.value = []
+    if (!props.folderId) folders.value = []
   })
 }
 
-// Submit
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
-      formData.append('user_id', userId.value)
+
       formData.append('folder_id', folderId.value)
       formData.append('word', word.value)
       formData.append('translation', translation.value)
-      if (audioFile.value) {
-        formData.append('audio_file', audioFile.value)
-      }
+      if (audioFile.value) formData.append('audio_file', audioFile.value)
 
       emit('word-data', formData)
       closeDrawer()
@@ -133,18 +132,11 @@ const onSubmit = () => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- اختيار العميل -->
-              <VCol cols="12">
-                <AppSelect
-                  v-model="userId"
-                  :items="users.map(u => ({ value: u.id, title: u.name }))"
-                  label="العميل"
-                  :rules="[requiredValidator]"
-                />
-              </VCol>
-
-              <!-- اختيار الفولدر حسب العميل -->
-              <VCol v-if="folders.length" cols="12">
+              <!-- ✅ Dropdown يظهر فقط لو مفيش folderId جاي من الـ prop -->
+              <VCol
+                v-if="!props.folderId && folders.length"
+                cols="12"
+              >
                 <AppSelect
                   v-model="folderId"
                   :items="folders.map(f => ({ value: f.id, title: f.name }))"
@@ -176,15 +168,20 @@ const onSubmit = () => {
                     ref="audioInput"
                     type="file"
                     accept="audio/*"
-                    @change="onAudioChange"
                     style="display:none"
-                  />
-
-                  <VBtn variant="outlined" @click="audioInput.click()">
+                    @change="onAudioChange"
+                  >
+                  <VBtn
+                    variant="outlined"
+                    @click="audioInput.click()"
+                  >
                     رفع ملف صوت
                   </VBtn>
 
-                  <div v-if="audioFile" class="d-flex gap-2 align-center">
+                  <div
+                    v-if="audioFile"
+                    class="d-flex gap-2 align-center"
+                  >
                     <span class="small">{{ audioFile.name }}</span>
                     <VBtn
                       icon
@@ -194,17 +191,28 @@ const onSubmit = () => {
                       <VIcon icon="tabler-x" />
                     </VBtn>
                   </div>
-
-                  <div v-else class="text-muted small">لم يتم اختيار ملف</div>
+                  <div
+                    v-else
+                    class="text-muted small"
+                  >
+                    لم يتم اختيار ملف
+                  </div>
                 </div>
-
-                <div v-if="audioError" class="text-danger small mt-1">
+                <div
+                  v-if="audioError"
+                  class="text-danger small mt-1"
+                >
                   {{ audioError }}
                 </div>
               </VCol>
 
               <VCol cols="12">
-                <VBtn type="submit" class="me-3">حفظ</VBtn>
+                <VBtn
+                  type="submit"
+                  class="me-3"
+                >
+                  حفظ
+                </VBtn>
                 <VBtn
                   type="reset"
                   variant="tonal"

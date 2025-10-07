@@ -57,7 +57,7 @@ const saveProfile = async () => {
 
     formData.append('name', accountDataLocal.value.name)
     formData.append('email', accountDataLocal.value.email)
-    formData.append('language', accountDataLocal.value.language)
+    formData.append('language', 'ar')
 
     // ✅ فقط لو المستخدم اختار صورة جديدة
     if (accountDataLocal.value.avatar instanceof File) {
@@ -236,34 +236,8 @@ onMounted(() => {
                 />
               </VCol>
 
-              <!-- 👉 Language -->
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppSelect
-                  v-model="accountDataLocal.language"
-                  label="اللغة"
-                  placeholder="Select Language"
-                  :items="languages"
-                />
-              </VCol>
-
-              <!-- 👉 Role (read-only) -->
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="accountDataLocal.role"
-                  label="الوظيفة"
-                  readonly
-                  variant="plain"
-                />
-              </VCol>
-
               <!-- 👉 Form Actions -->
-              <VCol
+              <VCardText
                 cols="12"
                 class="d-flex flex-wrap gap-4"
               >
@@ -281,7 +255,7 @@ onMounted(() => {
                 >
                   الغاء
                 </VBtn>
-              </VCol>
+              </VCardText>
             </VRow>
           </VForm>
         </VCardText>

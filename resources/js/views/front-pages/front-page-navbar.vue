@@ -21,10 +21,54 @@ watch(() => display, () => {
 
 const isMenuOpen = ref(false)
 
+// حالة المستخدم
+const isLoggedIn = computed(() => {
+  const userData = useCookie('userData').value
+  
+  return !!userData
+})
+
+const userData = computed(() => {
+  return useCookie('userData').value
+})
+
+const menuItems = ref([
+  {
+    listTitle: 'Authentication',
+    listIcon: 'tabler-lock',
+    navItems: [
+      { name: 'Login', to: { name: 'login' } },
+      { name: 'Register', to: { name: 'register' } },
+    ],
+  },
+])
+
 const isCurrentRoute = to => {
   return route.matched.some(_route => _route.path.startsWith(router.resolve(to).path))
 }
 
+// دالة تسجيل الخروج
+const logout = async () => {
+  try {
+    // إرسال طلب تسجيل الخروج إلى الـ API
+    await $api('/logout', {
+      method: 'POST',
+    })
+  } catch (error) {
+    console.error('Logout error:', error)
+  } finally {
+    // مسح البيانات المحلية بغض النظر عن استجابة الـ API
+    useCookie('accessToken').value = null
+    useCookie('userData').value = null
+    useCookie('userAbilityRules').value = null
+
+    // إعادة التوجيه إلى الصفحة الرئيسية
+    await router.replace('/')
+
+    // إعادة تحميل الصفحة لتحديث الحالة
+    window.location.reload()
+  }
+}
 </script>
 
 <template>
@@ -44,12 +88,12 @@ const isCurrentRoute = to => {
         <div class="d-flex flex-column gap-y-4 pa-4">
           <RouterLink
             v-for="(item, index) in [
-      { label: 'الرئيسية', hash: 'home' },
-      { label: 'الميزات', hash: 'features' },
-      { label: 'الفريق', hash: 'team' },
-      { label: 'الأسئلة الشائعة', hash: 'faq' },
-      { label: 'اتصل بنا', hash: 'contact-us' },
-    ]"
+              { label: 'الرئيسية', hash: 'home' },
+              { label: 'الميزات', hash: 'features' },
+              { label: 'الفريق', hash: 'team' },
+              { label: 'الأسئلة الشائعة', hash: 'faq' },
+              { label: 'اتصل بنا', hash: 'contact-us' },
+            ]"
             :key="index"
             :to="{ name: 'home', hash: `#${item.hash}` }"
             class="nav-link font-weight-medium"
@@ -57,6 +101,48 @@ const isCurrentRoute = to => {
           >
             {{ item.label }}
           </RouterLink>
+
+          <!-- 👉 قوائم المستخدم المسجل -->
+          <div
+            v-if="isLoggedIn"
+            class="d-flex flex-column gap-y-4"
+          >
+            <RouterLink
+              to="/profile"
+              class="nav-link font-weight-medium"
+              @click="sidebar = false"
+            >
+              حسابي
+            </RouterLink>
+            <RouterLink
+              to="/folders"
+              class="nav-link font-weight-medium"
+              @click="sidebar = false"
+            >
+              المجلدات
+            </RouterLink>
+            <RouterLink
+              to="/tests"
+              class="nav-link font-weight-medium"
+              @click="sidebar = false"
+            >
+              الاختبارات
+            </RouterLink>
+
+            <VBtn
+              color="primary"
+              variant="flat"
+              block
+              class="mt-2"
+              @click="logout"
+            >
+              <VIcon
+                icon="tabler-logout"
+                class="me-2"
+              />
+              تسجيل خروج
+            </VBtn>
+          </div>
 
           <div class="font-weight-medium cursor-pointer">
             <div
@@ -174,11 +260,11 @@ const isCurrentRoute = to => {
           <div class="text-base align-center d-none d-md-flex">
             <RouterLink
               v-for="(item, index) in [
-              { label: 'الرئيسية', hash: 'home' },
-              { label: 'باقات الاشتراك', hash: 'pricing-plan' },
-              { label: 'الأسئلة الشائعة', hash: 'faq' },
-              { label: 'اتصل بنا', hash: 'contact-us' },
-            ]"
+                { label: 'الرئيسية', hash: 'home' },
+                { label: 'باقات الاشتراك', hash: 'pricing-plan' },
+                { label: 'الأسئلة الشائعة', hash: 'faq' },
+                { label: 'اتصل بنا', hash: 'contact-us' },
+              ]"
               :key="index"
               :to="{ name: 'home', hash: `#${item.hash}` }"
               class="nav-link font-weight-medium py-2 px-2 px-lg-4"
@@ -186,23 +272,79 @@ const isCurrentRoute = to => {
             >
               {{ item.label }}
             </RouterLink>
-          </div>
 
+            <!-- 👉 قوائم المستخدم المسجل في شريط التنقل العلوي -->
+            <template v-if="isLoggedIn">
+              <RouterLink
+                to="/profile"
+                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+              >
+                حسابي
+              </RouterLink>
+
+              <RouterLink
+                to="/folders"
+                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+              >
+                المجلدات
+              </RouterLink>
+
+              <RouterLink
+                to="/tests"
+                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+              >
+                الاختبارات
+              </RouterLink>
+
+            </template>
+          </div>
         </div>
 
         <VSpacer />
 
-        <div class="d-flex gap-x-4">
-          <NavbarThemeSwitcher />
+        <div class="d-flex gap-x-4 align-center">
+          <!-- 👉 زر تسجيل الخروج للمستخدم المسجل -->
+          <template v-if="isLoggedIn">
+            <VBtn
+              color="primary"
+              variant="elevated"
+              class="me-2"
+              @click="logout"
+            >
+              <VIcon
+                icon="tabler-logout"
+                class="me-2"
+              />
+              تسجيل خروج
+            </VBtn>
 
+            <!-- معلومات المستخدم -->
+            <VAvatar
+              v-if="userData?.avatar"
+              size="36"
+              :image="userData.avatar"
+            />
+            <VAvatar
+              v-else
+              size="36"
+              color="primary"
+              variant="tonal"
+            >
+              <span class="text-caption">
+                {{ userData?.name?.charAt(0) || userData?.email?.charAt(0) || 'U' }}
+              </span>
+            </VAvatar>
+          </template>
+
+          <!-- 👉 زر الاشتراك للمستخدم غير المسجل -->
           <VBtn
-            v-if="$vuetify.display.lgAndUp"
-            prepend-icon="tabler-shopping-cart"
+            v-else-if="$vuetify.display.lgAndUp"
+            prepend-icon="tabler-lock"
             variant="elevated"
             color="primary"
-            :to="{ name: 'register' }"
+            :to="{ name: 'login' }"
           >
-            اشترك الآن
+            تسجيل الدخول
           </VBtn>
         </div>
       </VAppBar>

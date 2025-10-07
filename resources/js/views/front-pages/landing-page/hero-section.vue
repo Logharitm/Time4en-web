@@ -18,25 +18,21 @@ const heroImages = [heroImg1]
     >
       <VContainer>
         <div class="hero-text-box text-center px-6">
-          <h1 class="hero-title mb-4">تعلم الإنجليزية بسهولة وفي أي وقت مع Time4EN</h1>
+          <h1 class="hero-title mb-5">
+            تعلم الإنجليزية بسهولة
+          </h1>
+          <h1 class="hero-title mb-4">
+            وفي أي وقت مع Time4EN
+          </h1>
           <div class="position-relative">
-            <h6 class="position-absolute hero-btn-item d-md-flex d-none text-h6 text-medium-emphasis">
-              {{ $t("Join Community") }}
-              <VImg :src="joinArrow" class="flip-in-rtl" width="54" height="31" />
-            </h6>
-            <VBtn
-              :size="$vuetify.display.smAndUp ? 'large' : 'default'"
-              :to="{ name: 'home', hash: `#pricing-plan` }"
-            >
-              {{ $t("Get early Access") }}
-            </VBtn>
+            <h6 class="position-absolute hero-btn-item d-md-flex d-none text-h6 text-medium-emphasis" />
           </div>
         </div>
       </VContainer>
     </div>
 
     <!-- Slider الهيرو فوق الخلفية -->
-    <VContainer style="margin-top: -264px !important;">
+    <VContainer style="margin-top: -364px !important;">
       <VCarousel
         cycle
         hide-delimiters
@@ -47,13 +43,11 @@ const heroImages = [heroImg1]
           v-for="(img, index) in heroImages"
           :key="index"
         >
-          <RouterLink :to="{ name: 'dashboards-ecommerce' }" target="_blank">
-            <VImg
-              :src="img"
-              class="hero-slider-img"
-              cover
-            />
-          </RouterLink>
+          <VImg
+            :src="img"
+            class="hero-slider-img"
+            cover
+          />
         </VCarouselItem>
       </VCarousel>
     </VContainer>

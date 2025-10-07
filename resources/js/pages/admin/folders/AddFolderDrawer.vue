@@ -50,7 +50,6 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
-      formData.append('user_id', userId.value)
       formData.append('name', name.value)
       formData.append('description', description.value || '')
 
@@ -78,15 +77,6 @@ const onSubmit = () => {
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
               <VCol cols="12">
-                <AppSelect
-                  v-model="userId"
-                  :items="users.map(u => ({ value: u.id, title: u.name }))"
-                  label="العميل"
-                  :rules="[requiredValidator]"
-                />
-              </VCol>
-
-              <VCol cols="12">
                 <AppTextField
                   v-model="name"
                   label="اسم المجلد"
@@ -95,7 +85,7 @@ const onSubmit = () => {
               </VCol>
 
               <VCol cols="12">
-                <AppTextField
+                <AppTextarea
                   v-model="description"
                   label="الوصف"
                   type="text"

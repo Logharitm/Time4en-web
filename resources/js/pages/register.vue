@@ -1,8 +1,8 @@
 <script setup>
 import { VForm } from 'vuetify/components/VForm'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import authV2RegisterIllustrationBorderedDark from '@images/pages/auth-v2-register-illustration-bordered-dark.png'
 import authV2RegisterIllustrationBorderedLight from '@images/pages/auth-v2-register-illustration-bordered-light.png'
 import authV2RegisterIllustrationDark from '@images/pages/auth-v2-register-illustration-dark.png'
@@ -10,7 +10,14 @@ import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illu
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 
-const imageVariant = useGenerateImageVariant(authV2RegisterIllustrationLight, authV2RegisterIllustrationDark, authV2RegisterIllustrationBorderedLight, authV2RegisterIllustrationBorderedDark, true)
+const imageVariant = useGenerateImageVariant(
+  authV2RegisterIllustrationLight,
+  authV2RegisterIllustrationDark,
+  authV2RegisterIllustrationBorderedLight,
+  authV2RegisterIllustrationBorderedDark,
+  true,
+)
+
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 definePage({
@@ -21,13 +28,69 @@ definePage({
 })
 
 const form = ref({
-  username: '',
+  name: '',
   email: '',
   password: '',
+  password_confirmation: '',
   privacyPolicies: false,
 })
 
 const isPasswordVisible = ref(false)
+const refVForm = ref()
+const router = useRouter()
+
+const errors = ref({
+  name: undefined,
+  email: undefined,
+  password: undefined,
+})
+
+const generalError = ref(null)
+
+const register = async () => {
+  try {
+    const res = await $api('/register', {
+      method: 'POST',
+      body: {
+        name: form.value.name,
+        email: form.value.email,
+        password: form.value.password,
+        password_confirmation: form.value.password_confirmation,
+      },
+      onResponseError({ response }) {
+        if (response._data?.errors) {
+          // السيرفر بيرجع errors كمصفوفة [{field, message}]
+          const fieldErrors = {}
+          response._data.errors.forEach(e => {
+            if (!fieldErrors[e.field]) fieldErrors[e.field] = []
+            fieldErrors[e.field].push(e.message)
+          })
+          errors.value = fieldErrors
+        } else if (response._data?.message) {
+          errors.value = { email: [response._data.message] }
+        }
+      },
+    })
+
+    // دعم الحالتين: res أو res.data
+    const payload = res?.status ?? res
+    if (payload === 'success') {
+      router.replace('/login')
+    }
+  } catch (err) {
+    console.error('Register error:', err)
+    errors.value = { email: ['Something went wrong, please try again.'] }
+  }
+}
+
+
+
+const onSubmit = () => {
+  refVForm.value?.validate().then(({ valid: isValid }) => {
+    if (isValid && form.value.privacyPolicies)
+      register()
+  })
+}
 </script>
 
 <template>
@@ -59,7 +122,6 @@ const isPasswordVisible = ref(false)
             class="auth-illustration mt-16 mb-2"
           />
         </div>
-
         <img
           class="auth-footer-mask"
           :src="authThemeMask"
@@ -74,7 +136,6 @@ const isPasswordVisible = ref(false)
       cols="12"
       md="4"
       class="auth-card-v2 d-flex align-center justify-center"
-      style="background-color: rgb(var(--v-theme-surface));"
     >
       <VCard
         flat
@@ -83,106 +144,112 @@ const isPasswordVisible = ref(false)
       >
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Adventure starts here 🚀
+            تسجيل حساب جديد
           </h4>
-          <p class="mb-0">
-            Make your app management easy and fun!
-          </p>
         </VCardText>
 
         <VCardText>
-          <VForm @submit.prevent="() => {}">
+          <VForm
+            ref="refVForm"
+            @submit.prevent="onSubmit"
+          >
             <VRow>
-              <!-- Username -->
               <VCol cols="12">
                 <AppTextField
-                  v-model="form.username"
+                  v-model="form.name"
+                  label="الاسم"
                   :rules="[requiredValidator]"
+                  :error-messages="errors.name"
                   autofocus
-                  label="Username"
-                  placeholder="Johndoe"
                 />
               </VCol>
 
-              <!-- email -->
               <VCol cols="12">
                 <AppTextField
                   v-model="form.email"
-                  :rules="[requiredValidator, emailValidator]"
-                  label="Email"
+                  label="البريد الإلكتروني"
                   type="email"
-                  placeholder="johndoe@email.com"
+                  :rules="[requiredValidator, emailValidator]"
+                  :error-messages="errors.email"
                 />
               </VCol>
 
-              <!-- password -->
               <VCol cols="12">
                 <AppTextField
                   v-model="form.password"
-                  :rules="[requiredValidator]"
-                  label="Password"
-                  placeholder="············"
+                  label="كلمة المرور"
                   :type="isPasswordVisible ? 'text' : 'password'"
-                  autocomplete="password"
+                  :rules="[requiredValidator]"
+                  :error-messages="errors.password"
+                  autocomplete="new-password"
+                  placeholder="••••••••"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 />
+              </VCol>
 
-                <div class="d-flex align-center my-6">
+              <VCol cols="12">
+                <AppTextField
+                  v-model="form.password_confirmation"
+                  label="تأكيد كلمة المرور"
+                  :type="isPasswordVisible ? 'text' : 'password'"
+                  :rules="[requiredValidator]"
+                  autocomplete="new-password"
+                  placeholder="••••••••"
+                />
+              </VCol>
+
+              <!-- اتفاقية الخصوصية -->
+              <VCol cols="12">
+                <div class="d-flex align-center my-4">
                   <VCheckbox
-                    id="privacy-policy"
                     v-model="form.privacyPolicies"
                     inline
                   />
-                  <VLabel
-                    for="privacy-policy"
-                    style="opacity: 1;"
-                  >
-                    <span class="me-1 text-high-emphasis">I agree to</span>
+                  <VLabel for="privacy-policy">
+                    <span class="me-1">أوافق على</span>
                     <a
                       href="javascript:void(0)"
                       class="text-primary"
-                    >privacy policy & terms</a>
+                    >سياسة الخصوصية والشروط</a>
                   </VLabel>
                 </div>
+              </VCol>
 
+              <!-- عرض رسالة الخطأ العامة -->
+              <VCol
+                v-if="generalError"
+                cols="12"
+              >
+                <VAlert
+                  type="error"
+                  border="start"
+                  class="mb-4"
+                >
+                  {{ generalError }}
+                </VAlert>
+              </VCol>
+
+              <VCol cols="12">
                 <VBtn
                   block
                   type="submit"
                 >
-                  Sign up
+                  تسجيل
                 </VBtn>
               </VCol>
 
-              <!-- create account -->
               <VCol
                 cols="12"
                 class="text-center text-base"
               >
-                <span class="d-inline-block">Already have an account?</span>
+                <span>لديك حساب بالفعل؟</span>
                 <RouterLink
-                  class="text-primary ms-1 d-inline-block"
+                  class="text-primary ms-1"
                   :to="{ name: 'login' }"
                 >
-                  Sign in instead
+                  تسجيل الدخول
                 </RouterLink>
-              </VCol>
-
-              <VCol
-                cols="12"
-                class="d-flex align-center"
-              >
-                <VDivider />
-                <span class="mx-4">or</span>
-                <VDivider />
-              </VCol>
-
-              <!-- auth providers -->
-              <VCol
-                cols="12"
-                class="text-center"
-              >
-                <AuthProvider />
               </VCol>
             </VRow>
           </VForm>
