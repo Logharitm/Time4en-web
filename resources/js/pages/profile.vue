@@ -2,6 +2,7 @@
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import AccountSettingsAccount from '@/views/pages/account-settings/AccountSettingsAccount.vue'
 import AccountSettingsSecurity from '@/views/pages/account-settings/AccountSettingsSecurity.vue'
+import AccountSettingsBillingAndPlans from '@/views/pages/account-settings/AccountSettingsBillingAndPlans.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
 import { useConfigStore } from '@core/stores/config'
 import PricingPlans from "@/views/front-pages/landing-page/pricing-plans.vue"
@@ -46,6 +47,9 @@ useIntersectionObserver([
       </VCol>
       <VCol cols="12">
         <AccountSettingsSecurity />
+      </VCol>
+      <VCol cols="12">
+        <AccountSettingsBillingAndPlans></AccountSettingsBillingAndPlans>
       </VCol>
     </VContainer>
 

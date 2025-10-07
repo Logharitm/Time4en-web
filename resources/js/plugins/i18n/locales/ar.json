@@ -284,6 +284,18 @@
   "Example": "مثال",
   "Add Word": "اضافة كلمة جديدة",
   "Notifications": "الاشعارات",
-  "No Notification Found": "لا توجد اشعارات"
+  "No Notification Found": "لا توجد اشعارات",
+  "Current Plan": "الباقة الحالية",
+  "Your Current Plan is": "باقتك الحالية هي",
+  "None": "لا يوجد",
+  "No active subscription": "لا يوجد اشتراك حتي الان",
+  "Active until": "صالحة حتي",
+  "Per Month": "شهريا",
+  "Price": "السعر",
+  "We need your attention": "يجب عليك الانتباه",
+  "Your plan requires update" : "اشتراكك يحتاج الي تحديث",
+  "Days": "ايام",
+  "days remaining until your plan requires update": "الايام المتبقية حتي انتهاء الاشتراك",
+  "of": "من"
 
 }
