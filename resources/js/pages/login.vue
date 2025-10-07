@@ -1,24 +1,25 @@
 <script setup>
-import {VForm} from 'vuetify/components/VForm'
+import { VForm } from 'vuetify/components/VForm'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
-import {useGenerateImageVariant} from '@core/composable/useGenerateImageVariant'
+import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
 import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
 import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
-import {VNodeRenderer} from '@layouts/components/VNodeRenderer'
-import {themeConfig} from '@themeConfig'
-import {useAbility} from '@casl/vue'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
+import { themeConfig } from '@themeConfig'
+import { useAbility } from '@casl/vue'
 
 const authThemeImg = useGenerateImageVariant(
   authV2LoginIllustrationLight,
   authV2LoginIllustrationDark,
   authV2LoginIllustrationBorderedLight,
   authV2LoginIllustrationBorderedDark,
-  true
+  true,
 )
+
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 
 definePage({
@@ -72,6 +73,7 @@ const login = async () => {
     // التحقق من وجود token في الرد
     if (!payload.accessToken) {
       generalError.value = 'Login failed. No access token received.'
+      
       return
     }
 
@@ -87,9 +89,9 @@ const login = async () => {
     // ضبط الصلاحيات
     let userAbilities = []
     if (userFromApi.role === 'admin') {
-      userAbilities = [{action: 'manage', subject: 'all'}]
+      userAbilities = [{ action: 'manage', subject: 'all' }]
     } else {
-      userAbilities = [{action: 'read', subject: 'Home'}]
+      userAbilities = [{ action: 'read', subject: 'Home' }]
     }
 
     // حفظ الحالة
@@ -139,7 +141,7 @@ const onSubmit = () => {
   errors.value = { email: undefined, password: undefined }
   generalError.value = ''
 
-  refVForm.value?.validate().then(({valid: isValid}) => {
+  refVForm.value?.validate().then(({ valid: isValid }) => {
     if (isValid) {
       login()
     }
@@ -160,15 +162,21 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
 <template>
   <RouterLink to="/">
     <div class="auth-logo d-flex align-center gap-x-3">
-      <VNodeRenderer :nodes="themeConfig.app.logo"/>
+      <VNodeRenderer :nodes="themeConfig.app.logo" />
       <h1 class="auth-title">
         {{ themeConfig.app.title }}
       </h1>
     </div>
   </RouterLink>
 
-  <VRow no-gutters class="auth-wrapper bg-surface">
-    <VCol md="8" class="d-none d-md-flex">
+  <VRow
+    no-gutters
+    class="auth-wrapper bg-surface"
+  >
+    <VCol
+      md="8"
+      class="d-none d-md-flex"
+    >
       <div class="position-relative bg-background w-100 me-0">
         <div
           class="d-flex align-center justify-center w-100 h-100"
@@ -187,12 +195,20 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
           alt="auth-footer-mask"
           height="280"
           width="100"
-        />
+        >
       </div>
     </VCol>
 
-    <VCol cols="12" md="4" class="auth-card-v2 d-flex align-center justify-center">
-      <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
+    <VCol
+      cols="12"
+      md="4"
+      class="auth-card-v2 d-flex align-center justify-center"
+    >
+      <VCard
+        flat
+        :max-width="500"
+        class="mt-12 mt-sm-0 pa-4"
+      >
         <VCardText>
           <h4 class="text-h4 mb-1">
             مرحبا بك في
@@ -201,7 +217,10 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
         </VCardText>
 
         <VCardText>
-          <VForm ref="refVForm" @submit.prevent="onSubmit">
+          <VForm
+            ref="refVForm"
+            @submit.prevent="onSubmit"
+          >
             <VRow>
               <!-- email -->
               <VCol cols="12">
@@ -241,7 +260,10 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                 </VAlert>
 
                 <div class="d-flex align-center flex-wrap justify-space-between my-6">
-                  <VCheckbox v-model="rememberMe" label="تذكرني"/>
+                  <VCheckbox
+                    v-model="rememberMe"
+                    label="تذكرني"
+                  />
                   <RouterLink
                     class="text-primary ms-2 mb-1"
                     :to="{ name: 'forgot-password' }"
@@ -261,7 +283,10 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
               </VCol>
 
               <!-- create account -->
-              <VCol cols="12" class="text-center text-base">
+              <VCol
+                cols="12"
+                class="text-center text-base"
+              >
                 <span class="d-inline-block">{{ $t('dont have an account') }}</span>
                 <RouterLink
                   class="text-primary ms-1 d-inline-block"

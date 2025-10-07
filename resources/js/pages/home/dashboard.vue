@@ -1,13 +1,6 @@
 <script setup>
 import LogisticsCardStatistics from '@/views/apps/logistics/LogisticsCardStatistics.vue'
 import LogisticsVehicleOverview from '@/views/apps/logistics/LogisticsVehicleOverview.vue'
-
-definePage({
-  meta: {
-    action: 'read',
-    subject: 'Home',
-  },
-})
 </script>
 
 <template>

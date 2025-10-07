@@ -40,7 +40,9 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
     Route::get('/statistics', [StatisticsController::class, 'index']);
     Route::get('/plans', [PlanController::class, 'index']);
-
+    // --------------------------------- Contact Info ---------------------------------
+    Route::get('/contact-info', [ContactInfoController::class, 'show']);
+    Route::post('/contact-info', [ContactInfoController::class, 'update']);
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
 
@@ -93,9 +95,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/messages', [MessagesController::class, 'store']);
         Route::post('/messages/{message}/delete', [MessagesController::class, 'destroy']);
 
-        // --------------------------------- Contact Info ---------------------------------
-        Route::get('/contact-info', [ContactInfoController::class, 'show']);
-        Route::post('/contact-info', [ContactInfoController::class, 'update']);
+
 
         // --------------------------------- Policies ---------------------------------
         Route::post('/policies/{type}', [PolicyController::class, 'update']);

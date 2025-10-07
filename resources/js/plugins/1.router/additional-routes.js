@@ -8,7 +8,7 @@ export const redirects = [
       const userData = useCookie('userData')
 
       // لو الكوكيز مش موجودة، نعيد للتسجيل
-      if (!userData.value) return { name: 'login', query: to.query }
+      if (!userData.value) return { name: 'home' }
 
       const userRole = userData.value.role
 
@@ -16,7 +16,7 @@ export const redirects = [
       if (userRole === 'user') return { name: 'home' }
 
       // أي حالة أخرى
-      return { name: 'login', query: to.query }
+      return { name: 'home' }
     },
   },
 ]
@@ -24,6 +24,11 @@ export const redirects = [
 
 
 export const routes = [
+  {
+    path: '/home/dashboard',
+    name: 'home-dashboard',
+    component: () => import('@/pages/home/dashboard.vue'),
+  },
   {
     path: '/dashboard',
     name: 'dashboard',
