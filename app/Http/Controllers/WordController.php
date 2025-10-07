@@ -128,6 +128,10 @@ class WordController extends Controller
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
         }
 
+        $sentence = $this->generate($data['word']);
+
+        $data['example_sentence'] = $sentence;
+
         $word->update($data);
 
         return $this->successResponse('Word updated successfully.', new WordResource($word));
