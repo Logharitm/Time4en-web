@@ -114,14 +114,14 @@ onMounted(fetchPlans)
 
                 </VList>
 
-                <VBtn
-                  block
-                  :variant="plan.current ? 'elevated' : 'tonal'"
-                  class="mt-8"
-                  href="register"
-                >
-                  {{ $t("Get Started") }}
-                </VBtn>
+<!--                <VBtn-->
+<!--                  block-->
+<!--                  :variant="plan.current ? 'elevated' : 'tonal'"-->
+<!--                  class="mt-8"-->
+<!--                  href="register"-->
+<!--                >-->
+<!--                  {{ $t("Get Started") }}-->
+<!--                </VBtn>-->
               </VCardText>
             </VCard>
           </VCol>

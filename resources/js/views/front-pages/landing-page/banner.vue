@@ -16,13 +16,13 @@ import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
           <h5 class="text-h5 text-medium-emphasis mb-8" style="color: white !important;">
            {{$t("Ready msg")}}
           </h5>
-          <VBtn
-            color="white"
-            href="/register"
-            :size="$vuetify.display.smAndUp ? 'large' : 'default' "
-          >
-            {{ $t("Get Started") }}
-          </VBtn>
+<!--          <VBtn-->
+<!--            color="white"-->
+<!--            href="/register"-->
+<!--            :size="$vuetify.display.smAndUp ? 'large' : 'default' "-->
+<!--          >-->
+<!--            {{ $t("Get Started") }}-->
+<!--          </VBtn>-->
 
         </div>
 

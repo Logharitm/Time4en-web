@@ -6,6 +6,8 @@ import navImg from '@images/front-pages/misc/nav-item-col-img.png'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
+import LanguageSwitcher from '@core/components/I18n.vue'
 
 const props = defineProps({ activeId: String })
 
@@ -301,7 +303,8 @@ const logout = async () => {
         </div>
 
         <VSpacer />
-
+        <LanguageSwitcher></LanguageSwitcher>
+        <NavBarNotifications></NavBarNotifications>
         <div class="d-flex gap-x-4 align-center">
           <!-- 👉 زر تسجيل الخروج للمستخدم المسجل -->
           <template v-if="isLoggedIn">

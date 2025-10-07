@@ -297,8 +297,8 @@ onMounted(() => {
                   </VCardText>
 
                   <!-- الأزرار -->
-                  <div class="card-actions mt-2">
-                    <VCol cols="6">
+                  <div class="v-row" style="padding:10px">
+                    <VCol class="v-col">
                       <VBtn
                         color="primary"
                         variant="outlined"
@@ -308,7 +308,7 @@ onMounted(() => {
                         {{ $t("Edit") }}
                       </VBtn>
                     </VCol>
-                    <VCol cols="6">
+                    <VCol  class="v-col">
                       <VBtn
                         color="primary"
                         variant="outlined"
