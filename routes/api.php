@@ -40,6 +40,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
     Route::get('/policies/{type}', [PolicyController::class, 'show']);
     Route::get('/statistics', [StatisticsController::class, 'index']);
     Route::get('/plans', [PlanController::class, 'index']);
+
     // --------------------------------- Contact Info ---------------------------------
     Route::get('/contact-info', [ContactInfoController::class, 'show']);
     Route::post('/contact-info', [ContactInfoController::class, 'update']);
@@ -101,7 +102,7 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('/policies/{type}', [PolicyController::class, 'update']);
 
         // --------------------------------- Plans ---------------------------------
-        Route::get('/plans', [PlanController::class, 'index']);
+
         Route::get('/plans/{plan}', [PlanController::class, 'show']);
         Route::post('/plans/store', [PlanController::class, 'store']);
         Route::post('/plans/update/{plan}', [PlanController::class, 'update']);
