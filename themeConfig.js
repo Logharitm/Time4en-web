@@ -4,13 +4,18 @@ import { defineThemeConfig } from '@core'
 import { Skins } from '@core/enums'
 
 // ❗ Logo SVG must be imported with ?raw suffix
+// eslint-disable-next-line import/no-unresolved
 import logo from '@images/logo.png'
 import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layouts/enums'
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
     title: 'Time4en',
-    logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
+    logo: h('img', {
+      src: logo,
+      alt: 'Time4en Logo',
+      style: 'height: 40px; line-height:0;',
+    }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1, // 1 for matching with vuetify breakpoint. Docs: https://next.vuetifyjs.com/en/features/display-and-platform/
@@ -45,7 +50,6 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     transition: 'slide-y-reverse-transition',
     popoverOffset: 6,
   },
-
   icons: {
     chevronDown: { icon: 'tabler-chevron-down' },
     chevronRight: { icon: 'tabler-chevron-right', size: 20 },
