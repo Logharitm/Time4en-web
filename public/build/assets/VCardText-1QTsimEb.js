@@ -1,1 +1,0 @@
-import{ah as s,ai as r,aM as o,b as c,ak as n,am as m}from"./main-Hb8XIVRF.js";const p=r({opacity:[Number,String],...m(),...n()},"VCardText"),i=s()({name:"VCardText",props:p(),setup(a,e){let{slots:t}=e;return o(()=>c(a.tag,{class:["v-card-text",a.class],style:[{"--v-card-text-opacity":a.opacity},a.style]},t)),{}}});export{i as V};
