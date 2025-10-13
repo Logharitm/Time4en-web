@@ -1,5 +1,5 @@
 <script setup>
-import ConnectImg from '@images/front-pages/landing-page/contact-customer-service.png'
+import ConnectImg from '@images/front-pages/landing-page/contact-us.jpg'
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
