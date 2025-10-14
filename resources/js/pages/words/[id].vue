@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, onBeforeUnmount, computed } from "vue"
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
 import AddWordDrawer from "@/pages/admin/words/AddWordDrawer.vue"
@@ -14,6 +14,7 @@ const route = useRoute()
 const activeSectionId = ref()
 const words = ref([])
 const loading = ref(false)
+const folderName = ref('')
 
 // ✅ الباجنيشن
 const currentPage = ref(1)
@@ -29,21 +30,30 @@ const selectedWord = ref(null)
 const isDeleteConfirmDialogVisible = ref(false)
 const wordToDeleteId = ref(null)
 
-// ✅ تشغيل الصوت
+// ✅ الصوت
 const currentAudio = ref(null)
 const playingWordId = ref(null)
 
-// جلب الكلمات
+// ✅ Toast
+const showToast = ref(false)
+const message = ref('')
+const color = ref('success')
+
+const triggerToast = (msg, type = 'success') => {
+  message.value = msg
+  color.value = type
+  showToast.value = true
+}
+
+// ✅ جلب الكلمات
 const fetchWords = async (page = 1) => {
   loading.value = true
   try {
     const res = await $api(`/words?folder_id=${route.params.id}&page=${page}&per_page=${perPage.value}`, { method: "GET" })
 
     if (res.status === "success" && res.data) {
-      // ✅ الكلمات نفسها
       words.value = res.data || []
 
-      // ✅ بيانات الباجنيشن من meta
       if (res.meta) {
         currentPage.value = res.meta.current_page
         perPage.value = res.meta.per_page
@@ -57,6 +67,7 @@ const fetchWords = async (page = 1) => {
   }
 }
 
+// ✅ جلب اسم المجلد
 const fetchFolder = async () => {
   try {
     const res2 = await $api(`/folders/${route.params.id}`, { method: "GET" })
@@ -70,46 +81,27 @@ const fetchFolder = async () => {
   }
 }
 
-// Toast
-const showToast = ref(false)
-const message = ref('')
-const color = ref('success')
-const triggerToast = (msg, type = 'success') => {
-  message.value = msg
-  color.value = type
-  showToast.value = true
-}
-
-// إضافة كلمة
+// ✅ إضافة كلمة
 const addWord = async formData => {
   try {
     const res = await $api("/words", { method: "POST", body: formData })
 
     if (res.status === "error") {
-      // السيرفر رجّع استجابة خطأ
-      triggerToast(res.message || 'حدث خطأ أثناء إضافة الكلمة', 'error')
+      triggerToast(res.message || $t('حدث خطأ أثناء إضافة الكلمة'), 'error')
+      
       return
     }
 
-    // نجاح
+
     fetchWords(currentPage.value)
-    triggerToast('تم إضافة الكلمة بنجاح', 'success')
+    triggerToast($t('تم إضافة الكلمة بنجاح'), 'success')
 
   } catch (err) {
-    // لو حصل خطأ من الـ fetch أو الـ API (403, 500, ...)
-    console.error(err)
-
-    // حاول تطلع الرسالة من السيرفر لو موجودة
-    if (err.response && err.response._data && err.response._data.message) {
-      triggerToast(err.response._data.message, 'error')
-    } else {
-      triggerToast('حدث خطأ غير متوقع', 'error')
-    }
+    triggerToast($t('حدث خطأ غير متوقع'), 'error')
   }
 }
 
-
-// تعديل كلمة
+// ✅ تعديل كلمة
 const editWord = async (id, formData) => {
   try {
     await $api(`/words/${id}/update`, { method: "POST", body: formData })
@@ -119,17 +111,11 @@ const editWord = async (id, formData) => {
   }
 }
 
-// حذف كلمة
+// ✅ حذف كلمة
 const confirmDelete = id => {
   wordToDeleteId.value = id
   isDeleteConfirmDialogVisible.value = true
 }
-
-store.skin = 'default'
-
-definePage({
-  meta: { layout: 'blank', public: true },
-})
 
 const executeDelete = async () => {
   if (!wordToDeleteId.value) return
@@ -144,36 +130,77 @@ const executeDelete = async () => {
   }
 }
 
-// ✅ تشغيل / إيقاف الصوت
+// ✅ تشغيل / إيقاف الصوت + Text-to-Speech fallback
 const toggleAudio = item => {
-  if (!item.audio_url) return
+  // إيقاف أي صوت شغال
   if (currentAudio.value) {
     currentAudio.value.pause()
     currentAudio.value.currentTime = 0
+    currentAudio.value = null
   }
+
+  // لو ضغط على نفس الكلمة => إيقاف فقط
   if (playingWordId.value === item.id) {
     playingWordId.value = null
-    currentAudio.value = null
-  } else {
+    
+    return
+  }
+
+  playingWordId.value = item.id
+
+  // لو عنده ملف صوتي
+  if (item.audio_url && item.audio_url !== "null") {
     const audio = new Audio(item.audio_url)
+
     currentAudio.value = audio
-    playingWordId.value = item.id
     audio.play()
     audio.onended = () => {
       playingWordId.value = null
       currentAudio.value = null
     }
+    audio.onerror = () => {
+      currentAudio.value = null
+      speakText(item.word)
+    }
+  } else {
+    // fallback لو مفيش ملف صوتي
+    speakText(item.word)
   }
 }
 
+// ✅ Text-to-Speech
+function speakText(text) {
+  if (!text) return
+  const utterance = new SpeechSynthesisUtterance(text)
+
+  utterance.lang = "en-US"
+  utterance.rate = 1
+  utterance.pitch = 1
+  speechSynthesis.cancel()
+  speechSynthesis.speak(utterance)
+  utterance.onend = () => {
+    playingWordId.value = null
+  }
+}
+
+// ✅ قراءة الجملة
 function readSentence(sentence) {
   if (!sentence) return
   const utterance = new SpeechSynthesisUtterance(sentence)
+
   utterance.lang = "en-US"
+  speechSynthesis.cancel()
   speechSynthesis.speak(utterance)
 }
 
-const folderName = ref('')
+// ✅ إيقاف الصوت عند مغادرة الصفحة
+onBeforeUnmount(() => {
+  if (currentAudio.value) {
+    currentAudio.value.pause()
+    currentAudio.value = null
+  }
+  speechSynthesis.cancel()
+})
 
 const breadcrumbs = computed(() => [
   { text: 'الرئيسية', to: '/', icon: 'tabler-home' },
@@ -181,6 +208,12 @@ const breadcrumbs = computed(() => [
   { text: folderName.value || '...', to: null },
   { text: 'الكلمات', to: null },
 ])
+
+store.skin = 'default'
+
+definePage({
+  meta: { layout: 'blank', public: true },
+})
 
 onMounted(() => {
   fetchFolder()
@@ -227,10 +260,11 @@ onMounted(() => {
           </span>
         </template>
       </VBreadcrumbs>
-      <VCol cols="12 ">
+
+      <VCol cols="12">
         <div id="words">
           <VContainer>
-            <!-- Header + Add button -->
+            <!-- Header -->
             <div class="d-flex justify-space-between align-center mb-6">
               <h4 class="text-h4">
                 {{ $t("Words") }}
@@ -253,11 +287,10 @@ onMounted(() => {
                 lg="4"
               >
                 <VCard class="word-card">
-                  <!-- الكلمة الأساسية + زر الصوت -->
+                  <!-- الكلمة -->
                   <div class="main-word-box d-flex align-center justify-space-between">
                     <span>{{ word.word }}</span>
                     <VBtn
-                      v-if="word.audio_url"
                       icon
                       size="small"
                       color="white"
@@ -282,9 +315,7 @@ onMounted(() => {
                       class="example-box d-flex align-center justify-space-between"
                       style="direction: ltr"
                     >
-                      <span class="sentence">
-                        {{ word.example_sentence || "-" }}
-                      </span>
+                      <span class="sentence">{{ word.example_sentence || "-" }}</span>
                       <VBtn
                         icon
                         color="primary"
@@ -297,8 +328,11 @@ onMounted(() => {
                   </VCardText>
 
                   <!-- الأزرار -->
-                  <div class="v-row" style="padding:10px">
-                    <VCol class="v-col">
+                  <div
+                    class="v-row"
+                    style="padding:10px"
+                  >
+                    <VCol>
                       <VBtn
                         color="primary"
                         variant="outlined"
@@ -308,7 +342,7 @@ onMounted(() => {
                         {{ $t("Edit") }}
                       </VBtn>
                     </VCol>
-                    <VCol  class="v-col">
+                    <VCol>
                       <VBtn
                         color="primary"
                         variant="outlined"
@@ -323,13 +357,17 @@ onMounted(() => {
               </VCol>
             </VRow>
 
-            <!-- Loading -->
-            <div v-if="loading" class="text-center py-6">
+            <div
+              v-if="loading"
+              class="text-center py-6"
+            >
               {{ $t("Loading") }}...
             </div>
 
-            <!-- ✅ Pagination -->
-            <div v-if="!loading && totalPages > 1" class="d-flex justify-center my-6">
+            <div
+              v-if="!loading && totalPages > 1"
+              class="d-flex justify-center my-6"
+            >
               <VPagination
                 v-model="currentPage"
                 :length="totalPages"
@@ -344,53 +382,76 @@ onMounted(() => {
 
     <Footer />
 
-    <!-- Drawers -->
     <AddWordDrawer
       v-model:is-drawer-open="isAddDrawerOpen"
       :folder-id="route.params.id"
       @word-data="addWord"
     />
-
     <EditWordDrawer
       v-model:is-drawer-open="isEditDrawerOpen"
       :word-data="selectedWord"
       @submit-word="editWord"
     />
 
-    <!-- Dialog -->
     <VDialog
       v-model="isDeleteConfirmDialogVisible"
       max-width="500px"
     >
       <VCard>
-        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardTitle class="text-h6">
+          تأكيد الحذف
+        </VCardTitle>
         <VCardText>هل أنت متأكد أنك تريد حذف هذه الكلمة؟</VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer />
-          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible = false">
+          <VBtn
+            color="error"
+            variant="flat"
+            @click="isDeleteConfirmDialogVisible = false"
+          >
             إلغاء
           </VBtn>
-          <VBtn color="success" variant="flat" @click="executeDelete">
+          <VBtn
+            color="success"
+            variant="flat"
+            @click="executeDelete"
+          >
             موافق
           </VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
 
-    <VSnackbar v-model="showToast" :color="color" location="top end" timeout="5000">
+    <VSnackbar
+      v-model="showToast"
+      :color="color"
+      location="top end"
+      timeout="5000"
+    >
       <template #prepend>
-        <VIcon v-if="color==='success'" icon="tabler-check"/>
-        <VIcon v-else-if="color==='error'" icon="tabler-alert-circle"/>
+        <VIcon
+          v-if="color==='success'"
+          icon="tabler-check"
+        />
+        <VIcon
+          v-else-if="color==='error'"
+          icon="tabler-alert-circle"
+        />
       </template>
       {{ message }}
       <template #actions>
-        <VBtn icon variant="text" color="white" @click="showToast=false"><VIcon icon="tabler-x"/></VBtn>
+        <VBtn
+          icon
+          variant="text"
+          color="white"
+          @click="showToast=false"
+        >
+          <VIcon icon="tabler-x" />
+        </VBtn>
       </template>
     </VSnackbar>
   </div>
 </template>
-
-
 
 <style lang="scss">
 .v-navigation-drawer--temporary.v-navigation-drawer--active {
@@ -408,17 +469,6 @@ onMounted(() => {
   border-radius: 2rem;
   background-color: rgb(var(--v-theme-background));
   padding: 2rem;
-}
-.card-title-bar {
-  width: 100%;
-  background-color: rgb(var(--v-theme-primary));
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.1rem;
-  padding: 0.75rem 1rem;
-}
-.card-actions-bordered .v-col {
-  padding: 7px !important;
 }
 
 .word-card {
@@ -444,7 +494,6 @@ onMounted(() => {
   }
 }
 
-.translation-ar,
 .translation-en {
   margin: 0.25rem 0;
   font-size: 1rem;
@@ -458,25 +507,29 @@ onMounted(() => {
   background-color: rgba(var(--v-theme-primary), 0.05);
 }
 
-.example-box .label {
-  font-weight: 600;
-  color: rgb(var(--v-theme-primary));
-  margin-right: 0.5rem;
-}
-
-.example-box .sentence {
+.sentence {
   font-weight: 500;
   color: rgba(var(--v-theme-on-surface), 0.9);
 }
 
-.card-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
 .front-page-navbar[data-v-bd06682f]::after {
   backdrop-filter: unset !important;
   height: 1px !important;
 }
-.v-card{border-radius: 0!important;}
+.v-card { border-radius: 0!important; }
+.landing-page-wrapper {
+  min-height: 100vh; /* ✅ طول الشاشة بالكامل */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ المحتوى الرئيسي ياخد المساحة المتبقية بين الهيدر والفوتر */
+.page-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* لو عايز المحتوى ييجي في النص عموديًا */
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
 </style>

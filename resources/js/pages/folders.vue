@@ -381,4 +381,5 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.v-col{display: block;}
 </style>
