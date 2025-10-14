@@ -201,12 +201,15 @@ onBeforeUnmount(() => {
   }
   speechSynthesis.cancel()
 })
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const breadcrumbs = computed(() => [
-  { text: 'الرئيسية', to: '/', icon: 'tabler-home' },
-  { text: 'المجلدات', to: '/folders', icon: 'tabler-folders' },
+  { text: t('home'), to: '/', icon: 'tabler-home' },
+  { text: t('folders'), to: '/folders', icon: 'tabler-folders' },
   { text: folderName.value || '...', to: null },
-  { text: 'الكلمات', to: null },
+  { text: t('words'), to: null },
 ])
 
 store.skin = 'default'
@@ -399,9 +402,9 @@ onMounted(() => {
     >
       <VCard>
         <VCardTitle class="text-h6">
-          تأكيد الحذف
+          {{ $t('confirm delete') }}
         </VCardTitle>
-        <VCardText>هل أنت متأكد أنك تريد حذف هذه الكلمة؟</VCardText>
+        <VCardText>{{ $t('confirm_message') }} </VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer />
           <VBtn
@@ -409,14 +412,14 @@ onMounted(() => {
             variant="flat"
             @click="isDeleteConfirmDialogVisible = false"
           >
-            إلغاء
+            {{ $t('cancel') }}
           </VBtn>
           <VBtn
             color="success"
             variant="flat"
             @click="executeDelete"
           >
-            موافق
+            {{ $t('confirm') }}
           </VBtn>
         </VCardActions>
       </VCard>

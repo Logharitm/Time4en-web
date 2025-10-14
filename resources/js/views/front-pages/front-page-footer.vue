@@ -27,27 +27,27 @@ onMounted(() => {
       <VRow class="gap-y-6">
         <!-- 👈 About & Design -->
         <VCol cols="12" md="4">
-          <h4 class="footer-title mb-3">تصميم وبرمجة</h4>
+          <h4 class="footer-title mb-3">{{ $t('prog')}}</h4>
           <p class="text-white-variant">
-            بواسطة
+            {{ $t('by') }}
             <a href="https://logharitm.com/" target="_blank" class="text-white font-weight-bold ms-1">
-              Logharitm
+              {{ $t('Logharitm')}}
             </a>
           </p>
-          <p class="text-white-variant mt-2">&copy; {{ new Date().getFullYear() }} جميع الحقوق محفوظة</p>
+          <p class="text-white-variant mt-2">&copy; {{ new Date().getFullYear() }} {{ $t('copyrights')}} </p>
         </VCol>
 
         <!-- 👈 Contact Info -->
         <VCol cols="12" md="4" v-if="contactInfo">
-          <h4 class="footer-title mb-3">معلومات الاتصال</h4>
-          <p class="text-white-variant mb-1">العنوان: {{ contactInfo.address }}</p>
-          <p class="text-white-variant mb-1">الهاتف: {{ contactInfo.phone }}</p>
-          <p class="text-white-variant mb-1">البريد الإلكتروني: {{ contactInfo.email }}</p>
+          <h4 class="footer-title mb-3">{{ $t('contact_info')}} </h4>
+          <p class="text-white-variant mb-1">{{ $t('address')}}   : {{ contactInfo.address }}</p>
+          <p class="text-white-variant mb-1">  {{ $t('phone')}} : {{ contactInfo.phone }}</p>
+          <p class="text-white-variant mb-1">  {{ $t('email')}}  : {{ contactInfo.email }}</p>
         </VCol>
 
         <!-- 👈 Social Media -->
         <VCol cols="12" md="4">
-          <h4 class="footer-title mb-3">تابعنا</h4>
+          <h4 class="footer-title mb-3">{{ $t('followus')}}</h4>
           <div class="d-flex gap-4">
             <template v-if="contactInfo">
               <a v-if="contactInfo.facebook" :href="contactInfo.facebook" target="_blank">

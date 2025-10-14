@@ -5,7 +5,6 @@ const theme = useTheme()
 
 <template>
   <div id="home">
-    <!-- Hero Section مع الخلفية الأصلية -->
     <div
       class="landing-hero"
       :class="theme.current.value.dark ? 'landing-hero-dark-bg' : 'landing-hero-light-bg'"
@@ -13,10 +12,10 @@ const theme = useTheme()
       <VContainer>
         <div class="hero-text-box text-center px-6">
           <h1 class="hero-title mb-5">
-            تعلم الإنجليزية بسهولة
+            {{ $t('learn_easy')}}
           </h1>
           <h1 class="hero-title mb-4">
-            وفي أي وقت مع Time4EN
+            {{ $t('using_app') }}
           </h1>
           <div class="position-relative">
             <h6 class="position-absolute hero-btn-item d-md-flex d-none text-h6 text-medium-emphasis" />

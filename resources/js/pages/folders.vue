@@ -196,7 +196,7 @@ onMounted(() => {
                               variant="outlined"
                               v-bind="props"
                             >
-                              ادارة المجلد
+                              {{ $t('manage folders')}}
                             </VBtn>
                           </template>
 
@@ -290,10 +290,10 @@ onMounted(() => {
     >
       <VCard>
         <VCardTitle class="text-h6">
-          تأكيد الحذف
+         {{ $t('confirm delete')}}
         </VCardTitle>
         <VCardText>
-          هل أنت متأكد أنك تريد حذف هذا المجلد؟ لا يمكن التراجع عن هذا الإجراء.
+         {{ $t('confirm_message') }}
         </VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer />
@@ -302,14 +302,14 @@ onMounted(() => {
             variant="flat"
             @click="isDeleteConfirmDialogVisible = false"
           >
-            إلغاء
+            {{ $t('cancel') }}
           </VBtn>
           <VBtn
             color="success"
             variant="flat"
             @click="executeDelete"
           >
-            موافق
+            {{ $t('confirm') }}
           </VBtn>
         </VCardActions>
       </VCard>

@@ -56,7 +56,7 @@ onMounted(fetchStatistics)
                   {{ item.value }}
                 </h3>
                 <p class="text-body-1 font-weight-medium mb-0 text-wrap" style="color:#44158f">
-                  {{ item.title }}
+                  {{ $t(item.title_en) }}
                 </p>
               </VCardText>
             </VCard>

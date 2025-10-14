@@ -16,10 +16,12 @@ const { y } = useWindowScroll()
 const route = useRoute()
 const router = useRouter()
 const sidebar = ref(false)
+
 const languages = [
   { i18nLang: 'en', label: 'English' },
-  { i18nLang: 'ar', label: 'العربية' }
+  { i18nLang: 'ar', label: 'العربية' },
 ]
+
 watch(() => display, () => {
   return display.mdAndUp ? sidebar.value = false : sidebar.value
 }, { deep: true })
@@ -93,11 +95,10 @@ const logout = async () => {
         <div class="d-flex flex-column gap-y-4 pa-4">
           <RouterLink
             v-for="(item, index) in [
-              { label: 'الرئيسية', hash: 'home' },
-              { label: 'الميزات', hash: 'features' },
-              { label: 'الفريق', hash: 'team' },
-              { label: 'الأسئلة الشائعة', hash: 'faq' },
-              { label: 'اتصل بنا', hash: 'contact-us' },
+              { label:$t('home'), hash: 'home' },
+              { label:$t('pricing-plan') , hash: 'pricing-plan' },
+              { label:$t('faq'), hash: 'faq' },
+              { label:$t('contact-us') , hash: 'contact-us' },
             ]"
             :key="index"
             :to="{ name: 'home', hash: `#${item.hash}` }"
@@ -117,21 +118,21 @@ const logout = async () => {
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              الملف الشخصي
+              {{ $t('profile') }}
             </RouterLink>
             <RouterLink
               to="/folders"
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              اشتراكاتي
+              {{ $t('my subscriptions') }}
             </RouterLink>
             <RouterLink
               to="/folders"
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              مجلداتى
+              {{ $t('my folders') }}
             </RouterLink>
             <VBtn
               color="primary"
@@ -144,7 +145,7 @@ const logout = async () => {
                 icon="tabler-logout"
                 class="me-2"
               />
-              تسجيل خروج
+              {{ $t('logout') }}
             </VBtn>
           </div>
         </div>
@@ -201,10 +202,10 @@ const logout = async () => {
           <div class="text-base align-center d-none d-md-flex">
             <RouterLink
               v-for="(item, index) in [
-                { label: 'الرئيسية', hash: 'home' },
-                { label: 'باقات الاشتراك', hash: 'pricing-plan' },
-                { label: 'الأسئلة الشائعة', hash: 'faq' },
-                { label: 'اتصل بنا', hash: 'contact-us' },
+                { label:$t('home'), hash: 'home' },
+                { label:$t('pricing-plan') , hash: 'pricing-plan' },
+                { label:$t('faq'), hash: 'faq' },
+                { label:$t('contact-us') , hash: 'contact-us' },
               ]"
               :key="index"
               :to="{ name: 'home', hash: `#${item.hash}` }"
@@ -213,19 +214,15 @@ const logout = async () => {
             >
               {{ item.label }}
             </RouterLink>
-
-
-
           </div>
         </div>
 
         <VSpacer />
         <LanguageSwitcher :languages="languages" />
-        <NavBarNotifications v-if="isLoggedIn" ></NavBarNotifications>
+        <NavBarNotifications v-if="isLoggedIn" />
         <div class="d-flex gap-x-4 align-center">
           <!-- 👉 زر تسجيل الخروج للمستخدم المسجل -->
           <template v-if="isLoggedIn">
-
             <!-- 👉 قوائم المستخدم المسجل في شريط التنقل العلوي -->
             <IconBtn>
               <!-- معلومات المستخدم -->
@@ -240,9 +237,9 @@ const logout = async () => {
                 color="primary"
                 variant="tonal"
               >
-              <span class="text-caption">
-                {{ userData?.name?.charAt(0) || userData?.email?.charAt(0) || 'U' }}
-              </span>
+                <span class="text-caption">
+                  {{ userData?.name?.charAt(0) || userData?.email?.charAt(0) || 'U' }}
+                </span>
               </VAvatar>
               <!-- القائمة -->
               <VMenu
@@ -253,23 +250,22 @@ const logout = async () => {
               >
                 <VList color="primary">
                   <VListItem @click="$router.push('/profile')">
-                    <VListItemTitle>الملف الشخصي</VListItemTitle>
+                    <VListItemTitle>{{ $t('profile') }}</VListItemTitle>
                   </VListItem>
                   <VListItem @click="$router.push('/profile')">
-                    <VListItemTitle>اشتراكاتي</VListItemTitle>
+                    <VListItemTitle>{{ $t('my subscriptions') }}</VListItemTitle>
                   </VListItem>
 
                   <VListItem @click="$router.push('/folders')">
-                    <VListItemTitle>مجلداتى</VListItemTitle>
+                    <VListItemTitle>{{ $t('my folders') }}</VListItemTitle>
                   </VListItem>
 
                   <VListItem @click="logout">
-                    <VListItemTitle>تسجيل خروج</VListItemTitle>
+                    <VListItemTitle>{{ $t('logout') }}</VListItemTitle>
                   </VListItem>
                 </VList>
               </VMenu>
             </IconBtn>
-
           </template>
 
           <!-- 👉 زر الاشتراك للمستخدم غير المسجل -->
@@ -280,7 +276,7 @@ const logout = async () => {
             color="primary"
             :to="{ name: 'login' }"
           >
-            تسجيل الدخول
+            {{ $t('logout') }}
           </VBtn>
         </div>
       </VAppBar>
