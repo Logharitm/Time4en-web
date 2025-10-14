@@ -84,8 +84,16 @@ const startRecording = async () => {
     mediaRecorder.start()
     isRecording.value = true
   } catch (err) {
-    audioError.value = 'حدث خطأ أثناء محاولة الوصول إلى الميكروفون'
     console.error('Error accessing microphone', err)
+    if (err.name === 'NotAllowedError') {
+      audioError.value = 'تم رفض الإذن باستخدام الميكروفون. يرجى السماح به من إعدادات المتصفح.'
+    } else if (err.name === 'NotFoundError') {
+      audioError.value = 'لم يتم العثور على ميكروفون متصل بالجهاز.'
+    } else if (location.protocol !== 'https:') {
+      audioError.value = 'يجب أن يتم التسجيل من موقع يستخدم HTTPS.'
+    } else {
+      audioError.value = 'حدث خطأ أثناء محاولة الوصول إلى الميكروفون.'
+    }
   }
 }
 
@@ -94,6 +102,19 @@ const stopRecording = () => {
   if (mediaRecorder && isRecording.value) {
     mediaRecorder.stop()
     isRecording.value = false
+  }
+}
+
+// 📁 رفع ملف صوتي يدويًا
+const handleFileUpload = e => {
+  const file = e.target.files[0]
+  if (file) {
+    if (!file.type.startsWith('audio/')) {
+      audioError.value = 'الملف المرفوع يجب أن يكون صوتياً.'
+      return
+    }
+    audioFile.value = file
+    audioError.value = null
   }
 }
 
@@ -179,48 +200,66 @@ const onSubmit = () => {
                 />
               </VCol>
 
-              <!-- 🎤 تسجيل الصوت -->
+              <!-- 🎤 رفع أو تسجيل صوت -->
               <VCol cols="12">
-                <div class="d-flex gap-2 align-center">
-                  <VBtn
-                    variant="outlined"
-                    color="primary"
-                    v-if="!isRecording"
-                    @click="startRecording"
-                  >
-                    بدء التسجيل
-                  </VBtn>
+                <div class="mb-2 fw-bold">الصوت</div>
 
-                  <VBtn
-                    variant="outlined"
-                    color="error"
-                    v-else
-                    @click="stopRecording"
-                  >
-                    إيقاف التسجيل
-                  </VBtn>
+                <div class="d-flex flex-column gap-3">
+                  <!-- اختيار ملف -->
+                  <div>
+                    <label class="form-label">رفع ملف صوتي</label>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      @change="handleFileUpload"
+                      class="form-control"
+                    />
+                  </div>
 
-                  <div v-if="audioFile" class="d-flex gap-2 align-center">
-                    <audio :src="URL.createObjectURL(audioFile)" controls></audio>
+                  <div class="text-center fw-bold">أو</div>
+
+                  <!-- التسجيل -->
+                  <div class="d-flex gap-2 align-center">
                     <VBtn
-                      icon
-                      variant="text"
-                      @click="() => { audioFile = null }"
+                      variant="outlined"
+                      color="primary"
+                      v-if="!isRecording"
+                      @click="startRecording"
                     >
-                      <VIcon icon="tabler-x" />
+                      بدء التسجيل
                     </VBtn>
+
+                    <VBtn
+                      variant="outlined"
+                      color="error"
+                      v-else
+                      @click="stopRecording"
+                    >
+                      إيقاف التسجيل
+                    </VBtn>
+
+                    <div v-if="audioFile" class="d-flex gap-2 align-center">
+                      <audio :src="URL.createObjectURL(audioFile)" controls></audio>
+                      <VBtn
+                        icon
+                        variant="text"
+                        @click="() => { audioFile = null }"
+                      >
+                        <VIcon icon="tabler-x" />
+                      </VBtn>
+                    </div>
+
+                    <div v-else-if="!isRecording" class="text-muted small">
+                      لم يتم اختيار أو تسجيل صوت بعد
+                    </div>
                   </div>
 
-                  <div v-else-if="!isRecording" class="text-muted small">
-                    لم يتم تسجيل صوت بعد
+                  <div
+                    v-if="audioError"
+                    class="text-danger small mt-1"
+                  >
+                    {{ audioError }}
                   </div>
-                </div>
-
-                <div
-                  v-if="audioError"
-                  class="text-danger small mt-1"
-                >
-                  {{ audioError }}
                 </div>
               </VCol>
 

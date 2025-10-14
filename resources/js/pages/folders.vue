@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue"
+import { ref, onMounted, computed, nextTick } from "vue"
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
 import { useConfigStore } from '@core/stores/config'
@@ -87,14 +87,13 @@ const fetchFolders = async (page = 1) => {
   }
 }
 
-import { nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 
 // Add folder
-const addFolder = async (formData) => {
+const addFolder = async formData => {
   try {
     const response = await $api("/folders", {
       method: "POST",
@@ -366,5 +365,20 @@ onMounted(() => {
   top: 0 !important;
   bottom: 0px;
   width: 400px;
+}
+.landing-page-wrapper {
+  min-height: 100vh; /* ✅ طول الشاشة بالكامل */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ المحتوى الرئيسي ياخد المساحة المتبقية بين الهيدر والفوتر */
+.page-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* لو عايز المحتوى ييجي في النص عموديًا */
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 </style>

@@ -286,7 +286,7 @@ const toggleAudio = (item) => {
         </template>
 
         <template #item.user_name="{ item }">
-          <a v-if="item.user_id" @click.prevent="router.push(`/admin/users/${item.user_id}`)" class="text-primary cursor-pointer">
+          <a v-if="item.user_id" class="text-primary cursor-pointer">
             {{ item.user_name }}
           </a>
           <span v-else>-</span>
