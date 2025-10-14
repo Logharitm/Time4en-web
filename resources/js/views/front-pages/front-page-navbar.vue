@@ -16,7 +16,10 @@ const { y } = useWindowScroll()
 const route = useRoute()
 const router = useRouter()
 const sidebar = ref(false)
-
+const languages = [
+  { i18nLang: 'en', label: 'English' },
+  { i18nLang: 'ar', label: 'العربية' }
+]
 watch(() => display, () => {
   return display.mdAndUp ? sidebar.value = false : sidebar.value
 }, { deep: true })
@@ -217,7 +220,7 @@ const logout = async () => {
         </div>
 
         <VSpacer />
-        <LanguageSwitcher></LanguageSwitcher>
+        <LanguageSwitcher :languages="languages" />
         <NavBarNotifications v-if="isLoggedIn" ></NavBarNotifications>
         <div class="d-flex gap-x-4 align-center">
           <!-- 👉 زر تسجيل الخروج للمستخدم المسجل -->
