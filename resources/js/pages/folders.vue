@@ -7,6 +7,7 @@ import AddFolderDrawer from "@/pages/admin/folders/AddFolderDrawer.vue"
 import EditFolderDrawer from "@/pages/admin/folders/EditFolderDrawer.vue"
 
 const store = useConfigStore()
+
 store.skin = 'default'
 
 definePage({
@@ -22,7 +23,7 @@ useIntersectionObserver(
   ([{ isIntersecting, target }]) => {
     if (isIntersecting) activeSectionId.value = target.id
   },
-  { threshold: 0.25 }
+  { threshold: 0.25 },
 )
 
 // ✅ Data
@@ -38,7 +39,7 @@ const selectedFolder = ref(null)
 const isDeleteConfirmDialogVisible = ref(false)
 const folderToDeleteId = ref(null)
 
-const confirmDelete = (id) => {
+const confirmDelete = id => {
   folderToDeleteId.value = id
   isDeleteConfirmDialogVisible.value = true
 }
@@ -86,11 +87,31 @@ const fetchFolders = async (page = 1) => {
   }
 }
 
+import { nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+
 // Add folder
 const addFolder = async (formData) => {
   try {
-    await $api("/folders", { method: "POST", body: formData })
+    const response = await $api("/folders", {
+      method: "POST",
+      body: formData,
+    })
+
+    const folderId = response.data.id // أو response.data.id حسب شكل الـ API
+
     fetchFolders(currentPage.value)
+
+    if (folderId) {
+      const target = `/words/${folderId}`
+
+      if (router.currentRoute.value.fullPath !== target) {
+        await nextTick(() => router.replace(target))
+      }
+    }
   } catch (err) {
     console.error("Error adding folder", err)
   }
@@ -122,9 +143,14 @@ onMounted(() => {
           <VContainer>
             <!-- Header + Add button -->
             <div class="d-flex justify-space-between align-center mb-6">
-              <h4 class="text-h4">{{ $t("Folders") }}</h4>
-              <VBtn color="primary" @click="isAddDrawerOpen = true">
-                <VIcon class="tabler-folder-plus ml-2"></VIcon>
+              <h4 class="text-h4">
+                {{ $t("Folders") }}
+              </h4>
+              <VBtn
+                color="primary"
+                @click="isAddDrawerOpen = true"
+              >
+                <VIcon class="tabler-folder-plus ml-2" />
                 {{ $t("Add Folder") }}
               </VBtn>
             </div>
@@ -140,23 +166,37 @@ onMounted(() => {
                 <VCard>
                   <!-- ✅ عنوان الكارد بخلفية primary -->
                   <div class="card-title-bar">
-                    <VIcon class="tabler-folder ml-2"></VIcon>
+                    <VIcon class="tabler-folder ml-2" />
                     {{ folder.name }}
                   </div>
 
                   <VCardText class="pa-6">
-                    <p class="text-body-6 font-bold mb-4" style="font-size: 18px;line-height: 30px;">
+                    <p
+                      class="text-body-6 font-bold mb-4"
+                      style="font-size: 18px;line-height: 30px;"
+                    >
                       {{ folder.description }}
                     </p>
                   </VCardText>
 
                   <!-- ✅ الأزرار أسفل الكارد -->
                   <VCardActions class="pa-0 card-actions-bordered">
-                    <VRow no-gutters class="w-100">
+                    <VRow
+                      no-gutters
+                      class="w-100"
+                    >
                       <VCol cols="4">
-                        <VMenu location="top" open-on-hover>
+                        <VMenu
+                          location="top"
+                          open-on-hover
+                        >
                           <template #activator="{ props }">
-                            <VBtn block color="primary" variant="outlined" v-bind="props">
+                            <VBtn
+                              block
+                              color="primary"
+                              variant="outlined"
+                              v-bind="props"
+                            >
                               ادارة المجلد
                             </VBtn>
                           </template>
@@ -173,16 +213,30 @@ onMounted(() => {
                         </VMenu>
                       </VCol>
 
-                      <VCol cols="4" class="btn-divider">
+                      <VCol
+                        cols="4"
+                        class="btn-divider"
+                      >
                         <RouterLink :to="`/words/${folder.id}`">
-                          <VBtn block color="primary" variant="outlined">
+                          <VBtn
+                            block
+                            color="primary"
+                            variant="outlined"
+                          >
                             {{ $t("Words") }} ( {{ folder.words_count }} )
                           </VBtn>
                         </RouterLink>
                       </VCol>
 
-                      <VCol cols="4" class="btn-divider">
-                        <VBtn block color="primary" variant="outlined">
+                      <VCol
+                        cols="4"
+                        class="btn-divider"
+                      >
+                        <VBtn
+                          block
+                          color="primary"
+                          variant="outlined"
+                        >
                           {{ $t("Practice") }}
                         </VBtn>
                       </VCol>
@@ -193,12 +247,18 @@ onMounted(() => {
             </VRow>
 
             <!-- Loading -->
-            <div v-if="loading" class="text-center py-6">
+            <div
+              v-if="loading"
+              class="text-center py-6"
+            >
               {{ $t("Loading") }}...
             </div>
 
             <!-- ✅ Pagination -->
-            <div v-if="!loading && totalPages > 1" class="d-flex justify-center my-6">
+            <div
+              v-if="!loading && totalPages > 1"
+              class="d-flex justify-center my-6"
+            >
               <VPagination
                 v-model="currentPage"
                 :length="totalPages"
@@ -215,26 +275,43 @@ onMounted(() => {
 
     <!-- Drawers -->
     <AddFolderDrawer
-      v-model:isDrawerOpen="isAddDrawerOpen"
+      v-model:is-drawer-open="isAddDrawerOpen"
       @folder-data="addFolder"
     />
     <EditFolderDrawer
-      v-model:isDrawerOpen="isEditDrawerOpen"
+      v-model:is-drawer-open="isEditDrawerOpen"
       :folder-data="selectedFolder"
       @folder-data="editFolder"
     />
 
     <!-- ✅ Dialog تأكيد الحذف -->
-    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
+    <VDialog
+      v-model="isDeleteConfirmDialogVisible"
+      max-width="500px"
+    >
       <VCard>
-        <VCardTitle class="text-h6">تأكيد الحذف</VCardTitle>
+        <VCardTitle class="text-h6">
+          تأكيد الحذف
+        </VCardTitle>
         <VCardText>
           هل أنت متأكد أنك تريد حذف هذا المجلد؟ لا يمكن التراجع عن هذا الإجراء.
         </VCardText>
         <VCardActions class="px-6 pb-4">
           <VSpacer />
-          <VBtn color="error" variant="flat" @click="isDeleteConfirmDialogVisible = false">إلغاء</VBtn>
-          <VBtn color="success" variant="flat" @click="executeDelete">موافق</VBtn>
+          <VBtn
+            color="error"
+            variant="flat"
+            @click="isDeleteConfirmDialogVisible = false"
+          >
+            إلغاء
+          </VBtn>
+          <VBtn
+            color="success"
+            variant="flat"
+            @click="executeDelete"
+          >
+            موافق
+          </VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

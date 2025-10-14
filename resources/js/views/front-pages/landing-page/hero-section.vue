@@ -1,12 +1,6 @@
 <script setup>
 import { useTheme } from 'vuetify'
-import joinArrow from '@images/front-pages/icons/Join-community-arrow.png'
-
-// صور الهيرو للSlider
-import heroImg1 from '@images/front-pages/landing-page/banner.png'
-
 const theme = useTheme()
-const heroImages = [heroImg1]
 </script>
 
 <template>
@@ -30,27 +24,6 @@ const heroImages = [heroImg1]
         </div>
       </VContainer>
     </div>
-
-    <!-- Slider الهيرو فوق الخلفية -->
-    <VContainer style="margin-top: -364px !important;">
-      <VCarousel
-        cycle
-        hide-delimiters
-        height="400"
-        class="my-12"
-      >
-        <VCarouselItem
-          v-for="(img, index) in heroImages"
-          :key="index"
-        >
-          <VImg
-            :src="img"
-            class="hero-slider-img"
-            cover
-          />
-        </VCarouselItem>
-      </VCarousel>
-    </VContainer>
   </div>
 </template>
 
@@ -66,7 +39,7 @@ const heroImages = [heroImg1]
 
 .landing-hero {
   border-radius: 0 0 50px 50px;
-  padding-block: 9.75rem 22rem;
+  padding-top: 15rem;
   position: relative;
   overflow: hidden;
 }

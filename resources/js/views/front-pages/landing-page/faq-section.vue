@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import boyWithLogo from "@images/front-pages/landing-page/faq-boy-with-logos.png"
+import boyWithLogo from "@images/front-pages/landing-page/faq.webp"
 
 // i18n
 const { locale } = useI18n()

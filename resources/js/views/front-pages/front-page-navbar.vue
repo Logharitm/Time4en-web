@@ -114,23 +114,22 @@ const logout = async () => {
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              حسابي
+              الملف الشخصي
             </RouterLink>
             <RouterLink
               to="/folders"
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              المجلدات
+              اشتراكاتي
             </RouterLink>
             <RouterLink
-              to="/tests"
+              to="/folders"
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              الاختبارات
+              مجلداتى
             </RouterLink>
-
             <VBtn
               color="primary"
               variant="flat"
@@ -145,69 +144,6 @@ const logout = async () => {
               تسجيل خروج
             </VBtn>
           </div>
-
-          <div class="font-weight-medium cursor-pointer">
-            <div
-              :class="[isMenuOpen ? 'mb-6 active-link' : '', isPageActive ? 'active-link' : '']"
-              style="color: rgba(var(--v-theme-on-surface));"
-              class="page-link"
-              @click="isMenuOpen = !isMenuOpen"
-            >
-              Pages <VIcon :icon="isMenuOpen ? 'tabler-chevron-up' : 'tabler-chevron-down'" />
-            </div>
-
-            <div
-              class="px-4"
-              :class="isMenuOpen ? 'd-block' : 'd-none'"
-            >
-              <div
-                v-for="(item, index) in menuItems"
-                :key="index"
-              >
-                <div class="d-flex align-center gap-x-3 mb-4">
-                  <VAvatar
-                    variant="tonal"
-                    color="primary"
-                    rounded
-                    :icon="item.listIcon"
-                  />
-                  <div class="text-body-1 text-high-emphasis font-weight-medium">
-                    {{ item.listTitle }}
-                  </div>
-                </div>
-                <ul class="mb-6">
-                  <li
-                    v-for="listItem in item.navItems"
-                    :key="listItem.name"
-                    style="list-style: none;"
-                    class="text-body-1 mb-4 text-no-wrap"
-                  >
-                    <RouterLink
-                      :to="listItem.to"
-                      :target="item.listTitle === 'Page' ? '_self' : '_blank'"
-                      class="mega-menu-item"
-                      :class="isCurrentRoute(listItem.to) ? 'active-link' : 'text-high-emphasis'"
-                    >
-                      <VIcon
-                        icon="tabler-circle"
-                        :size="10"
-                        class="me-2"
-                      />
-                      <span>  {{ listItem.name }}</span>
-                    </RouterLink>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <RouterLink
-            to="/"
-            target="_blank"
-            class="font-weight-medium nav-link"
-          >
-            Admin
-          </RouterLink>
         </div>
       </div>
 
@@ -275,68 +211,62 @@ const logout = async () => {
               {{ item.label }}
             </RouterLink>
 
-            <!-- 👉 قوائم المستخدم المسجل في شريط التنقل العلوي -->
-            <template v-if="isLoggedIn">
-              <RouterLink
-                to="/profile"
-                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
-              >
-                حسابي
-              </RouterLink>
 
-              <RouterLink
-                to="/folders"
-                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
-              >
-                المجلدات
-              </RouterLink>
 
-              <RouterLink
-                to="/tests"
-                class="nav-link font-weight-medium py-2 px-2 px-lg-4"
-              >
-                الاختبارات
-              </RouterLink>
-
-            </template>
           </div>
         </div>
 
         <VSpacer />
         <LanguageSwitcher></LanguageSwitcher>
-        <NavBarNotifications></NavBarNotifications>
+        <NavBarNotifications v-if="isLoggedIn" ></NavBarNotifications>
         <div class="d-flex gap-x-4 align-center">
           <!-- 👉 زر تسجيل الخروج للمستخدم المسجل -->
           <template v-if="isLoggedIn">
-            <VBtn
-              color="primary"
-              variant="elevated"
-              class="me-2"
-              @click="logout"
-            >
-              <VIcon
-                icon="tabler-logout"
-                class="me-2"
-              />
-              تسجيل خروج
-            </VBtn>
 
-            <!-- معلومات المستخدم -->
-            <VAvatar
-              v-if="userData?.avatar"
-              size="36"
-              :image="userData.avatar"
-            />
-            <VAvatar
-              v-else
-              size="36"
-              color="primary"
-              variant="tonal"
-            >
+            <!-- 👉 قوائم المستخدم المسجل في شريط التنقل العلوي -->
+            <IconBtn>
+              <!-- معلومات المستخدم -->
+              <VAvatar
+                v-if="userData?.avatar"
+                size="36"
+                :image="userData.avatar"
+              />
+              <VAvatar
+                v-else
+                size="36"
+                color="primary"
+                variant="tonal"
+              >
               <span class="text-caption">
                 {{ userData?.name?.charAt(0) || userData?.email?.charAt(0) || 'U' }}
               </span>
-            </VAvatar>
+              </VAvatar>
+              <!-- القائمة -->
+              <VMenu
+                activator="parent"
+                offset="12px"
+                width="200"
+                open-on-hover
+              >
+                <VList color="primary">
+                  <VListItem @click="$router.push('/profile')">
+                    <VListItemTitle>الملف الشخصي</VListItemTitle>
+                  </VListItem>
+                  <VListItem @click="$router.push('/profile')">
+                    <VListItemTitle>اشتراكاتي</VListItemTitle>
+                  </VListItem>
+
+                  <VListItem @click="$router.push('/folders')">
+                    <VListItemTitle>مجلداتى</VListItemTitle>
+                  </VListItem>
+
+                  <VListItem @click="logout">
+                    <VListItemTitle>تسجيل خروج</VListItemTitle>
+                  </VListItem>
+                </VList>
+              </VMenu>
+            </IconBtn>
+
           </template>
 
           <!-- 👉 زر الاشتراك للمستخدم غير المسجل -->
@@ -452,7 +382,6 @@ const logout = async () => {
 .front-page-navbar::after {
   position: fixed;
   z-index: 2;
-  backdrop-filter: saturate(100%) blur(6px);
   block-size: 5rem;
   content: "";
   inline-size: 100%;
@@ -496,5 +425,8 @@ const logout = async () => {
   cursor: pointer;
   inset-block-start: 0.5rem;
   inset-inline-end: 1rem;
+}
+.front-page-navbar:after{
+  display: none !important;
 }
 </style>

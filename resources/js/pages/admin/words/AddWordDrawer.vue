@@ -4,7 +4,7 @@ import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 
 const props = defineProps({
   isDrawerOpen: { type: Boolean, required: true },
-  folderId: { type: Number, default: null },   // ✅ استقبل folderId
+  folderId: { type: Number, default: null },
 })
 
 const emit = defineEmits(['update:isDrawerOpen', 'word-data'])
@@ -15,23 +15,24 @@ const refForm = ref()
 
 // Fields
 const userId = ref(null)
-const folderId = ref(props.folderId)   // ✅ يبدأ بالـ prop
+const folderId = ref(props.folderId)
 const word = ref('')
 const translation = ref('')
 const audioFile = ref(null)
 const audioError = ref(null)
 
+// Recording
+const isRecording = ref(false)
+let mediaRecorder = null
+let audioChunks = []
+
 // Options
 const users = ref([])
 const folders = ref([])
 
-// refs
-const audioInput = ref(null)
-
 onMounted(async () => {
   try {
     const resp = await $api('/users?role=user', { method: 'GET' })
-
     users.value = resp.data || []
   } catch (err) {
     console.error('Error fetching users', err)
@@ -48,7 +49,6 @@ watch(userId, async val => {
   if (val) {
     try {
       const resp = await $api(`/folders?user_id=${val}`, { method: 'GET' })
-
       folders.value = resp.data || []
       folderId.value = null
     } catch (err) {
@@ -62,18 +62,38 @@ watch(userId, async val => {
   }
 })
 
-// handle audio file
-const onAudioChange = e => {
-  const file = e.target.files[0]
-  if (file) {
-    if (file.type.startsWith('audio/')) {
-      audioFile.value = file
-      audioError.value = null
-    } else {
-      audioError.value = 'الملف يجب أن يكون صوتياً'
-      audioFile.value = null
-      e.target.value = null
+// 🎤 بدء التسجيل
+const startRecording = async () => {
+  audioError.value = null
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    mediaRecorder = new MediaRecorder(stream)
+    audioChunks = []
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data)
     }
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' })
+      const file = new File([blob], 'recorded_audio.webm', { type: 'audio/webm' })
+      audioFile.value = file
+    }
+
+    mediaRecorder.start()
+    isRecording.value = true
+  } catch (err) {
+    audioError.value = 'حدث خطأ أثناء محاولة الوصول إلى الميكروفون'
+    console.error('Error accessing microphone', err)
+  }
+}
+
+// 🛑 إيقاف التسجيل
+const stopRecording = () => {
+  if (mediaRecorder && isRecording.value) {
+    mediaRecorder.stop()
+    isRecording.value = false
   }
 }
 
@@ -87,7 +107,6 @@ const closeDrawer = () => {
     translation.value = ''
     audioFile.value = null
     audioError.value = null
-    if (audioInput.value) audioInput.value.value = null
     if (!props.folderId) folders.value = []
   })
 }
@@ -96,7 +115,6 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       const formData = new FormData()
-
       formData.append('folder_id', folderId.value)
       formData.append('word', word.value)
       formData.append('translation', translation.value)
@@ -132,7 +150,7 @@ const onSubmit = () => {
             @submit.prevent="onSubmit"
           >
             <VRow>
-              <!-- ✅ Dropdown يظهر فقط لو مفيش folderId جاي من الـ prop -->
+              <!-- اختيار المجلد -->
               <VCol
                 v-if="!props.folderId && folders.length"
                 cols="12"
@@ -161,43 +179,43 @@ const onSubmit = () => {
                 />
               </VCol>
 
-              <!-- ملف الصوت -->
+              <!-- 🎤 تسجيل الصوت -->
               <VCol cols="12">
                 <div class="d-flex gap-2 align-center">
-                  <input
-                    ref="audioInput"
-                    type="file"
-                    accept="audio/*"
-                    style="display:none"
-                    @change="onAudioChange"
-                  >
                   <VBtn
                     variant="outlined"
-                    @click="audioInput.click()"
+                    color="primary"
+                    v-if="!isRecording"
+                    @click="startRecording"
                   >
-                    رفع ملف صوت
+                    بدء التسجيل
                   </VBtn>
 
-                  <div
-                    v-if="audioFile"
-                    class="d-flex gap-2 align-center"
+                  <VBtn
+                    variant="outlined"
+                    color="error"
+                    v-else
+                    @click="stopRecording"
                   >
-                    <span class="small">{{ audioFile.name }}</span>
+                    إيقاف التسجيل
+                  </VBtn>
+
+                  <div v-if="audioFile" class="d-flex gap-2 align-center">
+                    <audio :src="URL.createObjectURL(audioFile)" controls></audio>
                     <VBtn
                       icon
                       variant="text"
-                      @click="() => { audioFile = null; audioInput.value.value = null }"
+                      @click="() => { audioFile = null }"
                     >
                       <VIcon icon="tabler-x" />
                     </VBtn>
                   </div>
-                  <div
-                    v-else
-                    class="text-muted small"
-                  >
-                    لم يتم اختيار ملف
+
+                  <div v-else-if="!isRecording" class="text-muted small">
+                    لم يتم تسجيل صوت بعد
                   </div>
                 </div>
+
                 <div
                   v-if="audioError"
                   class="text-danger small mt-1"
@@ -207,10 +225,7 @@ const onSubmit = () => {
               </VCol>
 
               <VCol cols="12">
-                <VBtn
-                  type="submit"
-                  class="me-3"
-                >
+                <VBtn type="submit" class="me-3">
                   حفظ
                 </VBtn>
                 <VBtn

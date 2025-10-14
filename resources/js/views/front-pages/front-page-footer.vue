@@ -80,8 +80,8 @@ onMounted(() => {
 .footer {
   background-color: #451291;
   color: #fff;
-  border-top-left-radius: 50px;
-  border-top-right-radius: 50px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 
   .footer-container {
     display: flex;

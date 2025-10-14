@@ -1,5 +1,13 @@
 <script setup>
-import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
+import ctaDashborad from '@images/front-pages/landing-page/9236774.png'
+
+
+// حالة المستخدم
+const isLoggedIn = computed(() => {
+  const userData = useCookie('userData').value
+
+  return !!userData
+})
 </script>
 
 <template>
@@ -10,26 +18,32 @@ import ctaDashborad from '@images/front-pages/landing-page/cta-light.png'
     <VContainer>
       <div class="d-flex justify-center justify-md-space-between flex-wrap gap-6 gap-x-10 position-relative pt-12">
         <div class="align-self-center">
-          <div class="banner-title text-primary mb-8" style="color: white !important;">
+          <div
+            class="banner-title text-primary mb-8"
+            style="color: white !important;"
+          >
             {{ $t('Ready to Get Started?') }}
           </div>
-          <h5 class="text-h5 text-medium-emphasis mb-8" style="color: white !important;">
-           {{$t("Ready msg")}}
+          <h5
+            class="text-h5 text-medium-emphasis mb-8"
+            style="color: white !important;"
+          >
+            {{ $t("Ready msg") }}
           </h5>
-<!--          <VBtn-->
-<!--            color="white"-->
-<!--            href="/register"-->
-<!--            :size="$vuetify.display.smAndUp ? 'large' : 'default' "-->
-<!--          >-->
-<!--            {{ $t("Get Started") }}-->
-<!--          </VBtn>-->
-
+                    <VBtn
+                      v-if="!isLoggedIn"
+                      color="white"
+                      href="/register"
+                      :size="$vuetify.display.smAndUp ? 'large' : 'default' "
+                    >
+                      {{ $t("Get Started") }}
+                    </VBtn>
         </div>
 
         <div class="banner-img">
           <img
             :src="ctaDashborad"
-            class="w-100"
+            class="w-50"
           >
         </div>
       </div>
