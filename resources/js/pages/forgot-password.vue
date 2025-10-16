@@ -6,8 +6,10 @@ import authV2ForgotPasswordIllustrationDark from '@images/pages/auth-v2-forgot-p
 import authV2ForgotPasswordIllustrationLight from '@images/pages/auth-v2-forgot-password-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
-import axios from 'axios'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const email = ref('')
 const message = ref('')
@@ -33,13 +35,13 @@ const submitForgotPassword = async () => {
         email: email.value,
       },
     })
-    
-    message.value = response.message
+
+    message.value = response.message || t('forgotPassword.success')
   } catch (error) {
     if (error?.errors?.email) {
       message.value = error.errors.email[0]
     } else {
-      message.value = 'حدث خطأ غير متوقع، حاول مرة أخرى'
+      message.value = t('forgotPassword.unexpectedError')
     }
   } finally {
     loading.value = false
@@ -57,14 +59,8 @@ const submitForgotPassword = async () => {
     </div>
   </RouterLink>
 
-  <VRow
-    class="auth-wrapper bg-surface"
-    no-gutters
-  >
-    <VCol
-      md="8"
-      class="d-none d-md-flex"
-    >
+  <VRow class="auth-wrapper bg-surface" no-gutters>
+    <VCol md="8" class="d-none d-md-flex">
       <div class="position-relative bg-background w-100 me-0">
         <div
           class="d-flex align-center justify-center w-100 h-100"
@@ -79,29 +75,21 @@ const submitForgotPassword = async () => {
         <img
           class="auth-footer-mask"
           :src="authThemeMask"
-          alt="قناع التذييل"
+          alt="footer-mask"
           height="280"
           width="100"
-        >
+        />
       </div>
     </VCol>
 
-    <VCol
-      cols="12"
-      md="4"
-      class="d-flex align-center justify-center"
-    >
-      <VCard
-        flat
-        :max-width="500"
-        class="mt-12 mt-sm-0 pa-4"
-      >
+    <VCol cols="12" md="4" class="d-flex align-center justify-center">
+      <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
           <h4 class="text-h4 mb-1">
-            هل نسيت كلمة المرور؟ 🔒
+            {{ t('forgotPassword.title') }}
           </h4>
           <p class="mb-0">
-            أدخل بريدك الإلكتروني وسنرسل لك تعليمات لإعادة تعيين كلمة المرور الخاصة بك
+            {{ t('forgotPassword.description') }}
           </p>
         </VCardText>
 
@@ -112,26 +100,19 @@ const submitForgotPassword = async () => {
                 <AppTextField
                   v-model="email"
                   autofocus
-                  label="البريد الإلكتروني"
+                  :label="t('forgotPassword.emailLabel')"
                   type="email"
-                  placeholder="example@email.com"
+                  :placeholder="t('forgotPassword.emailPlaceholder')"
                 />
               </VCol>
 
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                  :loading="loading"
-                >
-                  إرسال رابط إعادة التعيين
+                <VBtn block type="submit" :loading="loading">
+                  {{ t('forgotPassword.submit') }}
                 </VBtn>
               </VCol>
 
-              <VCol
-                v-if="message"
-                cols="12"
-              >
+              <VCol v-if="message" cols="12">
                 <p class="text-center text-success">
                   {{ message }}
                 </p>
@@ -147,7 +128,7 @@ const submitForgotPassword = async () => {
                     size="20"
                     class="me-1 flip-in-rtl"
                   />
-                  <span>العودة لتسجيل الدخول</span>
+                  <span>{{ t('forgotPassword.backToLogin') }}</span>
                 </RouterLink>
               </VCol>
             </VRow>

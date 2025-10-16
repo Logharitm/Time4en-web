@@ -278,7 +278,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                   :loading="isLoading"
                   :disabled="isLoading"
                 >
-                  {{ isLoading ? $t('Login') : $t('Register') }}
+                  {{ isLoading ? $t('Register') : $t('Login') }}
                 </VBtn>
               </VCol>
 

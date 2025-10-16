@@ -319,7 +319,34 @@
   "practices": "Practices",
   "remember_me": "Remember me",
   "forget_password": "Forget password?",
-  "welcome_en": "Welcome to you in"
-
+  "welcome_en": "Welcome to you in",
+  "register": {
+    "title": "Create a New Account",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "agreeText": "I agree to the",
+    "privacyPolicy": "Privacy Policy and Terms",
+    "submit": "Register",
+    "haveAccount": "Already have an account?",
+    "login": "Login",
+    "errorTryAgain": "Something went wrong, please try again."
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "description": "Enter your email and we'll send you instructions to reset your password.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "",
+    "submit": "Send Reset Link",
+    "success": "We have sent a password reset link to your email.",
+    "unexpectedError": "An unexpected error occurred, please try again.",
+    "backToLogin": "Back to Login"
+  },
+  "verifiedSuccess": {
+    "title": "Your email has been successfully verified 🎉",
+    "description": "You can now fully use your account.",
+    "goHome": "Go to Home"
+  }
 
 }

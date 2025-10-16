@@ -1,14 +1,18 @@
 <script setup>
+import { ref } from 'vue'
 import { VForm } from 'vuetify/components/VForm'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
+import { useI18n } from 'vue-i18n'
 import authV2RegisterIllustrationBorderedDark from '@images/pages/auth-v2-register-illustration-bordered-dark.png'
 import authV2RegisterIllustrationBorderedLight from '@images/pages/auth-v2-register-illustration-bordered-light.png'
 import authV2RegisterIllustrationDark from '@images/pages/auth-v2-register-illustration-dark.png'
 import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const imageVariant = useGenerateImageVariant(
   authV2RegisterIllustrationLight,
@@ -59,7 +63,6 @@ const register = async () => {
       },
       onResponseError({ response }) {
         if (response._data?.errors) {
-          // السيرفر بيرجع errors كمصفوفة [{field, message}]
           const fieldErrors = {}
           response._data.errors.forEach(e => {
             if (!fieldErrors[e.field]) fieldErrors[e.field] = []
@@ -72,18 +75,15 @@ const register = async () => {
       },
     })
 
-    // دعم الحالتين: res أو res.data
     const payload = res?.status ?? res
     if (payload === 'success') {
       router.replace('/login')
     }
   } catch (err) {
     console.error('Register error:', err)
-    errors.value = { email: ['Something went wrong, please try again.'] }
+    errors.value = { email: [t('register.errorTryAgain')] }
   }
 }
-
-
 
 const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
@@ -103,19 +103,10 @@ const onSubmit = () => {
     </div>
   </RouterLink>
 
-  <VRow
-    no-gutters
-    class="auth-wrapper bg-surface"
-  >
-    <VCol
-      md="8"
-      class="d-none d-md-flex"
-    >
+  <VRow no-gutters class="auth-wrapper bg-surface">
+    <VCol md="8" class="d-none d-md-flex">
       <div class="position-relative bg-background w-100 me-0">
-        <div
-          class="d-flex align-center justify-center w-100 h-100"
-          style="padding-inline: 100px;"
-        >
+        <div class="d-flex align-center justify-center w-100 h-100" style="padding-inline: 100px;">
           <VImg
             max-width="500"
             :src="imageVariant"
@@ -132,32 +123,21 @@ const onSubmit = () => {
       </div>
     </VCol>
 
-    <VCol
-      cols="12"
-      md="4"
-      class="auth-card-v2 d-flex align-center justify-center"
-    >
-      <VCard
-        flat
-        :max-width="500"
-        class="mt-12 mt-sm-0 pa-4"
-      >
+    <VCol cols="12" md="4" class="auth-card-v2 d-flex align-center justify-center">
+      <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>
           <h4 class="text-h4 mb-1">
-            تسجيل حساب جديد
+            {{ t('register.title') }}
           </h4>
         </VCardText>
 
         <VCardText>
-          <VForm
-            ref="refVForm"
-            @submit.prevent="onSubmit"
-          >
+          <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
               <VCol cols="12">
                 <AppTextField
                   v-model="form.name"
-                  label="الاسم"
+                  :label="t('register.name')"
                   :rules="[requiredValidator]"
                   :error-messages="errors.name"
                   autofocus
@@ -167,7 +147,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="form.email"
-                  label="البريد الإلكتروني"
+                  :label="t('register.email')"
                   type="email"
                   :rules="[requiredValidator, emailValidator]"
                   :error-messages="errors.email"
@@ -177,7 +157,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="form.password"
-                  label="كلمة المرور"
+                  :label="t('register.password')"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   :rules="[requiredValidator]"
                   :error-messages="errors.password"
@@ -191,7 +171,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="form.password_confirmation"
-                  label="تأكيد كلمة المرور"
+                  :label="t('register.confirmPassword')"
                   :type="isPasswordVisible ? 'text' : 'password'"
                   :rules="[requiredValidator]"
                   autocomplete="new-password"
@@ -202,53 +182,33 @@ const onSubmit = () => {
               <!-- اتفاقية الخصوصية -->
               <VCol cols="12">
                 <div class="d-flex align-center my-4">
-                  <VCheckbox
-                    v-model="form.privacyPolicies"
-                    inline
-                  />
+                  <VCheckbox v-model="form.privacyPolicies" inline />
                   <VLabel for="privacy-policy">
-                    <span class="me-1">أوافق على</span>
-                    <a
-                      href="javascript:void(0)"
-                      class="text-primary"
-                    >سياسة الخصوصية والشروط</a>
+                    <span class="me-1">{{ t('register.agreeText') }}</span>
+                    <a href="javascript:void(0)" class="text-primary">
+                      {{ t('register.privacyPolicy') }}
+                    </a>
                   </VLabel>
                 </div>
               </VCol>
 
               <!-- عرض رسالة الخطأ العامة -->
-              <VCol
-                v-if="generalError"
-                cols="12"
-              >
-                <VAlert
-                  type="error"
-                  border="start"
-                  class="mb-4"
-                >
+              <VCol v-if="generalError" cols="12">
+                <VAlert type="error" border="start" class="mb-4">
                   {{ generalError }}
                 </VAlert>
               </VCol>
 
               <VCol cols="12">
-                <VBtn
-                  block
-                  type="submit"
-                >
-                  تسجيل
+                <VBtn block type="submit">
+                  {{ t('register.submit') }}
                 </VBtn>
               </VCol>
 
-              <VCol
-                cols="12"
-                class="text-center text-base"
-              >
-                <span>لديك حساب بالفعل؟</span>
-                <RouterLink
-                  class="text-primary ms-1"
-                  :to="{ name: 'login' }"
-                >
-                  تسجيل الدخول
+              <VCol cols="12" class="text-center text-base">
+                <span>{{ t('register.haveAccount') }}</span>
+                <RouterLink class="text-primary ms-1" :to="{ name: 'login' }">
+                  {{ t('register.login') }}
                 </RouterLink>
               </VCol>
             </VRow>
