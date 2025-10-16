@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+
 const userData = ref(null)
 const subscriptionPlan = ref(null)
 const daysRemaining = ref(0)
@@ -50,7 +51,6 @@ onMounted(() => {
               <div>
                 <div class="mb-6">
                   <h3 class="text-body-1 text-high-emphasis font-weight-medium mb-1">
-
                     <span v-if="subscriptionPlan">{{ subscriptionPlan.name }}</span>
                     <span v-else>{{ $t('None') }}</span>
 
@@ -58,7 +58,6 @@ onMounted(() => {
                       <span v-if="subscriptionPlan">{{ subscriptionPlan.description }}</span>
                       <span v-else>{{ $t('No active subscription') }}</span>
                     </p>
-
                   </h3>
                 </div>
 
@@ -70,15 +69,14 @@ onMounted(() => {
 
                 <div class="mb-6" v-if="userData?.subscription?.end_date">
                   <h3 class="text-body-1 text-high-emphasis font-weight-medium mb-1">
-                    {{ $t('Words Count') }} : {{subscriptionPlan.words_limit }}
+                    {{ $t('Words Count') }} : {{ subscriptionPlan.words_limit }}
                   </h3>
                 </div>
 
                 <div v-if="subscriptionPlan">
                   <h3 class="text-body-1 text-high-emphasis font-weight-medium mb-1">
-                    {{ $t('Price') }} :  <span class="me-2">${{ subscriptionPlan.price }} {{ $t('Per Month') }}</span>
+                    {{ $t('Price') }} : <span class="me-2">${{ subscriptionPlan.price }} {{ $t('Per Month') }}</span>
                   </h3>
-
                 </div>
               </div>
             </VCol>
@@ -94,17 +92,17 @@ onMounted(() => {
                   <span>{{ daysRemaining }} {{ $t('of') }} {{ subscriptionPlan.duration_months * 30 }} {{ $t('Days') }}</span>
                 </h6>
 
-                <VProgressLinear color="primary" rounded :model-value="100 - (daysRemaining / (subscriptionPlan.duration_months * 30) * 100)" />
+                <VProgressLinear
+                  color="primary"
+                  rounded
+                  :model-value="100 - (daysRemaining / (subscriptionPlan.duration_months * 30) * 100)"
+                />
                 <p class="text-body-2 mt-1 mb-0">
                   {{ daysRemaining }} {{ $t('days remaining until your plan requires update') }}
                 </p>
               </VAlert>
             </VCol>
           </VRow>
-
-
-
-
         </VCardText>
       </VCard>
     </VCol>

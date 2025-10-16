@@ -347,6 +347,30 @@
     "title": "Your email has been successfully verified 🎉",
     "description": "You can now fully use your account.",
     "goHome": "Go to Home"
+  },
+  "profile": {
+    "successMessage": "Profile updated successfully",
+    "errorMessage": "An error occurred, please try again later",
+    "uploadPhoto": "Upload Profile Picture",
+    "cancel": "Cancel",
+    "allowedFormats": "Allowed formats: JPG, GIF, PNG up to 2MB max",
+    "name": "Name",
+    "enterName": "Enter your name",
+    "email": "Email",
+    "enterEmail": "Enter your email",
+    "saveChanges": "Save Changes",
+    "cancelChanges": "Cancel"
+  },
+  "password": {
+    "title": "Change Password",
+    "current": "Current Password",
+    "new": "New Password",
+    "confirmNew": "Confirm New Password",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "successMessage": "Password updated successfully",
+    "errorMessage": "An error occurred while updating password, please try again later"
   }
+
 
 }

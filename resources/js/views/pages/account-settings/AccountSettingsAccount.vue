@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const refInputEl = ref()
 const isLoading = ref(false)
 const isSaving = ref(false)
@@ -59,11 +61,9 @@ const saveProfile = async () => {
     formData.append('email', accountDataLocal.value.email)
     formData.append('language', 'ar')
 
-    // ✅ فقط لو المستخدم اختار صورة جديدة
     if (accountDataLocal.value.avatar instanceof File) {
       formData.append('avatar', accountDataLocal.value.avatar)
     } else {
-      // لو ما اختارش صورة جديدة، ابعتها null
       formData.append('avatar', '')
     }
 
@@ -72,7 +72,7 @@ const saveProfile = async () => {
       body: formData,
     })
 
-    triggerToast('تم تعديل البيانات بنجاح', 'success')
+    triggerToast(t('profile.successMessage'), 'success')
 
     if (res?.data?.user) {
       useCookie('userData').value = {
@@ -85,7 +85,7 @@ const saveProfile = async () => {
 
   } catch (err) {
     console.error('Error updating profile:', err)
-    triggerToast('حدث خطأ من فضلك حاو في وقت اخر', 'error')
+    triggerToast(t('profile.errorMessage'), 'error')
   } finally {
     isSaving.value = false
   }
@@ -111,7 +111,6 @@ onMounted(() => {
   fetchUser()
 })
 </script>
-
 
 <template>
   <VSnackbar
@@ -139,20 +138,15 @@ onMounted(() => {
       </VBtn>
     </template>
   </VSnackbar>
+
   <VRow>
     <VCol cols="12">
       <VCard>
         <VCardText v-if="isLoading">
-          <VProgressCircular
-            indeterminate
-            color="primary"
-          />
+          <VProgressCircular indeterminate color="primary" />
         </VCardText>
 
-        <VCardText
-          v-else
-          class="d-flex"
-        >
+        <VCardText v-else class="d-flex">
           <!-- 👉 Avatar -->
           <VAvatar
             rounded
@@ -164,16 +158,9 @@ onMounted(() => {
           <!-- 👉 Upload Photo -->
           <form class="d-flex flex-column justify-center gap-4">
             <div class="d-flex flex-wrap gap-4">
-              <VBtn
-                color="primary"
-                size="small"
-                @click="refInputEl?.click()"
-              >
-                <VIcon
-                  icon="tabler-cloud-upload"
-                  class="d-sm-none"
-                />
-                <span class="d-none d-sm-block">تحميل صورة الحساب</span>
+              <VBtn color="primary" size="small" @click="refInputEl?.click()">
+                <VIcon icon="tabler-cloud-upload" class="d-sm-none" />
+                <span class="d-none d-sm-block">{{ t('profile.uploadPhoto') }}</span>
               </VBtn>
 
               <input
@@ -191,61 +178,43 @@ onMounted(() => {
                 variant="tonal"
                 @click="resetAvatar"
               >
-                <span class="d-none d-sm-block">الغاء</span>
-                <VIcon
-                  icon="tabler-refresh"
-                  class="d-sm-none"
-                />
+                <span class="d-none d-sm-block">{{ t('profile.cancel') }}</span>
+                <VIcon icon="tabler-refresh" class="d-sm-none" />
               </VBtn>
             </div>
             <p class="text-body-1 mb-0">
-              مسموح بالامتدادات JPG, GIF , PNG  بمساحة 2 ميجا كحد اقصي
+              {{ t('profile.allowedFormats') }}
             </p>
           </form>
         </VCardText>
 
         <VCardText class="pt-2">
           <!-- 👉 Form -->
-          <VForm
-            class="mt-3"
-            @submit.prevent="saveProfile"
-          >
+          <VForm class="mt-3" @submit.prevent="saveProfile">
             <VRow>
               <!-- 👉 Name -->
-              <VCol
-                cols="12"
-                md="6"
-              >
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="accountDataLocal.name"
-                  label="الاسم"
-                  placeholder="ادخل اسمك"
+                  :label="t('profile.name')"
+                  :placeholder="t('profile.enterName')"
                 />
               </VCol>
 
               <!-- 👉 Email -->
-              <VCol
-                cols="12"
-                md="6"
-              >
+              <VCol cols="12" md="6">
                 <AppTextField
                   v-model="accountDataLocal.email"
-                  label="البريد الالكتروني"
-                  placeholder="ادخل بريدك الالكتروني"
+                  :label="t('profile.email')"
+                  :placeholder="t('profile.enterEmail')"
                   type="email"
                 />
               </VCol>
 
               <!-- 👉 Form Actions -->
-              <VCardText
-                cols="12"
-                class="d-flex flex-wrap gap-4"
-              >
-                <VBtn
-                  type="submit"
-                  :loading="isSaving"
-                >
-                  حفظ التعديلات
+              <VCardText cols="12" class="d-flex flex-wrap gap-4">
+                <VBtn type="submit" :loading="isSaving">
+                  {{ t('profile.saveChanges') }}
                 </VBtn>
                 <VBtn
                   color="secondary"
@@ -253,7 +222,7 @@ onMounted(() => {
                   :disabled="isSaving"
                   @click.prevent="fetchUser"
                 >
-                  الغاء
+                  {{ t('profile.cancelChanges') }}
                 </VBtn>
               </VCardText>
             </VRow>

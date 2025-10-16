@@ -1,18 +1,20 @@
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // 👉 Password fields state
 const passwordFields = ref([
-  { key: 'current_password', label: 'كلمة المرور الحالية', value: '', visible: false },
-  { key: 'new_password', label: 'كلمة المرور الجديدة', value: '', visible: false },
-  { key: 'new_password_confirmation', label: 'تأكيد كلمة المرور الجديدة', value: '', visible: false },
+  { key: 'current_password', label: t('password.current'), value: '', visible: false },
+  { key: 'new_password', label: t('password.new'), value: '', visible: false },
+  { key: 'new_password_confirmation', label: t('password.confirmNew'), value: '', visible: false },
 ])
 
 // 👉 Toast state
 const showToast = ref(false)
 const message = ref('')
 const color = ref('success')
-
 
 // 👉 Toast trigger
 const triggerToast = (msg, type = 'success') => {
@@ -35,13 +37,13 @@ const changePassword = async () => {
       body: payload,
     })
 
-    triggerToast(res.data.message || 'تم تعديل كلمة المرور بنجاح', 'success')
+    triggerToast(res.data.message || t('password.successMessage'), 'success')
 
     // Reset fields after success
-    passwordFields.value.forEach(f => f.value = '')
+    passwordFields.value.forEach(f => (f.value = ''))
   } catch (err) {
     console.error('Error updating password:', err)
-    triggerToast(err?.response?._data?.message || 'حدث خطأ اثناء التعديل برجاء المحاولة في وقت لاحق', 'error')
+    triggerToast(err?.response?._data?.message || t('password.errorMessage'), 'error')
   }
 }
 </script>
@@ -54,18 +56,9 @@ const changePassword = async () => {
     timeout="5000"
   >
     <template #prepend>
-      <VIcon
-        v-if="color === 'success'"
-        icon="tabler-check"
-      />
-      <VIcon
-        v-else-if="color === 'error'"
-        icon="tabler-alert-circle"
-      />
-      <VIcon
-        v-else
-        icon="tabler-info-circle"
-      />
+      <VIcon v-if="color === 'success'" icon="tabler-check" />
+      <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
+      <VIcon v-else icon="tabler-info-circle" />
     </template>
 
     {{ message }}
@@ -81,9 +74,10 @@ const changePassword = async () => {
       </VBtn>
     </template>
   </VSnackbar>
+
   <VRow>
     <VCol cols="12">
-      <VCard title="تعديل كلمة المرور">
+      <VCard :title="t('password.title')">
         <VForm @submit.prevent="changePassword">
           <VCardText class="pt-0">
             <VRow>
@@ -108,14 +102,14 @@ const changePassword = async () => {
 
           <VCardText class="d-flex flex-wrap gap-4">
             <VBtn type="submit">
-              حفظ التعديلات
+              {{ t('password.save') }}
             </VBtn>
             <VBtn
               type="reset"
               color="secondary"
               variant="tonal"
             >
-              الغاء
+              {{ t('password.cancel') }}
             </VBtn>
           </VCardText>
         </VForm>
