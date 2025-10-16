@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   isDrawerOpen: {
@@ -69,7 +72,7 @@ const onSubmit = () => {
     :model-value="props.isDrawerOpen"
     @update:model-value="val => emit('update:isDrawerOpen', val)"
   >
-    <AppDrawerHeaderSection title="إضافة مجلد جديد" @cancel="closeDrawer" />
+    <AppDrawerHeaderSection :title="t('addNewFolder')" @cancel="closeDrawer" />
     <VDivider />
     <PerfectScrollbar :options="{ wheelPropagation: false }">
       <VCard flat>
@@ -79,7 +82,7 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="name"
-                  label="اسم المجلد"
+                  :label="t('folderName')"
                   :rules="[requiredValidator]"
                 />
               </VCol>
@@ -87,15 +90,15 @@ const onSubmit = () => {
               <VCol cols="12">
                 <AppTextarea
                   v-model="description"
-                  label="الوصف"
+                  :label="t('description')"
                   type="text"
                 />
               </VCol>
 
               <VCol cols="12">
-                <VBtn type="submit" class="me-3">حفظ</VBtn>
+                <VBtn type="submit" class="me-3">{{ t('save') }}</VBtn>
                 <VBtn type="reset" variant="tonal" color="error" @click="closeDrawer">
-                  إلغاء
+                  {{ t('cancel') }}
                 </VBtn>
               </VCol>
             </VRow>
