@@ -35,11 +35,11 @@ import { VerticalNavLayout } from '@layouts'
 
         <VSpacer />
 
-        <NavBarI18n
-          v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
-          :languages="themeConfig.app.i18n.langConfig"
-        />
-        <NavbarThemeSwitcher />
+<!--        <NavBarI18n-->
+<!--          v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"-->
+<!--          :languages="themeConfig.app.i18n.langConfig"-->
+<!--        />-->
+<!--        <NavbarThemeSwitcher />-->
 <!--        <NavbarShortcuts /> -->
 <!--        <NavBarNotifications class="me-1" /> -->
         <UserProfile />
