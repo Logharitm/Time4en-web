@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('twitter')->nullable();
             $table->string('instagram')->nullable();
             $table->string('whatsapp')->nullable();
+            $table->string('tiktok')->nullable();
             $table->timestamps();
         });
 
@@ -34,6 +35,7 @@ return new class extends Migration
             'twitter' => null,
             'instagram' => null,
             'whatsapp' => null,
+            'tiktok' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
