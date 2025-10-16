@@ -118,7 +118,7 @@ const logout = async () => {
               class="nav-link font-weight-medium"
               @click="sidebar = false"
             >
-              {{ $t('profile') }}
+              {{ $t('Profile') }}
             </RouterLink>
             <RouterLink
               to="/folders"
