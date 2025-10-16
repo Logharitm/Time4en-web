@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
+import { useI18n } from "vue-i18n"
 import paperPlane from '@images/front-pages/icons/paper-airplane.png'
 import plane from '@images/front-pages/icons/plane.png'
 import shuttleRocket from '@images/front-pages/icons/shuttle-rocket.png'
@@ -11,6 +12,9 @@ const loading = ref(false)
 
 // أيقونات احتياطية لكل خطة
 const defaultIcons = [paperPlane, plane, shuttleRocket]
+
+// جلب اللغة الحالية من i18n
+const { locale } = useI18n({ useScope: 'global' })
 
 // جلب البيانات من API
 const fetchPlans = async () => {
@@ -32,6 +36,15 @@ const fetchPlans = async () => {
 }
 
 onMounted(fetchPlans)
+
+// دالة مساعدة لاختيار النص بناءً على اللغة الحالية
+const getName = (plan) => {
+  return locale.value === 'en' ? plan.name_en || plan.name : plan.name
+}
+
+const getDescription = (plan) => {
+  return locale.value === 'en' ? plan.description_en || plan.description : plan.description
+}
 </script>
 
 <template>
@@ -54,7 +67,6 @@ onMounted(fetchPlans)
                 {{ $t("Tailored plans designed for you") }}
               </div>
             </div>
-
           </h4>
         </div>
 
@@ -75,10 +87,10 @@ onMounted(fetchPlans)
                   class="mx-auto mb-8"
                 />
                 <h4 class="text-h4 text-center">
-                  {{ plan.name }}
+                  {{ getName(plan) }}
                 </h4>
                 <p class="text-body-2 text-center mb-6 mt-6">
-                  {{ plan.description }}
+                  {{ getDescription(plan) }}
                 </p>
 
                 <!-- السعر -->
@@ -111,17 +123,16 @@ onMounted(fetchPlans)
                       </h6>
                     </template>
                   </VListItem>
-
                 </VList>
 
-<!--                <VBtn-->
-<!--                  block-->
-<!--                  :variant="plan.current ? 'elevated' : 'tonal'"-->
-<!--                  class="mt-8"-->
-<!--                  href="register"-->
-<!--                >-->
-<!--                  {{ $t("Get Started") }}-->
-<!--                </VBtn>-->
+                <!--                <VBtn-->
+                <!--                  block-->
+                <!--                  :variant="plan.current ? 'elevated' : 'tonal'"-->
+                <!--                  class="mt-8"-->
+                <!--                  href="register"-->
+                <!--                >-->
+                <!--                  {{ $t("Get Started") }}-->
+                <!--                </VBtn>-->
               </VCardText>
             </VCard>
           </VCol>
