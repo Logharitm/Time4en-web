@@ -250,7 +250,7 @@ const logout = async () => {
               >
                 <VList color="primary">
                   <VListItem @click="$router.push('/profile')">
-                    <VListItemTitle>{{ $t('profile') }}</VListItemTitle>
+                    <VListItemTitle>{{ $t('Profile') }}</VListItemTitle>
                   </VListItem>
                   <VListItem @click="$router.push('/profile')">
                     <VListItemTitle>{{ $t('my subscriptions') }}</VListItemTitle>
