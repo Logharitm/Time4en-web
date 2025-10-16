@@ -262,6 +262,9 @@ const logout = async () => {
                   <VListItem @click="$router.push('/pages/account-settings/account')"  v-if="userData?.role == 'admin'">
                     <VListItemTitle>{{ $t('Profile') }}</VListItemTitle>
                   </VListItem>
+                  <VListItem @click="$router.push('/home/dashboard')"  v-if="userData?.role == 'admin'">
+                    <VListItemTitle>{{ $t('dashboard') }}</VListItemTitle>
+                  </VListItem>
                   <VListItem @click="logout">
                     <VListItemTitle>{{ $t('logout') }}</VListItemTitle>
                   </VListItem>
