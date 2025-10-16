@@ -73,7 +73,7 @@ const loading = ref(true)
 const formatDateTime = dateStr => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
-  
+
   return date.toLocaleString('en-US', {
     year: 'numeric',
     month: '2-digit',
@@ -227,8 +227,7 @@ const deletePractice = async id => {
         <template #item.user_name="{ item }">
           <a
             v-if="item.user_id"
-            class="text-primary cursor-pointer"
-            @click.prevent="router.push(`/admin/users/${item.user_id}`)"
+            class="text-primary"
           >
             {{ item.user_name }}
           </a>

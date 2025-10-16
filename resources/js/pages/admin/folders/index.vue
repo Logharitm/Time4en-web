@@ -249,7 +249,7 @@ const deleteFolder = async id => {
         @update:options="updateOptions"
       >
         <template #item.user_name="{ item }">
-          <a @click.prevent="router.push(`/admin/users/${item.user.id}`)" class="text-primary cursor-pointer">
+          <a class="text-primary">
             {{ item.user_name }}
           </a>
         </template>

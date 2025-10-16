@@ -279,14 +279,14 @@ const toggleAudio = (item) => {
         </template>
 
         <template #item.folder_name="{ item }">
-          <a v-if="item.folder_id" @click.prevent="router.push(`/admin/folders/${item.folder_id}`)" class="text-primary cursor-pointer">
+          <a v-if="item.folder_id" class="text-primary">
             {{ item.folder_name }}
           </a>
           <span v-else>-</span>
         </template>
 
         <template #item.user_name="{ item }">
-          <a v-if="item.user_id" class="text-primary cursor-pointer">
+          <a v-if="item.user_id" class="text-primary">
             {{ item.user_name }}
           </a>
           <span v-else>-</span>

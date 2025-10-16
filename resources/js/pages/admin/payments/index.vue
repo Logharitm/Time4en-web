@@ -314,7 +314,7 @@ const resetFilters = () => {
         @update:options="updateOptions"
       >
         <template #item.user_name="{ item }">
-          <a @click.prevent="router.push(`/admin/users/${item.subscription?.user?.id ?? item.subscription?.user_id}`)" class="text-primary cursor-pointer">
+          <a class="text-primary">
             {{ item.user_name }}
           </a>
         </template>
