@@ -185,7 +185,7 @@ const logout = async () => {
         <div class="d-flex align-center">
           <VAppBarTitle class="me-6">
             <RouterLink
-              to="/"
+              to="/home"
               class="d-flex gap-x-4"
               :class="$vuetify.display.mdAndUp ? 'd-none' : 'd-block'"
             >
