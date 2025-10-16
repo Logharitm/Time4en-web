@@ -1,8 +1,9 @@
 <script setup>
-import successImg from '@images/pages/auth-v2-two-step-illustration-light.png' // هات صورة مناسبة للنجاح
+import successImg from '@images/Logo.png'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
 import miscMaskLight from '@images/pages/misc-mask-light.png'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
+import { useI18n } from 'vue-i18n'
 
 definePage({
   alias: '/verified-success',
@@ -12,6 +13,7 @@ definePage({
   },
 })
 
+const { t } = useI18n()
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 </script>
 
@@ -20,8 +22,8 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
     <!-- 👉 Success Header -->
     <ErrorHeader
       status-code="✅"
-      title="تم تفعيل بريدك الإلكتروني بنجاح 🎉"
-      description="يمكنك الآن استخدام حسابك بشكل كامل."
+      :title="t('verifiedSuccess.title')"
+      :description="t('verifiedSuccess.description')"
     />
 
     <!-- 👉 Back to Home -->
@@ -30,7 +32,7 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
       color="success"
       to="/home/dashboard"
     >
-      الذهاب إلى الرئيسية
+      {{ t('verifiedSuccess.goHome') }}
     </VBtn>
 
     <!-- 👉 Image -->

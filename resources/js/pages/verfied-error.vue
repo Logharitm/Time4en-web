@@ -1,5 +1,5 @@
 <script setup>
-import errorImg from '@images/pages/auth-v2-two-step-illustration-light.png'
+import errorImg from '@images/Logo.png'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
 import miscMaskLight from '@images/pages/misc-mask-light.png'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
