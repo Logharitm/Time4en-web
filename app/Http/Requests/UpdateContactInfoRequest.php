@@ -29,6 +29,7 @@ class UpdateContactInfoRequest extends FormRequest
             'facebook'  => 'nullable|url',
             'twitter'   => 'nullable|url',
             'instagram' => 'nullable|url',
+            'tiktok' => 'nullable|url',
             'whatsapp'  => 'nullable|string|max:20',
         ];
     }

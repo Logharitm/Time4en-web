@@ -17,5 +17,6 @@ class ContactInfo extends Model
         'twitter',
         'instagram',
         'whatsapp',
+        'tiktok'
     ];
 }
