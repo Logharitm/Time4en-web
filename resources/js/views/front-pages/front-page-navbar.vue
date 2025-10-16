@@ -249,17 +249,19 @@ const logout = async () => {
                 open-on-hover
               >
                 <VList color="primary">
-                  <VListItem @click="$router.push('/profile')">
+                  <VListItem @click="$router.push('/profile')"  v-if="userData?.role != 'admin'">
                     <VListItemTitle>{{ $t('Profile') }}</VListItemTitle>
                   </VListItem>
-                  <VListItem @click="$router.push('/profile')">
+                  <VListItem @click="$router.push('/profile')" v-if="userData?.role != 'admin'">
                     <VListItemTitle>{{ $t('my subscriptions') }}</VListItemTitle>
                   </VListItem>
 
-                  <VListItem @click="$router.push('/folders')">
+                  <VListItem @click="$router.push('/folders')" v-if="userData?.role != 'admin'">
                     <VListItemTitle>{{ $t('my folders') }}</VListItemTitle>
                   </VListItem>
-
+                  <VListItem @click="$router.push('/pages/account-settings/account')"  v-if="userData?.role == 'admin'">
+                    <VListItemTitle>{{ $t('Profile') }}</VListItemTitle>
+                  </VListItem>
                   <VListItem @click="logout">
                     <VListItemTitle>{{ $t('logout') }}</VListItemTitle>
                   </VListItem>
