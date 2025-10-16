@@ -31,7 +31,7 @@ const isMenuOpen = ref(false)
 // حالة المستخدم
 const isLoggedIn = computed(() => {
   const userData = useCookie('userData').value
-  
+
   return !!userData
 })
 
@@ -276,7 +276,7 @@ const logout = async () => {
             color="primary"
             :to="{ name: 'login' }"
           >
-            {{ $t('logout') }}
+            {{ $t('Login') }}
           </VBtn>
         </div>
       </VAppBar>

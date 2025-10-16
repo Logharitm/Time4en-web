@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const contactInfo = ref(null)
 const isLoading = ref(true)
@@ -8,6 +8,7 @@ const fetchContactInfo = async () => {
   isLoading.value = true
   try {
     const res = await $api('/contact-info', { method: 'GET' })
+
     contactInfo.value = res?.data || null
   } catch (err) {
     console.error('Error fetching contact info:', err)
@@ -15,6 +16,12 @@ const fetchContactInfo = async () => {
     isLoading.value = false
   }
 }
+
+const contactAddress = computed(() => {
+  if (!contactInfo.value) return ''
+
+  return locale.value === 'en' ? contactInfo.value.address_en : contactInfo.value.address
+})
 
 onMounted(() => {
   fetchContactInfo()
@@ -26,48 +33,120 @@ onMounted(() => {
     <VContainer class="footer-container py-10">
       <VRow class="gap-y-6">
         <!-- 👈 About & Design -->
-        <VCol cols="12" md="4">
-          <h4 class="footer-title mb-3">{{ $t('prog')}}</h4>
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <h4 class="footer-title mb-3">
+            {{ $t('prog') }}
+          </h4>
           <p class="text-white-variant">
             {{ $t('by') }}
-            <a href="https://logharitm.com/" target="_blank" class="text-white font-weight-bold ms-1">
-              {{ $t('Logharitm')}}
+            <a
+              href="https://logharitm.com/"
+              target="_blank"
+              class="text-white font-weight-bold ms-1"
+            >
+              {{ $t('Logharitm') }}
             </a>
           </p>
-          <p class="text-white-variant mt-2">&copy; {{ new Date().getFullYear() }} {{ $t('copyrights')}} </p>
+          <p class="text-white-variant mt-2">
+            &copy; {{ new Date().getFullYear() }} {{ $t('copyrights') }}
+          </p>
         </VCol>
 
         <!-- 👈 Contact Info -->
-        <VCol cols="12" md="4" v-if="contactInfo">
-          <h4 class="footer-title mb-3">{{ $t('contact_info')}} </h4>
-          <p class="text-white-variant mb-1">{{ $t('address')}}   : {{ contactInfo.address }}</p>
-          <p class="text-white-variant mb-1">  {{ $t('phone')}} : {{ contactInfo.phone }}</p>
-          <p class="text-white-variant mb-1">  {{ $t('email')}}  : {{ contactInfo.email }}</p>
+        <VCol
+          v-if="contactInfo"
+          cols="12"
+          md="4"
+        >
+          <h4 class="footer-title mb-3">
+            {{ $t('contact_info') }}
+          </h4>
+          <p class="text-white-variant mb-1">
+            {{ $t('address') }}   : {{ contactAddress }}
+          </p>
+          <p class="text-white-variant mb-1">
+            {{ $t('phone') }} : {{ contactInfo.phone }}
+          </p>
+          <p class="text-white-variant mb-1">
+            {{ $t('email') }}  : {{ contactInfo.email }}
+          </p>
         </VCol>
 
         <!-- 👈 Social Media -->
-        <VCol cols="12" md="4">
-          <h4 class="footer-title mb-3">{{ $t('followus')}}</h4>
+        <VCol
+          cols="12"
+          md="4"
+        >
+          <h4 class="footer-title mb-3">
+            {{ $t('followus') }}
+          </h4>
           <div class="d-flex gap-4">
             <template v-if="contactInfo">
-              <a v-if="contactInfo.facebook" :href="contactInfo.facebook" target="_blank">
-                <VIcon icon="tabler-brand-facebook-filled" size="20" color="white" />
+              <a
+                v-if="contactInfo.facebook"
+                :href="contactInfo.facebook"
+                target="_blank"
+              >
+                <VIcon
+                  icon="tabler-brand-facebook-filled"
+                  size="20"
+                  color="white"
+                />
               </a>
-              <a v-if="contactInfo.twitter" :href="contactInfo.twitter" target="_blank">
-                <VIcon icon="tabler-brand-twitter-filled" size="20" color="white" />
+              <a
+                v-if="contactInfo.twitter"
+                :href="contactInfo.twitter"
+                target="_blank"
+              >
+                <VIcon
+                  icon="tabler-brand-twitter-filled"
+                  size="20"
+                  color="white"
+                />
               </a>
-              <a v-if="contactInfo.instagram" :href="contactInfo.instagram" target="_blank">
-                <VIcon icon="tabler-brand-instagram-filled" size="20" color="white" />
+              <a
+                v-if="contactInfo.instagram"
+                :href="contactInfo.instagram"
+                target="_blank"
+              >
+                <VIcon
+                  icon="tabler-brand-instagram-filled"
+                  size="20"
+                  color="white"
+                />
               </a>
-              <a v-if="contactInfo.whatsapp" :href="`https://wa.me/${contactInfo.whatsapp}`" target="_blank">
-                <VIcon icon="tabler-brand-whatsapp-filled" size="20" color="white" />
+              <a
+                v-if="contactInfo.whatsapp"
+                :href="`https://wa.me/${contactInfo.whatsapp}`"
+                target="_blank"
+              >
+                <VIcon
+                  icon="tabler-brand-whatsapp-filled"
+                  size="20"
+                  color="white"
+                />
               </a>
             </template>
 
             <template v-else>
-              <VIcon icon="tabler-brand-facebook-filled" size="20" color="white" />
-              <VIcon icon="tabler-brand-twitter-filled" size="20" color="white" />
-              <VIcon icon="tabler-brand-instagram-filled" size="20" color="white" />
+              <VIcon
+                icon="tabler-brand-facebook-filled"
+                size="20"
+                color="white"
+              />
+              <VIcon
+                icon="tabler-brand-twitter-filled"
+                size="20"
+                color="white"
+              />
+              <VIcon
+                icon="tabler-brand-instagram-filled"
+                size="20"
+                color="white"
+              />
             </template>
           </div>
         </VCol>

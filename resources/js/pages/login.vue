@@ -73,7 +73,7 @@ const login = async () => {
     // التحقق من وجود token في الرد
     if (!payload.accessToken) {
       generalError.value = 'Login failed. No access token received.'
-      
+
       return
     }
 
@@ -211,7 +211,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
       >
         <VCardText>
           <h4 class="text-h4 mb-1">
-            مرحبا بك في
+           {{ $t('welcome_en')}}
             <span class="text-capitalize">{{ themeConfig.app.title }}</span>
           </h4>
         </VCardText>
@@ -226,7 +226,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="credentials.email"
-                  label="البريد الالكتروني"
+                  :label="$t('email')"
                   placeholder="johndoe@email.com"
                   type="email"
                   autofocus
@@ -239,7 +239,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
               <VCol cols="12">
                 <AppTextField
                   v-model="credentials.password"
-                  label="كلمة المرور"
+                  :label="$t('password')"
                   placeholder="············"
                   :rules="[requiredValidator]"
                   :type="isPasswordVisible ? 'text' : 'password'"
@@ -262,13 +262,13 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                 <div class="d-flex align-center flex-wrap justify-space-between my-6">
                   <VCheckbox
                     v-model="rememberMe"
-                    label="تذكرني"
+                    :label="$t('remember_me')"
                   />
                   <RouterLink
                     class="text-primary ms-2 mb-1"
                     :to="{ name: 'forgot-password' }"
                   >
-                    هل نسيت كلمة المرور ؟
+                    {{ $t('forget_password')}}
                   </RouterLink>
                 </div>
 
@@ -278,7 +278,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                   :loading="isLoading"
                   :disabled="isLoading"
                 >
-                  {{ isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}
+                  {{ isLoading ? $t('Login') : $t('Register') }}
                 </VBtn>
               </VCol>
 

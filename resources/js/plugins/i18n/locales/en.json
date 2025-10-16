@@ -314,6 +314,12 @@
   "using_app": "with Time4EN",
   "address": "Address",
   "phone": "Phone",
-  "email": "Email"
+  "email": "Email",
+  "users": "Users",
+  "practices": "Practices",
+  "remember_me": "Remember me",
+  "forget_password": "Forget password?",
+  "welcome_en": "Welcome to you in"
+
 
 }
