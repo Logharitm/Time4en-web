@@ -162,11 +162,12 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "public",
+    outDir: "public/build",
     emptyOutDir: true,
     manifest: true,
     chunkSizeWarningLimit: 5000,
   },
+
   optimizeDeps: {
     exclude: ["vuetify"],
     entries: ["./resources/js/**/*.vue"],
