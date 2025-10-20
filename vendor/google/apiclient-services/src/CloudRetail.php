@@ -801,6 +801,10 @@ class CloudRetail extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
               ],
             ],
           ]
@@ -812,7 +816,17 @@ class CloudRetail extends \Google\Service
         'placements',
         [
           'methods' => [
-            'predict' => [
+            'conversationalSearch' => [
+              'path' => 'v2/{+placement}:conversationalSearch',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'placement' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'predict' => [
               'path' => 'v2/{+placement}:predict',
               'httpMethod' => 'POST',
               'parameters' => [
@@ -847,6 +861,16 @@ class CloudRetail extends \Google\Service
               'httpMethod' => 'POST',
               'parameters' => [
                 'servingConfig' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'conversationalSearch' => [
+              'path' => 'v2/{+placement}:conversationalSearch',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'placement' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
@@ -1053,6 +1077,10 @@ class CloudRetail extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
               ],
             ],
           ]
@@ -1094,6 +1122,10 @@ class CloudRetail extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
               ],
             ],
