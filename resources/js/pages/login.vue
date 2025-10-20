@@ -76,7 +76,11 @@ const login = async () => {
 
       return
     }
-
+    if (payload.role === 'admin') {
+      
+    } else {
+      return
+    }
     const accessToken = payload.accessToken
 
     const userFromApi = payload.userData ?? {
@@ -264,12 +268,12 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                     v-model="rememberMe"
                     :label="$t('remember_me')"
                   />
-                  <RouterLink
+                  <!-- <RouterLink
                     class="text-primary ms-2 mb-1"
                     :to="{ name: 'forgot-password' }"
                   >
                     {{ $t('forget_password')}}
-                  </RouterLink>
+                  </RouterLink> -->
                 </div>
 
                 <VBtn
@@ -283,7 +287,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
               </VCol>
 
               <!-- create account -->
-              <VCol
+              <!-- <VCol
                 cols="12"
                 class="text-center text-base"
               >
@@ -294,7 +298,7 @@ watch([() => credentials.value.email, () => credentials.value.password], () => {
                 >
                   {{ $t('Sign up') }}
                 </RouterLink>
-              </VCol>
+              </VCol> -->
             </VRow>
           </VForm>
         </VCardText>

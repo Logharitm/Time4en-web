@@ -1,201 +1,221 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
-const searchQuery = ref('')
-const filterRole = ref(null)
-const filterPlan = ref(null)
-const filterStartDate = ref(null)
-const filterEndDate = ref(null)
+const searchQuery = ref("");
+const filterRole = ref(null);
+const filterPlan = ref(null);
+const filterStartDate = ref(null);
+const filterEndDate = ref(null);
 
-const plans = ref([])
+const plans = ref([]);
 
 const fetchPlans = async () => {
   try {
-    const resp = await $api('/plans', { method: 'GET', params: { per_page: 200 } })
-    if (resp && resp.status === 'success') {
+    const resp = await $api("/plans", {
+      method: "GET",
+      params: { per_page: 200 },
+    });
+    if (resp && resp.status === "success") {
       // handle both paginated and raw array
-      plans.value = Array.isArray(resp.data) ? resp.data : (resp.data?.data ?? resp.data ?? [])
+      plans.value = Array.isArray(resp.data)
+        ? resp.data
+        : resp.data?.data ?? resp.data ?? [];
     } else {
-      plans.value = []
+      plans.value = [];
     }
   } catch (e) {
-    console.error('Error fetching plans', e)
-    plans.value = []
+    console.error("Error fetching plans", e);
+    plans.value = [];
   }
-}
+};
 
-const itemsPerPage = ref(10)
-const page = ref(1)
-const sortBy = ref()
-const orderBy = ref()
-const selectedRows = ref([])
+const itemsPerPage = ref(10);
+const page = ref(1);
+const sortBy = ref();
+const orderBy = ref();
+const selectedRows = ref([]);
 
-const updateOptions = options => {
-  sortBy.value = options.sortBy?.[0]?.key
-  orderBy.value = options.sortBy?.[0]?.order
-}
+const updateOptions = (options) => {
+  sortBy.value = options.sortBy?.[0]?.key;
+  orderBy.value = options.sortBy?.[0]?.order;
+};
 
-const showToast = ref(false)
-const message = ref('')
-const color = ref('success')
+const showToast = ref(false);
+const message = ref("");
+const color = ref("success");
 
-const triggerToast = (msg, type = 'success') => {
-  message.value = msg
-  color.value = type
-  showToast.value = true
-}
+const triggerToast = (msg, type = "success") => {
+  message.value = msg;
+  color.value = type;
+  showToast.value = true;
+};
 
-const isDeleteConfirmDialogVisible = ref(false)
-const userToDeleteId = ref(null)
+const isDeleteConfirmDialogVisible = ref(false);
+const userToDeleteId = ref(null);
 
-const confirmDelete = userId => {
-  userToDeleteId.value = userId
-  isDeleteConfirmDialogVisible.value = true
-}
+const confirmDelete = (userId) => {
+  userToDeleteId.value = userId;
+  isDeleteConfirmDialogVisible.value = true;
+};
 
 const executeDelete = async () => {
   if (userToDeleteId.value) {
-    await deleteUser(userToDeleteId.value)
-    isDeleteConfirmDialogVisible.value = false
-    userToDeleteId.value = null
+    await deleteUser(userToDeleteId.value);
+    isDeleteConfirmDialogVisible.value = false;
+    userToDeleteId.value = null;
   }
-}
+};
 
-const calculateRemainingDays = endDateString => {
-  if (!endDateString) return 'غير محدد'
-  const today = new Date()
-  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-  const endDate = new Date(endDateString)
-  const endDateMidnight = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
-  const differenceInTime = endDateMidnight.getTime() - todayMidnight.getTime()
-  const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24))
-  if (differenceInDays > 0) return `متبقي ${differenceInDays} يوم`
-  if (differenceInDays === 0) return 'ينتهي اليوم'
+const calculateRemainingDays = (endDateString) => {
+  if (!endDateString) return "غير محدد";
+  const today = new Date();
+  const todayMidnight = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const endDate = new Date(endDateString);
+  const endDateMidnight = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+  const differenceInTime = endDateMidnight.getTime() - todayMidnight.getTime();
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
+  if (differenceInDays > 0) return `متبقي ${differenceInDays} يوم`;
+  if (differenceInDays === 0) return "ينتهي اليوم";
 
-  return 'منتهية'
-}
+  return "منتهية";
+};
 
+const notificationText = ref("");
+const notificationTextEN = ref("");
 
-const notificationText = ref('')
-const notificationTextEN = ref('')
-
-const loadingAllIds = ref(false)
-const allUserIds = ref([]) // cache IDs when fetched
+const loadingAllIds = ref(false);
+const allUserIds = ref([]); // cache IDs when fetched
 
 const fetchAllUserIds = async () => {
   if (allUserIds.value.length && allUserIds.value.length === totalUsers.value) {
-    return allUserIds.value
+    return allUserIds.value;
   }
 
   try {
-    loadingAllIds.value = true
+    loadingAllIds.value = true;
 
-    const perPageParam = totalUsers.value && totalUsers.value > 0 ? totalUsers.value : 1000
-    const resp = await $api('/users', { method: 'GET', params: { per_page: perPageParam, page: 1 } })
-    if (resp && resp.status === 'success') {
-      const data = Array.isArray(resp.data) ? resp.data : (resp.data?.data ?? resp.data ?? [])
-      const ids = data.map(u => u.id).filter(Boolean)
+    const perPageParam =
+      totalUsers.value && totalUsers.value > 0 ? totalUsers.value : 1000;
+    const resp = await $api("/users", {
+      method: "GET",
+      params: { per_page: perPageParam, page: 1 },
+    });
+    if (resp && resp.status === "success") {
+      const data = Array.isArray(resp.data)
+        ? resp.data
+        : resp.data?.data ?? resp.data ?? [];
+      const ids = data.map((u) => u.id).filter(Boolean);
 
-      allUserIds.value = ids
-      loadingAllIds.value = false
-      
-      return ids
+      allUserIds.value = ids;
+      loadingAllIds.value = false;
+
+      return ids;
     } else {
-      loadingAllIds.value = false
-      
-      return []
+      loadingAllIds.value = false;
+
+      return [];
     }
   } catch (err) {
-    console.error('Error fetching all user ids', err)
-    loadingAllIds.value = false
-    
-    return []
+    console.error("Error fetching all user ids", err);
+    loadingAllIds.value = false;
+
+    return [];
   }
-}
+};
 
 const checkAll = async () => {
   if (totalUsers.value <= usersData.value.length) {
-    selectedRows.value = usersData.value.map(u => u.id)
-    triggerToast(`تم تحديد ${selectedRows.value.length} مستخدم.`, 'success')
-    
-    return
+    selectedRows.value = usersData.value.map((u) => u.id);
+    triggerToast(`تم تحديد ${selectedRows.value.length} مستخدم.`, "success");
+
+    return;
   }
 
-  const ids = await fetchAllUserIds()
+  const ids = await fetchAllUserIds();
   if (ids.length) {
-    selectedRows.value = ids
-    triggerToast(`تم تحديد جميع المستخدمين (${ids.length}).`, 'success')
+    selectedRows.value = ids;
+    triggerToast(`تم تحديد جميع المستخدمين (${ids.length}).`, "success");
   } else {
-    selectedRows.value = usersData.value.map(u => u.id)
-    triggerToast('لم أتمكن من جلب كل المستخدمين من السيرفر — تم تحديد المستخدمين في الصفحة الحالية فقط.', 'warning')
+    selectedRows.value = usersData.value.map((u) => u.id);
+    triggerToast(
+      "لم أتمكن من جلب كل المستخدمين من السيرفر — تم تحديد المستخدمين في الصفحة الحالية فقط.",
+      "warning"
+    );
   }
-}
+};
 
 const uncheckAll = () => {
-  selectedRows.value = []
-  triggerToast('تم إلغاء تحديد الكل', 'success')
-}
+  selectedRows.value = [];
+  triggerToast("تم إلغاء تحديد الكل", "success");
+};
 
 const sendNotification = async () => {
-  const recipients = selectedRows.value
+  const recipients = selectedRows.value;
   if (!recipients || recipients.length === 0) {
-    triggerToast('برجاء اختيار مستخدمين أولاً', 'error')
-    
-    return
+    triggerToast("برجاء اختيار مستخدمين أولاً", "error");
+
+    return;
   }
   if (!notificationText.value || !notificationText.value.trim()) {
-    triggerToast('برجاء كتابة نص الإشعار', 'error')
+    triggerToast("برجاء كتابة نص الإشعار", "error");
 
-    return
+    return;
   }
 
   if (!notificationTextEN.value || !notificationTextEN.value.trim()) {
-    triggerToast('برجاء كتابة نص الإشعار', 'error')
+    triggerToast("برجاء كتابة نص الإشعار", "error");
 
-    return
+    return;
   }
 
   try {
-    await $api('/notifications', {
-      method: 'POST',
+    await $api("/notifications", {
+      method: "POST",
       body: {
         user_ids: recipients,
         message: notificationText.value.trim(),
         message_en: notificationTextEN.value.trim(),
       },
-    })
-    triggerToast('تم إرسال الإشعار بنجاح', 'success')
-    notificationText.value = notificationTextEN.value  = ''
+    });
+    triggerToast("تم إرسال الإشعار بنجاح", "success");
+    notificationText.value = notificationTextEN.value = "";
   } catch (err) {
-    console.error('Error sending notification', err)
-    triggerToast('حدث خطأ أثناء إرسال الإشعار', 'error')
+    console.error("Error sending notification", err);
+    triggerToast("حدث خطأ أثناء إرسال الإشعار", "error");
   }
-}
-
+};
 
 const headers = [
-  { title: '', key: 'select', sortable: false },
-  { title: 'المستخدم', key: 'user' },
-  { title: 'النوع', key: 'role' },
-  { title: 'عدد الفولدرات', key: 'folders', sortable: false },
-  { title: 'عدد الكلمات', key: 'words', sortable: false },
-  { title: 'باقة الاشتراك', key: 'plan' },
-  { title: 'بداية الاشتراك', key: 'start_at' },
-  { title: 'نهاية الاشتراك', key: 'expires_at' },
-  { title: 'الوقت المتبقي', key: 'remain' },
+  { title: "", key: "select", sortable: false },
+  { title: "المستخدم", key: "user" },
+  { title: "النوع", key: "role" },
+  { title: "عدد الفولدرات", key: "folders", sortable: false },
+  { title: "عدد الكلمات", key: "words", sortable: false },
+  { title: "باقة الاشتراك", key: "plan" },
+  { title: "بداية الاشتراك", key: "start_at" },
+  { title: "نهاية الاشتراك", key: "expires_at" },
+  { title: "الوقت المتبقي", key: "remain" },
   // { title: 'العمليات', key: 'actions', sortable: false },
-]
+];
 
 // API
-const usersData = ref([])
-const totalUsers = ref(0)
-const loading = ref(true)
+const usersData = ref([]);
+const totalUsers = ref(0);
+const loading = ref(true);
 
 const fetchUsers = async () => {
-  loading.value = true
+  loading.value = true;
   try {
     const params = {
       role: filterRole.value || undefined,
@@ -207,101 +227,117 @@ const fetchUsers = async () => {
       page: page.value,
       sort_by: sortBy.value || undefined,
       sort_order: orderBy.value || undefined,
-    }
+    };
 
-    const response = await $api('/users', { method: 'GET', params })
-    if (response && response.status === 'success') {
-      usersData.value = response.data
-      totalUsers.value = response.meta?.total || (Array.isArray(response.data) ? response.data.length : 0)
+    const response = await $api("/users", { method: "GET", params });
+    if (response && response.status === "success") {
+      usersData.value = response.data;
+      totalUsers.value =
+        response.meta?.total ||
+        (Array.isArray(response.data) ? response.data.length : 0);
     } else {
-      usersData.value = []
-      totalUsers.value = 0
+      usersData.value = [];
+      totalUsers.value = 0;
     }
   } catch (err) {
-    console.error('Error fetching users', err)
-    usersData.value = []
-    totalUsers.value = 0
+    console.error("Error fetching users", err);
+    usersData.value = [];
+    totalUsers.value = 0;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Reset filters
 const resetFilters = () => {
-  searchQuery.value = ''
-  filterRole.value = null
-  filterPlan.value = null
-  filterStartDate.value = null
-  filterEndDate.value = null
-}
+  searchQuery.value = "";
+  filterRole.value = null;
+  filterPlan.value = null;
+  filterStartDate.value = null;
+  filterEndDate.value = null;
+};
 
 onMounted(async () => {
-  await fetchPlans()
-  fetchUsers()
-})
+  await fetchPlans();
+  fetchUsers();
+});
 
 // Watch filters and table controls -> backend fetch
 watch(
-  [searchQuery, filterRole, filterPlan, filterStartDate, filterEndDate, itemsPerPage, sortBy, orderBy],
+  [
+    searchQuery,
+    filterRole,
+    filterPlan,
+    filterStartDate,
+    filterEndDate,
+    itemsPerPage,
+    sortBy,
+    orderBy,
+  ],
   () => {
-    page.value = 1
-    fetchUsers()
-  },
-)
+    page.value = 1;
+    fetchUsers();
+  }
+);
 
 watch(page, () => {
-  fetchUsers()
-})
+  fetchUsers();
+});
 
-const users = computed(() => usersData.value)
+const users = computed(() => usersData.value);
 
 // Role display
-const resolveUserRoleVariant = role => {
-  const roleLowerCase = role?.toLowerCase()
-  if (roleLowerCase === 'subscriber') return { color: 'success', icon: 'tabler-user' }
-  if (roleLowerCase === 'author') return { color: 'error', icon: 'tabler-device-desktop' }
-  if (roleLowerCase === 'maintainer') return { color: 'info', icon: 'tabler-chart-pie' }
-  if (roleLowerCase === 'editor') return { color: 'warning', icon: 'tabler-edit' }
-  if (roleLowerCase === 'admin') return { color: 'primary', icon: 'tabler-crown' }
+const resolveUserRoleVariant = (role) => {
+  const roleLowerCase = role?.toLowerCase();
+  if (roleLowerCase === "subscriber")
+    return { color: "success", icon: "tabler-user" };
+  if (roleLowerCase === "author")
+    return { color: "error", icon: "tabler-device-desktop" };
+  if (roleLowerCase === "maintainer")
+    return { color: "info", icon: "tabler-chart-pie" };
+  if (roleLowerCase === "editor")
+    return { color: "warning", icon: "tabler-edit" };
+  if (roleLowerCase === "admin")
+    return { color: "primary", icon: "tabler-crown" };
 
-  return { color: 'primary', icon: 'tabler-user' }
-}
+  return { color: "primary", icon: "tabler-user" };
+};
 
-const userToEdit = ref(null)
+const userToEdit = ref(null);
 
-const addNewUser = async userData => {
+const addNewUser = async (userData) => {
   try {
-    await $api('/users/store', { method: 'POST', body: userData })
-    triggerToast('تم اضافة البيانات بنجاح', 'success')
-    fetchUsers()
+    await $api("/users/store", { method: "POST", body: userData });
+    triggerToast("تم اضافة البيانات بنجاح", "success");
+    fetchUsers();
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
+    triggerToast("حدث خطأ من فضلك حاول في وقت اخر", "error");
   }
-}
+};
 
 const updateUser = async (id, userData) => {
   try {
-    await $api(`/users/update/${id}`, { method: 'POST', body: userData })
-    triggerToast('تم تعديل البيانات بنجاح', 'success')
-    fetchUsers()
+    await $api(`/users/update/${id}`, { method: "POST", body: userData });
+    triggerToast("تم تعديل البيانات بنجاح", "success");
+    fetchUsers();
   } catch (err) {
-    triggerToast('حدث خطأ من فضلك حاول في وقت اخر', 'error')
+    triggerToast("حدث خطأ من فضلك حاول في وقت اخر", "error");
   }
-}
+};
 
-const deleteUser = async id => {
+const deleteUser = async (id) => {
   try {
-    await $api(`/users/delete/${id}`, { method: 'POST' })
-    triggerToast('تم الحذف بنجاح', 'success')
-    fetchUsers()
+    await $api(`/users/delete/${id}`, { method: "POST" });
+    triggerToast("تم الحذف بنجاح", "success");
+    fetchUsers();
   } catch (err) {
-    triggerToast('حدث خطأ أثناء الحذف', 'error')
+    triggerToast("حدث خطأ أثناء الحذف", "error");
   }
-}
+};
 
-const viewUser = userId => {
-  router.push({ name: 'admin-users-id', params: { id: userId } })
-}
+const viewUser = (userId) => {
+  router.push({ name: "admin-users-id", params: { id: userId } });
+};
 </script>
 
 <template>
@@ -316,13 +352,13 @@ const viewUser = userId => {
           <AppSelect
             label="عرض"
             :model-value="itemsPerPage"
-            :items="[10,25,50,100].map(i=>({ value:i, title:i }))"
-            style="inline-size: 6.25rem;"
+            :items="[10, 25, 50, 100].map((i) => ({ value: i, title: i }))"
+            style="inline-size: 6.25rem"
             @update:model-value="itemsPerPage = parseInt($event, 10)"
           />
         </div>
 
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px">
           <AppTextField
             v-model="searchQuery"
             placeholder="بحث بالاسم أو الايميل"
@@ -330,19 +366,19 @@ const viewUser = userId => {
           />
         </div>
 
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px">
           <AppSelect
             v-model="filterRole"
             :items="[
               { value: 'user', title: 'مستخدم' },
-              { value: 'admin', title: 'مدير' }
+              { value: 'admin', title: 'مدير' },
             ]"
             label="النوع"
             clearable
           />
         </div>
 
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px">
           <AppSelect
             v-model="filterPlan"
             :items="plans"
@@ -354,7 +390,7 @@ const viewUser = userId => {
           />
         </div>
 
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px">
           <AppDateTimePicker
             v-model="filterStartDate"
             label="تاريخ البداية"
@@ -363,7 +399,7 @@ const viewUser = userId => {
           />
         </div>
 
-        <div style="min-width: 200px;">
+        <div style="min-width: 200px">
           <AppDateTimePicker
             v-model="filterEndDate"
             label="تاريخ النهاية"
@@ -402,11 +438,7 @@ const viewUser = userId => {
           />
 
           <div class="d-flex gap-2 align-center">
-            <VBtn
-              color="primary"
-              :loading="false"
-              @click="sendNotification"
-            >
+            <VBtn color="primary" :loading="false" @click="sendNotification">
               إرسال الإشعار
             </VBtn>
 
@@ -419,11 +451,7 @@ const viewUser = userId => {
               تحديد الكل
             </VBtn>
 
-            <VBtn
-              color="error"
-              variant="outlined"
-              @click="uncheckAll"
-            >
+            <VBtn color="error" variant="outlined" @click="uncheckAll">
               إلغاء التحديد
             </VBtn>
 
@@ -462,22 +490,18 @@ const viewUser = userId => {
             <VAvatar
               size="34"
               :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? resolveUserRoleVariant(item.role).color : undefined"
+              :color="
+                !item.avatar
+                  ? resolveUserRoleVariant(item.role).color
+                  : undefined
+              "
             >
-              <VImg
-                v-if="item.avatar"
-                :src="item.avatar"
-              />
+              <VImg v-if="item.avatar" :src="item.avatar" />
               <span v-else>{{ item.name?.charAt(0).toUpperCase() }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                <RouterLink
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
-                  class="font-weight-medium text-link"
-                >
-                  {{ item.name }}
-                </RouterLink>
+                {{ item.name }}
               </h6>
               <div class="text-sm">
                 {{ item.email }}
@@ -494,21 +518,21 @@ const viewUser = userId => {
               :color="resolveUserRoleVariant(item.role).color"
             />
             <div class="text-capitalize text-high-emphasis text-body-1">
-              {{ item.role == 'user' ? 'عميل' : 'ادمن' }}
+              {{ item.role == "user" ? "عميل" : "ادمن" }}
             </div>
           </div>
         </template>
 
         <template #item.plan="{ item }">
-          {{ item.subscription?.plan?.name || 'غير مشترك' }}
+          {{ item.subscription?.plan?.name || "غير مشترك" }}
         </template>
 
         <template #item.start_at="{ item }">
-          {{ item.subscription?.start_date ?? 'غير محدد' }}
+          {{ item.subscription?.start_date ?? "غير محدد" }}
         </template>
 
         <template #item.expires_at="{ item }">
-          {{ item.subscription?.end_date ?? 'غير محدد' }}
+          {{ item.subscription?.end_date ?? "غير محدد" }}
         </template>
 
         <template #item.remain="{ item }">
@@ -534,7 +558,6 @@ const viewUser = userId => {
       </VDataTableServer>
     </VCard>
 
-
     <VSnackbar
       v-model="showToast"
       :color="color"
@@ -542,51 +565,34 @@ const viewUser = userId => {
       timeout="5000"
     >
       <template #prepend>
-        <VIcon
-          v-if="color === 'success'"
-          icon="tabler-check"
-        />
-        <VIcon
-          v-else-if="color === 'error'"
-          icon="tabler-alert-circle"
-        />
+        <VIcon v-if="color === 'success'" icon="tabler-check" />
+        <VIcon v-else-if="color === 'error'" icon="tabler-alert-circle" />
       </template>
       {{ message }}
       <template #actions>
-        <VBtn
-          icon
-          variant="text"
-          color="white"
-          @click="showToast=false"
-        >
+        <VBtn icon variant="text" color="white" @click="showToast = false">
           <VIcon icon="tabler-x" />
         </VBtn>
       </template>
     </VSnackbar>
 
-    <VDialog
-      v-model="isDeleteConfirmDialogVisible"
-      max-width="500px"
-    >
+    <VDialog v-model="isDeleteConfirmDialogVisible" max-width="500px">
       <VCard>
-        <VCardTitle class="text-h6">
-          تأكيد الحذف
-        </VCardTitle>
-        <VCardText>هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.</VCardText>
+        <VCardTitle class="text-h6"> تأكيد الحذف </VCardTitle>
+        <VCardText
+          >هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا
+          الإجراء.</VCardText
+        >
         <VCardActions class="px-6 pb-4">
           <VSpacer />
           <VBtn
             color="error"
             variant="flat"
-            @click="isDeleteConfirmDialogVisible=false"
+            @click="isDeleteConfirmDialogVisible = false"
           >
             إلغاء
           </VBtn>
-          <VBtn
-            color="success"
-            variant="flat"
-            @click="executeDelete"
-          >
+          <VBtn color="success" variant="flat" @click="executeDelete">
             موافق
           </VBtn>
         </VCardActions>

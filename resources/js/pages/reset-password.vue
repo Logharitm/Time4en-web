@@ -30,7 +30,7 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
     <VBtn
       class="mb-11"
       color="success"
-      to="/home/dashboard"
+      to="/dashboard"
     >
       {{ t('verifiedSuccess.goHome') }}
     </VBtn>

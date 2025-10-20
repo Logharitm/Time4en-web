@@ -348,12 +348,9 @@ const viewUser = userId => {
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                <RouterLink
-                  :to="{ name: 'apps-user-view-id', params: { id: item.id } }"
-                  class="font-weight-medium text-link"
-                >
+               
                   {{ item.name }}
-                </RouterLink>
+              
               </h6>
               <div class="text-sm">
                 {{ item.email }}

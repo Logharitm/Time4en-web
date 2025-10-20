@@ -25,9 +25,9 @@ export const redirects = [
 
 export const routes = [
   {
-    path: '/home/dashboard',
+    path: '/dashboard',
     name: 'home-dashboard',
-    component: () => import('@/pages/home/dashboard.vue'),
+    component: () => import('@/pages/index/dashboard.vue'),
   },
   {
     path: '/dashboard',
