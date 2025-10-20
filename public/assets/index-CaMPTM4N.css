@@ -1,0 +1,1 @@
+.v-input--horizontal{grid-template-areas:"prepend control append" "a messages b";grid-template-columns:max-content minmax(0,1fr) max-content;grid-template-rows:1fr auto;margin:20px 0!important}

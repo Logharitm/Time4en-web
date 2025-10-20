@@ -57,8 +57,10 @@ export default defineConfig({
     }),
     laravel({
       input: ["resources/js/main.js"],
-      refresh: false,
+      refresh: true,
+      buildDirectory: "build", // <--- تأكد إن دي موجودة ومش مسبوقة بنقطة
     }),
+
     vueJsx(),
 
     // Docs: https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin
@@ -162,10 +164,10 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "public/build",
+    outDir: "public/build", // <--- هنا خليها public/build مش .vite
     emptyOutDir: true,
-    manifest: true,
-    chunkSizeWarningLimit: 5000,
+    // manifest: true,
+    // chunkSizeWarningLimit: 5000,
   },
 
   optimizeDeps: {
