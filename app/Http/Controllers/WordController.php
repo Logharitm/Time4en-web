@@ -118,6 +118,7 @@ class WordController extends Controller
     public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
         $data = $request->validated();
+        return $this->successResponse('Word updated successfully.', ['Request' => $request, 'Data' =>$data]);
 
         if ($request->hasFile('audio_file')) {
             if ($word->audio_url) {
@@ -126,9 +127,6 @@ class WordController extends Controller
             }
 
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
-        }
-        if($data['audio_url'] == 'deleted'){
-            $data['audio_url'] = NULL;
         }
 
         $sentence = $this->generate($data['word']);
