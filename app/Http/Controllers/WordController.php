@@ -128,7 +128,7 @@ class WordController extends Controller
 
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
         }else{
-            if( $data->audio_url == 'audio_url'){
+            if( $data->audio_url == 'deleted'){
                 $data['audio_url'] = NULL;
 
             }
