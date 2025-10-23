@@ -25,7 +25,7 @@ class UpdateWordRequest extends FormRequest
             'word' => 'sometimes|required|string|max:255',
             'translation' => 'sometimes|required|string|max:255',
             'audio_file' => 'nullable|file',
-            //'audio_file' => 'nullable|file|mimes:mp3,wav,aac|max:20480',
+            'audio_url' => 'nullable|string|max:255',
         ];
     }
 }
