@@ -128,7 +128,7 @@ class WordController extends Controller
 
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
         }else{
-            if(!empty($word->audio_url)){
+            if(!empty($word->audio_url)){}
         }
 
         $sentence = $this->generate($data['word']);
