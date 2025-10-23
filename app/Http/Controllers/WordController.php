@@ -29,7 +29,7 @@ class WordController extends Controller
         $query = $user->role === 'admin'
             ? Word::query()->with(['folder.user'])
             : Word::whereHas('folder', fn($q) => $q->where('user_id', $user->id))
-                ->with(['folder.user']);
+            ->with(['folder.user']);
 
         if ($request->filled('folder_id')) {
             $query->where('folder_id', $request->folder_id);
@@ -118,7 +118,7 @@ class WordController extends Controller
     public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
         $data = $request->validated();
-        return $this->successResponse('W', ['Request' => $data, 'Word' =>$word]);
+        // return $this->successResponse('W', ['Request' => $data, 'Word' => $word]);
 
         if ($request->hasFile('audio_file')) {
             if ($word->audio_url) {
@@ -127,8 +127,12 @@ class WordController extends Controller
             }
 
             $data['audio_url'] = $request->file('audio_file')->store('audio', 'public');
-        }else{
-            if( $data['audio_url'] == 'deleted' || empty($data['audio_url']) || $data['audio_url'] == null){
+        } else {
+            if (
+                $data['audio_url'] == 'deleted' ||
+                empty($data['audio_url']) ||
+                $data['audio_url'] =="null"
+            ) {
                 $data['audio_url'] = null;
             }
         }
@@ -146,7 +150,7 @@ class WordController extends Controller
     /**
      * Delete word
      */
-    public function destroy(WordShowRequest $request,Word $word): JsonResponse
+    public function destroy(WordShowRequest $request, Word $word): JsonResponse
     {
 
         if ($word->audio_url) {
