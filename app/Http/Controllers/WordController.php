@@ -118,7 +118,7 @@ class WordController extends Controller
     public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
         $data = $request->validated();
-        return $this->successResponse('Word updated successfully.', ['Request' => $request->validated(), 'Data' =>$data]);
+        return $this->successResponse( ['Request' => $data, 'Word' =>$word]);
 
         if ($request->hasFile('audio_file')) {
             if ($word->audio_url) {
