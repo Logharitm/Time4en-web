@@ -65,7 +65,7 @@ class FolderController extends Controller
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
-        if ($request->addData == 'all') {
+        if ($request->allData == 'all') {
             $folders = $query->paginate($request->get('per_page', 20));
         } else {
             $folders = $query->paginate($request->get('per_page', 20));
