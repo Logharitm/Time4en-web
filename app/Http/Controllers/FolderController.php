@@ -65,8 +65,11 @@ class FolderController extends Controller
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
-
-        $folders = $query->paginate($request->get('per_page', 20));
+        if ($request->addData == 'all') {
+            $folders = $query->paginate($request->get('per_page', 20));
+        } else {
+            $folders = $query->paginate($request->get('per_page', 20));
+        }
 
         return $this->successResponse(
             'Folders retrieved successfully.',
@@ -81,10 +84,10 @@ class FolderController extends Controller
      */
     public function store(StoreFolderRequest $request): JsonResponse
     {
-        if ($request->has('user_id')){
+        if ($request->has('user_id')) {
             $user = User::find($request->user_id);
             $folder = $user->folders()->create($request->validated());
-        }else{
+        } else {
             $folder = $request->user()->folders()->create($request->validated());
         }
 
