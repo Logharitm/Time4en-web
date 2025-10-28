@@ -132,7 +132,7 @@ class PracticeController extends Controller
 
         return $this->successResponse(
             'تم إنشاء الاختبار بنجاح',
-            ['practice_id' => $practice->id, 'questions' => $questions]
+            ['practice_id' => $practice->id, 'questions' => $questions , 'folder_id' => $folderId]
         );
     }
 
