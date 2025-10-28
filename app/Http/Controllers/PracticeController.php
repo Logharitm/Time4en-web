@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Word;
+use App\Models\Folder;
+use App\Models\Practice;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use App\Models\PracticeAnswer;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\CreateQuizRequest;
+use App\Http\Resources\PracticeResource;
 use App\Http\Requests\SubmitAnswerRequest;
 use App\Http\Resources\PracticeReportResource;
-use App\Http\Resources\PracticeResource;
-use App\Models\Practice;
-use App\Models\PracticeAnswer;
-use App\Models\Word;
-use App\Traits\ApiResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PracticeController extends Controller
 {
@@ -75,6 +76,7 @@ class PracticeController extends Controller
             });
 
         if ($folderId) {
+            $Folder = Folder::find($folderId);
             $query->where('folder_id', $folderId);
         }
 
@@ -127,12 +129,16 @@ class PracticeController extends Controller
                 'practice_id' => $practice->id,
                 'word_id' => $word->id,
             ]);
-
         }
 
+        $result =  ['practice_id' => $practice->id, 'questions' => $questions];
+        if($folderId) {
+            $result =  ['practice_id' => $practice->id, 'questions' => $questions, 'Folder' => $Folder];
+        }
+            
         return $this->successResponse(
             'تم إنشاء الاختبار بنجاح',
-            ['practice_id' => $practice->id, 'questions' => $questions , 'folder_id' => $folderId]
+            $result
         );
     }
 
