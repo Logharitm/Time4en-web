@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()->with(['subscription.plan'])->where('id','>', 0);
+        $query = User::query()->with(['subscription.plan'])->where('id','>', 1);
 
         if ($request->has('role') && in_array($request->role, ['admin', 'user'])) {
             $query->where('role', $request->role);
