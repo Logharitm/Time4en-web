@@ -21,8 +21,8 @@ class ResetPasswordMailEn extends Mailable
 
     public function build()
     {
-        $resetUrl = url("/reset-password?token={$this->token}&email={$this->user->email}");
-
+        $FrontendUrl = config('app.FrontendUrl');
+        $resetUrl = url("{$FrontendUrl}/reset-password?token={$this->token}&email={$this->user->email}");
         return $this->subject('Reset Your Password')
             ->markdown('emails.reset_password_en', [
                 'user' => $this->user,
