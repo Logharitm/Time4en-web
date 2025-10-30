@@ -21,8 +21,8 @@ class ResetPasswordMailAr extends Mailable
 
     public function build()
     {
-        $resetUrl = url("/reset-password?token={$this->token}&email={$this->user->email}");
-
+        $FrontendUrl = config('app.FrontendUrl');
+        $resetUrl = url("{$FrontendUrl}/reset-password?token={$this->token}&email={$this->user->email}");
         return $this->subject('إعادة تعيين كلمة المرور')
             ->markdown('emails.reset_password_ar', [
                 'user' => $this->user,
