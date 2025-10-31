@@ -13,7 +13,7 @@
             font-family: 'Tahoma', 'Cairo', sans-serif !important;
             background-color: #f9f9f9 !important;
             color: #333 !important;
-            text-align: center !important;
+            text-align: right !important;
             direction: rtl !important;
         }
 
@@ -21,6 +21,7 @@
             max-width: 600px !important;
             padding: 40px 0 !important;
             direction: rtl !important;
+            text-align: right !important;
             background: linear-gradient(180deg, #c0496b, #451291) !important;
         }
 
@@ -31,6 +32,7 @@
             margin: 0 auto !important;
             padding: 30px 25px !important;
             direction: rtl !important;
+            text-align: right !important;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
         }
 
@@ -43,6 +45,7 @@
             color: #451291 !important;
             font-size: 24px !important;
             margin-bottom: 10px !important;
+            text-align: center !important;
         }
 
         p {
