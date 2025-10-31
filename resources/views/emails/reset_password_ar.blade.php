@@ -13,7 +13,7 @@
             font-family: 'Tahoma', 'Cairo', sans-serif !important;
             background-color: #f9f9f9 !important;
             color: #333 !important;
-            text-align: right !important;
+            text-align: center !important;
             direction: rtl !important;
         }
 
@@ -21,7 +21,7 @@
             max-width: 600px !important;
             padding: 40px 0 !important;
             direction: rtl !important;
-            text-align: right !important;
+            text-align: center !important;
             background: linear-gradient(180deg, #c0496b, #451291) !important;
         }
 
@@ -32,13 +32,14 @@
             margin: 0 auto !important;
             padding: 30px 25px !important;
             direction: rtl !important;
-            text-align: right !important;
+            text-align: center !important;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
         }
 
         .logo {
             width: 120px !important;
             margin-bottom: 20px !important;
+            text-align: center !important;
         }
 
         h1 {
@@ -53,12 +54,14 @@
             line-height: 1.8 !important;
             color: #555 !important;
             margin: 10px 0 !important;
+            text-align: center !important;
         }
 
         .divider {
             border-top: 1px solid rgba(69, 18, 145, 0.2) !important;
             margin: 25px auto !important;
             width: 80% !important;
+            text-align: center !important;
         }
 
         .btn {
@@ -71,6 +74,7 @@
             font-size: 16px !important;
             margin-top: 15px !important;
             font-weight: bold !important;
+            text-align: center !important;
         }
 
         .btn:hover {
@@ -81,12 +85,14 @@
             font-size: 12px !important;
             color: #999 !important;
             margin-top: 25px !important;
+            text-align: center !important;
         }
 
         @media (max-width: 600px) {
             .card {
                 width: 90% !important;
                 padding: 20px !important;
+                text-align: center !important;
             }
         }
     </style>
