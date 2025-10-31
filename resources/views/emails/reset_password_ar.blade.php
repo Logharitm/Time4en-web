@@ -7,80 +7,80 @@
 
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Tahoma', 'Cairo', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      text-align: center;
-      direction: rtl;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: 'Tahoma', 'Cairo', sans-serif !important;
+      background-color: #f9f9f9 !important;
+      color: #333 !important;
+      text-align: center !important;
+      direction: rtl !important;
     }
 
     .container {
-      width: 100%;
-      padding: 40px 0;
-      background: linear-gradient(180deg, #c0496b, #451291);
+      width: 100% !important;
+      padding: 40px 0 !important;
+      background: linear-gradient(180deg, #c0496b, #451291) !important;
     }
 
     .card {
-      background: #fff;
-      border-radius: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 30px 25px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      background: #fff !important;
+      border-radius: 16px !important;
+      max-width: 480px !important;
+      margin: 0 auto !important;
+      padding: 30px 25px !important;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
     }
 
     .logo {
-      width: 120px;
-      margin-bottom: 20px;
+      width: 120px !important;
+      margin-bottom: 20px !important;
     }
 
     h1 {
-      color: #451291;
-      font-size: 24px;
-      margin-bottom: 10px;
+      color: #451291 !important;
+      font-size: 24px !important;
+      margin-bottom: 10px !important;
     }
 
     p {
-      font-size: 15px;
-      line-height: 1.8;
-      color: #555;
-      margin: 10px 0;
+      font-size: 15px !important;
+      line-height: 1.8 !important;
+      color: #555 !important;
+      margin: 10px 0 !important;
     }
 
     .divider {
-      border-top: 1px solid rgba(69, 18, 145, 0.2);
-      margin: 25px auto;
-      width: 80%;
+      border-top: 1px solid rgba(69, 18, 145, 0.2) !important;
+      margin: 25px auto !important;
+      width: 80% !important;
     }
 
     .btn {
-      display: inline-block;
-      padding: 12px 30px;
-      border-radius: 8px;
-      background-color: #451291;
-      color: #fff !important;
-      text-decoration: none;
-      font-size: 16px;
-      margin-top: 15px;
-      font-weight: bold;
+      display: inline-block !important;
+      padding: 12px 30px !important;
+      border-radius: 8px !important;
+      background-color: #451291 !important;
+      color: #fff !important !important;
+      text-decoration: none !important;
+      font-size: 16px !important;
+      margin-top: 15px !important;
+      font-weight: bold !important;
     }
 
     .btn:hover {
-      background-color: #5b19b9;
+      background-color: #5b19b9 !important;
     }
 
     .footer {
-      font-size: 12px;
-      color: #999;
-      margin-top: 25px;
+      font-size: 12px !important;
+      color: #999 !important;
+      margin-top: 25px !important;
     }
 
     @media (max-width: 600px) {
       .card {
-        width: 90%;
-        padding: 20px;
+        width: 90% !important;
+        padding: 20px !important;
       }
     }
   </style>
@@ -89,9 +89,9 @@
 <body>
   <div class="container">
     <div class="card">
-      <img src="https://time4en.logharitm.com/assets/Logo-DteKpv2F.png" alt="شعار الموقع" class="logo">
-
-      <h1>هل نسيت كلمة المرور؟</h1>
+        <h1>إعادة تعيين كلمة المرور</h1>
+        <img src="https://time4en-site.logharitm.com/_nuxt/logo_rtl.CN1rsYND.png" alt="شعار الموقع" class="logo">
+        <h1>هل نسيت كلمة المرور؟</h1>
 
       <p>لقد تلقينا طلبًا لإعادة تعيين كلمة المرور الخاصة بك.</p>
       <p>إذا لم تقم بتقديم هذا الطلب، فما عليك سوى تجاهل هذا البريد الإلكتروني.</p>
