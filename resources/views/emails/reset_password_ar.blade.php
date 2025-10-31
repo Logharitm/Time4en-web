@@ -17,7 +17,7 @@
     }
 
     .container {
-      width: 100% !important;
+      max-width: 600px !important;
       padding: 40px 0 !important;
       background: linear-gradient(180deg, #c0496b, #451291) !important;
     }
