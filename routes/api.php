@@ -16,7 +16,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WordController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
 Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');
@@ -128,4 +128,43 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
     });
 
+});
+
+
+
+
+
+
+
+Route::get('reset', function () {
+    $commands = [
+        'route:clear',
+        'cache:clear',
+        'config:clear',
+        'config:cache',
+        'storage:link',
+        'optimize',
+    ];
+
+    $result = "";
+
+    foreach ($commands as $command) {
+        try {
+            $exitCode = Artisan::call($command);
+
+            if ($exitCode === 0) {
+                // نجح
+                $result .= "<b>{$command}</b> : ✅ Success <br>";
+            } else {
+                // فشل → نجيب الـ output
+                $output = Artisan::output();
+                $result .= "<b>{$command}</b> : ❌ Failed <br><pre>{$output}</pre><br>";
+            }
+        } catch (\Exception $e) {
+            // حصل exception
+            $result .= "<b>{$command}</b> : ⚠️ Exception <br><pre>{$e->getMessage()}</pre><br>";
+        }
+    }
+
+    return $result . "<br>Done ...";
 });
