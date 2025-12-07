@@ -127,7 +127,6 @@ Route::group(['prefix' => 'auth', 'middleware' => 'api'], function () {
         Route::post('notifications', [NotificationController::class, 'store']);
         Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
     });
-
 });
 
 
